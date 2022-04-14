@@ -45,12 +45,13 @@ class Engine:
             n = len(array)
             linkedObjectQuicksort = BMathL.Math.QuickSort.LinkedObject()
             linkedObjectQuicksort.QuickSort(array, linkedObjArray, 0, n-1) #User our linked object quicksort algorithm
-            return linkedObjArray
+            return (linkedObjArray, array)
         return None
 
     
     def Render(self): #Note that the render function has literally no culling. Everything in the scene will be rendered no matter if it's even on the screen or not.
-        array = self.CalculateRenderOrder()
+        renderOrderReturnVal = self.CalculateRenderOrder()
+        array = renderOrderReturnVal[0]
         to_render = pygame.sprite.Group()
         if (array == None):
             return
@@ -62,16 +63,26 @@ class Engine:
 
 
 class GameObject:
-    def __init__(self):
-        self.position = Types.Vector3() #Default is (0,0,0)
-        self.size = Types.Vector2(1,1)
-        self.name = "GameObject"
+    def __init__(self): #Can optimize Update function to only call explicitly here
+        self._position = Types.Vector3() #Default is (0,0,0)
+        self._size = Types.Vector2(1,1)
+        self.name = "New GameObject"
         self.sprite = Sprite()
-        self.Update()
-        pass
-    def Update(self):
+    @property
+    def position(self):
+        return self._position
+    @position.setter
+    def position(self, value):
+        self._position = value
         self.sprite.rect.x = self.position.x
         self.sprite.rect.y = self.position.y
+    @property
+    def size(self):
+        return self._size
+    @size.setter
+    def size(self, value):
+        self._size = value
+        #Change size here
     def Destroy(self):
         try:
             Globals.sceneObjectsArray.remove(self)
@@ -81,28 +92,9 @@ class GameObject:
 
 
 class Sprite(pygame.sprite.Sprite):
-    def __init__(self, height=32, width=32, color=(255,255,255)):
+    def __init__(self, dimensions, color=(255,255,255)):
         super().__init__()
-        self.image = pygame.Surface((width, height))
+        self.image = pygame.Surface(dimensions.whole)
         self.image.fill(color)
         self.rect = self.image.get_rect()
-
-settings = PregameSettings()
-settings.SetScreenDimensions(Types.Vector2(512,512))
-#Z order testing START
-gm1 = GameObject()
-gm1.position = Types.Vector3(0,0,2)
-gm1.Update()
-gm2 = GameObject()
-gm2.position = Types.Vector3(15,5,1) #Maybe call update everytime a property changes?
-gm2.Update()
-gm2.sprite.image.fill((58,192,18))
-#Z order testing END
-engine = Engine()
-Globals.sceneObjectsArray.append(gm1)
-Globals.sceneObjectsArray.append(gm2)
-
-
-
-
-
+    
