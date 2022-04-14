@@ -4,10 +4,31 @@ import BMathL
 import time
 
 class Globals():
-    screen = pygame.display.set_mode((512,512)) #Default before PregameSettings change
-    screenGridCellCount = (32,32)
+    _display = (512, 512)
+    _gridDimensions = (32,32)
     clock = None
     sceneObjectsArray = []
+    _screen = pygame.display.set_mode(_display)
+    @property
+    def display(self):
+        return display;
+    @display.setter
+    def display(self, value):
+        if (typeof(value) == typeof(tuple)):
+            _display = value
+        else:
+            _display = value.whole
+
+        _screen = _screen = pygame.display.set_mode(_display)
+    @property
+    def gridDimensions(self):
+        return _gridDimensions
+    @gridDimensions.setter
+    def gridDimensions(self, value):
+        if (typeof(value) == typeof(tuple)):
+            _gridDimensions = value
+        else:
+            _gridDimensions = value.whole
 
 
 class PregameSettings:
@@ -19,7 +40,6 @@ class PregameSettings:
 class Engine:
     def __init__(self):
         pygame.mixer.pre_init(44100, 16, 2, 4096) #Audio mixer settings
-        
         pygame.init() #Initialize pygame duh
         Globals.clock = pygame.time.Clock()
         self.MainThread = threading.Thread(target = self.StartMain) #Start main game loop in its own thread.
@@ -73,7 +93,11 @@ class GameObject:
         return self._position
     @position.setter
     def position(self, value):
-        self._position = value
+        if (typeof(value) == typeof(tuple)):
+            self._position = Types.Vector3(value[0], value[1], value[2])
+        else:
+            self._position = value
+            
         self.sprite.rect.x = self.position.x
         self.sprite.rect.y = self.position.y
     @property
@@ -81,7 +105,11 @@ class GameObject:
         return self._size
     @size.setter
     def size(self, value):
-        self._size = value
+        if (typeof(value) == typeof(tuple)):
+            self._size = Types.Vector2(value[0], value[1])
+        else:
+            self._size = value
+            
         #Change size here
     def Destroy(self):
         try:
