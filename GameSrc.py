@@ -24,11 +24,11 @@ class Main:
     gm2.sprite.image.fill((58,192,18))
     self._APPENDSCENEOBJECT(gm1, gm2)
     
-  def _APPENDSCENEOBJECT(self, *args _objects):
-    for _object in _objects:
+  def _APPENDSCENEOBJECT(self, *args):
+    for _object in args:
       PyE.Globals.sceneObjectsArray.append(_object)
       
-  def _STARTENGINE(self)
+  def _STARTENGINE(self):
     self._PRESTART()
     Globals.engine = PyE.Engine()
     
