@@ -7,6 +7,7 @@ class Globals():
     _display = (512, 512)
     _gridDimensions = (32,32)
     clock = None
+    time = 0
     sceneObjectsArray = []
     _screen = pygame.display.set_mode(_display)
     @property
@@ -49,11 +50,11 @@ class Engine:
         while True:  
             for event in pygame.event.get():  
                 self.EventHandler(event)
-            Globals.clock.tick()
+            Globals.time = pygame.time.get_ticks()
             self.Render() #Call a render update
 
     def GetDeltaTime(self): #Seconds since last frame
-        return Globals.clock.get_rawtime() / 1000 #
+        return pygame.time.get_ticks() - Globals.time
     
     def EventHandler(self, event):
         if event.type == pygame.QUIT:
