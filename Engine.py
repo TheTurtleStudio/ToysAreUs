@@ -14,7 +14,7 @@ class Globals():
         return display;
     @display.setter
     def display(self, value):
-        if (typeof(value) == typeof(tuple)):
+        if (type(value) == tuple):
             _display = value
         else:
             _display = value.whole
@@ -25,16 +25,16 @@ class Globals():
         return _gridDimensions
     @gridDimensions.setter
     def gridDimensions(self, value):
-        if (typeof(value) == typeof(tuple)):
+        if (type(value) == tuple):
             _gridDimensions = value
         else:
             _gridDimensions = value.whole
 
 
 class PregameSettings:
-    def SetScreenDimensions(self, dimensions, gridDimension=Globals.screenGridCellCount): #We expect dimensions to be a type Types.Vector2 but python is implicit (yucky) so we can't specify this.
+    def SetScreenDimensions(self, dimensions, gridDimension=Globals.display): #We expect dimensions to be a type Types.Vector2 but python is implicit (yucky) so we can't specify this.
         Globals.screen = pygame.display.set_mode(dimensions.whole)
-        Globals.screenGridCellCount = gridDimension
+        Globals.display = gridDimension
 
     
 class Engine:
@@ -42,14 +42,19 @@ class Engine:
         pygame.mixer.pre_init(44100, 16, 2, 4096) #Audio mixer settings
         pygame.init() #Initialize pygame duh
         Globals.clock = pygame.time.Clock()
-        self.MainThread = threading.Thread(target = self.StartMain) #Start main game loop in its own thread.
+        self.MainThread = threading.Thread(target=self.StartMain) #Start main game loop in its own thread.
         self.MainThread.start()
         
     def StartMain(self): #Start the main gameloop
         while True:  
             for event in pygame.event.get():  
                 self.EventHandler(event)
+            Globals.clock.tick()
             self.Render() #Call a render update
+
+    def GetDeltaTime(self): #Seconds since last frame
+        return Globals.clock.get_rawtime() / 1000 #
+    
     def EventHandler(self, event):
         if event.type == pygame.QUIT:
             quit()
@@ -70,11 +75,12 @@ class Engine:
 
     
     def Render(self): #Note that the render function has literally no culling. Everything in the scene will be rendered no matter if it's even on the screen or not.
+        Globals._screen.fill((0,0,0))
         renderOrderReturnVal = self.CalculateRenderOrder()
+        if (renderOrderReturnVal == None):
+            return
         array = renderOrderReturnVal[0]
         to_render = pygame.sprite.Group()
-        if (array == None):
-            return
         for i in array:
             to_render.add(i.sprite)
         to_render.draw(Globals.screen)
@@ -93,7 +99,7 @@ class GameObject:
         return self._position
     @position.setter
     def position(self, value):
-        if (typeof(value) == typeof(tuple)):
+        if (type(value) == tuple):
             self._position = Types.Vector3(value[0], value[1], value[2])
         else:
             self._position = value
@@ -105,7 +111,7 @@ class GameObject:
         return self._size
     @size.setter
     def size(self, value):
-        if (typeof(value) == typeof(tuple)):
+        if (type(value) == tuple):
             self._size = Types.Vector2(value[0], value[1])
         else:
             self._size = value
@@ -120,9 +126,11 @@ class GameObject:
 
 
 class Sprite(pygame.sprite.Sprite):
-    def __init__(self, dimensions, color=(255,255,255)):
+    def __init__(self, dimensions=(50,50), color=(255,255,255)):
+        if not (type(dimensions) == tuple):
+            dimensions = dimensions.whole
         super().__init__()
-        self.image = pygame.Surface(dimensions.whole)
+        self.image = pygame.Surface(dimensions)
         self.image.fill(color)
         self.rect = self.image.get_rect()
     
