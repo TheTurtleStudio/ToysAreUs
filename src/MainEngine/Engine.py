@@ -19,12 +19,17 @@ class Engine:
         self.Globals.clock = pygame.time.Clock()
         main._POSTSTART()
         while True:
-            for event in pygame.event.get():
-                self.EventHandler(event)
-            self.Globals.clock.tick()
-            self._UpdateSubscribers() #Tell every GameObject to call their Update function.
-            self.Render() #Call a render update
-
+            self.FrameEvents()
+    
+    def FrameEvents(self):
+        self._ListenForEvents()
+        self.Globals.clock.tick()
+        self._UpdateSubscribers() #Tell every GameObject to call their Update function.
+        self.Render() #Call a render update
+        
+    def _ListenForEvents(self):
+        for event in pygame.event.get():
+            self.EventHandler(event)
 
     def _UpdateSubscribers(self):
         for subscriber in self.Globals.sceneObjectsArray:
@@ -72,7 +77,6 @@ class Engine:
 
     def SetCaption(self, value):
         pygame.display.set_caption(value)
-
 
     class Globals():
         _display = (512, 512)

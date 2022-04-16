@@ -1,4 +1,5 @@
 import SceneObjects
+import threading
 from MainEngine import Types
 from MainEngine import Engine
 class Globals:
@@ -32,6 +33,3 @@ class Main():
 
 main = Main()
 Globals.engine.Start(main)
-while True:
-  executed = Globals.engine.FrameEvents()
-  del executed
