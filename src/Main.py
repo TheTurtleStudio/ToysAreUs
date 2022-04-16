@@ -21,9 +21,17 @@ class Main():
     self._PRESTART()
     Globals.engine = Engine.Engine()
 
+  def _POSTSTART(self):
+    injections = SceneObjects.Injections()
+    Globals.engine.SetCaption(injections.caption) #Just change this to whatever
+    for rawCode in injections.abstract:
+      exec(rawCode)
+    objects = SceneObjects.Objects(Globals.engine)
+    self._APPENDSCENEOBJECT(objects.get())
+
+
 main = Main()
-Globals.engine.Start()
-injections = SceneObjects.Injections()
-Globals.engine.SetCaption(injections.caption) #Just change this to whatever
-objects = SceneObjects.Objects(Globals.engine)
-main._APPENDSCENEOBJECT(objects.get())
+Globals.engine.Start(main)
+while True:
+  executed = Globals.engine.FrameEvents()
+  del executed

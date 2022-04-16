@@ -14,23 +14,20 @@ class Engine:
     def __init__(self):
         pygame.mixer.pre_init(44100, 16, 2, 4096) #Audio mixer settings
         
-    def Start(self): #Start the main gameloop
+    def Start(self, main): #Start the main gameloop
         pygame.init() #Initialize pygame duh
         self.Globals.clock = pygame.time.Clock()
-        self.gameThread = threading.Thread(target=self.GameThread) #Start main game loop in its own thread.
-        self.gameThread.start()
-    
-    def GameThread(self):
-        while self.gameThread.is_alive:  
-            for event in pygame.event.get():  
+        main._POSTSTART()
+        while True:
+            for event in pygame.event.get():
                 self.EventHandler(event)
             self.Globals.clock.tick()
             self._UpdateSubscribers() #Tell every GameObject to call their Update function.
             self.Render() #Call a render update
-            
+
 
     def _UpdateSubscribers(self):
-        for subscriber in self.Globals.sceneObjectsArray.copy():
+        for subscriber in self.Globals.sceneObjectsArray:
             try:
                 subscriber.obj.Update()
             finally:
@@ -41,7 +38,6 @@ class Engine:
     
     def EventHandler(self, event):
         if event.type == pygame.QUIT:
-            print("QUIT")
             quit()
 
     def CalculateRenderOrder(self):
@@ -57,6 +53,7 @@ class Engine:
             linkedObjectQuicksort = BMathL.Math.QuickSort.LinkedObject()
             linkedObjectQuicksort.QuickSort(array, linkedObjArray, 0, n-1) #User our linked object quicksort algorithm
             return (linkedObjArray, array)
+        del array, linkedObjArray, sOA_copy
         return None
 
     def Render(self): #Note that the render function has literally no culling. Everything in the scene will be rendered no matter if it's even on the screen or not.
@@ -68,7 +65,9 @@ class Engine:
         to_render = pygame.sprite.Group()
         for i in array:
             to_render.add(i.gameObject.sprite)
-        to_render.draw(self.Globals.screen)
+        to_render.draw(self.Globals.screen) 
+        to_render.update()
+        del to_render
         pygame.display.update()
 
     def SetCaption(self, value):

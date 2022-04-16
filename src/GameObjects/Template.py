@@ -13,6 +13,7 @@ class Template(): #Change this to the name of your script
         #Below is some example code that moves the square. The attached GameObject.
         self.gameObject.position += Types.Vector3(self.speed * self.engine.GetDeltaTime(), self.speed * self.engine.GetDeltaTime(), 0)
         self.gameObject.size += Types.Vector2(self.sizeIncrease * self.engine.GetDeltaTime(), self.sizeIncrease * self.engine.GetDeltaTime())
+        print(id(self.gameObject))
         
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():
