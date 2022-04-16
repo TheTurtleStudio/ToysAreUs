@@ -23,6 +23,7 @@ class Main():
 
 main = Main()
 Globals.engine.Start()
-Globals.engine.SetCaption("ToysWereUs")
+injections = SceneObjects.Injections()
+Globals.engine.SetCaption(injections.caption) #Just change this to whatever
 objects = SceneObjects.Objects(Globals.engine)
 main._APPENDSCENEOBJECT(objects.get())

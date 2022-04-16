@@ -25,8 +25,9 @@ class Engine:
             for event in pygame.event.get():  
                 self.EventHandler(event)
             self.Globals.clock.tick()
-            self.Render() #Call a render update
             self._UpdateSubscribers() #Tell every GameObject to call their Update function.
+            self.Render() #Call a render update
+            
 
     def _UpdateSubscribers(self):
         for subscriber in self.Globals.sceneObjectsArray.copy():

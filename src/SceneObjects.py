@@ -23,3 +23,12 @@ class Objects():
         self.test3.gameObject.color = (0, 0, 255)
     def get(self):
         return (self.test1, self.test2, self.test3)
+class Injections():
+    def __init__(self):
+        self.caption = "ToysWereUs"
+        self.abstract = [
+            "#This is raw code to be after all other injections are made. Yes, I know this is vulnerable to ACE and very unsafe in general. No, I don't care. Why? Because I'm a thug.",
+            "#Also this is an array/list... Idk man I hate python. I have no idea what the brackets are, they just seem like an array, maybe it's a list.",
+            "#You can really just delete all this, just needed to explain somewhat what the hell this is.",
+            "print(\"Injections complete\") #This is for debugging though!"
+        ]

@@ -21,7 +21,7 @@ class Math():
                 pi = self.partition(arr, low, high)
                 self.QuickSort(arr, low, pi-1)
                 self.QuickSort(arr, pi+1, high)
-        class LinkedObject():
+        class LinkedObject(): #Same as the above quicksort class. This one just attaches another list and sorts alongside the first. Used in render function to determine render priority.
             def partition(self, arr, linkedObjArr, low, high):
                 i = (low-1)
                 pivot = arr[high]
