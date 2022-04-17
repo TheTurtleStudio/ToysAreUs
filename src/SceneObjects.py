@@ -1,29 +1,20 @@
-from GameObjects import Template
-
+from GameObjects import GameObject
+import pygame, random
 
 class Objects():
     def __init__(self, engine):
-        self.test1 = Template.Create(engine)
-        self.test1.gameObject.position = (4,3,2)
-        self.test1.obj.speed = 20
-        self.test1.obj.sizeIncrease = 20
-        self.test1.gameObject.color = (255, 0, 0)
-
-        self.test2 = Template.Create(engine)
-        self.test2.gameObject.position = (2,1,0)
-        self.test2.gameObject.size = (50,50)
-        self.test2.obj.speed = 10
-        self.test2.obj.sizeIncrease = 3
-        self.test2.gameObject.color = (0, 255, 0)
-
-        self.test3 = Template.Create(engine)
-        self.test3.gameObject.position = (540,670,1)
-        self.test3.obj.speed = -26
-        self.test3.obj.sizeIncrease = 9
-        self.test3.gameObject.color = (0, 0, 255)
-        engine.Globals.timeScale = 4
+        self.ObjectList = []
+        BackGround = GameObject.Create(engine)
+        BackGround.gameObject.size = engine._Globals._display
+        BackGround.gameObject.color = (106,181,102)
+        self.ObjectList.append(BackGround)
+        Wall = GameObject.Create(engine)
+        Wall.gameObject.size = (50, engine._Globals._display[0])
+        Wall.gameObject.color = (50,50,50)
+        self.ObjectList.append(Wall)
     def get(self):
-        return (self.test1, self.test2, self.test3)
+        #return (self.test1, self.test2, self.test3, self.test4)
+        return tuple(self.ObjectList)
 class Injections():
     def __init__(self):
         self.caption = "ToysWereUs"

@@ -11,8 +11,9 @@ class Main():
     self._STARTENGINE()
     
   def _PRESTART(self):
-    settings = Engine.PregameSettings()
-    settings.SetScreenDimensions(Types.Vector2(800, 800))
+    Globals.engine = Engine.Engine()
+    settings = Engine.PregameSettings(Globals.engine)
+    settings.SetScreenDimensions(Types.Vector2(1600,900))
     
   def _APPENDSCENEOBJECT(self, objectTuple):
     for _object in objectTuple:
@@ -20,7 +21,7 @@ class Main():
       
   def _STARTENGINE(self):
     self._PRESTART()
-    Globals.engine = Engine.Engine()
+    
 
   def _POSTSTART(self):
     injections = SceneObjects.Injections()

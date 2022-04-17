@@ -1,13 +1,13 @@
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 import pygame
-class Template(): #Change this to the name of your script
+class GameObject(): #Change this to the name of your script
     def __init__(self, engine):
         self.gameObject = Types.GameObject(engine)
         self.engine = engine
         self.Start()
 
     def Start(self): #Called when the object is added to the scene.
-        self.speed = 0
+        self.speed = 20
         self.sizeIncrease = 0
 
     def Update(self): #This is called every rendercycle
@@ -20,7 +20,7 @@ class Template(): #Change this to the name of your script
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():
     def __init__(self, engine):
-        self.obj = Template(engine) #Replace Template with the name of your class
+        self.obj = GameObject(engine) #Replace Template with the name of your class
     @property
     def gameObject(self):
         return self.obj.gameObject

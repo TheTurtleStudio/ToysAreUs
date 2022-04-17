@@ -1,54 +1,59 @@
 import pygame, threading
 from MainEngine import BMathL
+from MainEngine import Input
 
 
 
-class PregameSettings:
-        def SetScreenDimensions(self, dimensions, gridDimension=None): #We expect dimensions to be a type Types.Vector2 but python is implicit (yucky) so we can't specify this.
-            if (gridDimension == None):
-                gridDimension = Engine.Globals.display
-            Engine.Globals.screen = pygame.display.set_mode(dimensions.whole)
-            Engine.Globals.display = gridDimension
+class PregameSettings():
+    def __init__(self, engine):
+        self.engine = engine
+    def SetScreenDimensions(self, dimensions, gridDimension=None): #We expect dimensions to be a type Types.Vector2 but python is implicit (yucky) so we can't specify this.
+        if (gridDimension == None):
+            gridDimension = dimensions
+        self.engine._Globals.screen = pygame.display.set_mode(dimensions.whole)
+        self.engine._Globals.display = dimensions.whole
+        print("Set screen to" ,self.engine._Globals.display)
     
 class Engine:
     def __init__(self):
         pygame.mixer.pre_init(44100, 16, 2, 4096) #Audio mixer settings
+        self._Globals = self.Globals()
         
     def Start(self, main): #Start the main gameloop
         pygame.init() #Initialize pygame duh
-        self.Globals.clock = pygame.time.Clock()
+        pygame.key.set_repeat(1, 1)
+        self._Globals.clock = pygame.time.Clock()
+        self.Input = Input.InputHandler(self)
         main._POSTSTART()
         while True:
             self.FrameEvents()
     
     def FrameEvents(self):
-        self._ListenForEvents()
-        self.Globals.clock.tick()
+        self._Globals.clock.tick()
+        self._PostEventsToInput()
         self._UpdateSubscribers() #Tell every GameObject to call their Update function.
+        if (self.Input.TestFor.QUIT()):
+            quit()
+        self.Input.clearEvents()
         self.Render() #Call a render update
         
-    def _ListenForEvents(self):
-        for event in pygame.event.get():
-            self.EventHandler(event)
+    def _PostEventsToInput(self):
+        self.Input.postEvents(pygame.event.get())
 
     def _UpdateSubscribers(self):
-        for subscriber in self.Globals.sceneObjectsArray:
+        for subscriber in self._Globals.sceneObjectsArray:
             try:
                 subscriber.obj.Update()
             finally:
                 pass
 
     def GetDeltaTime(self): #Seconds since last frame
-        return self.Globals.clock.get_rawtime() / 1000 * self.Globals.timeScale
-    
-    def EventHandler(self, event):
-        if event.type == pygame.QUIT:
-            quit()
+        return self._Globals.clock.get_rawtime() / 1000 * self._Globals.timeScale
 
     def CalculateRenderOrder(self):
         array = []
         linkedObjArray = []
-        sOA_copy = self.Globals.sceneObjectsArray.copy()
+        sOA_copy = self._Globals.sceneObjectsArray.copy()
         if (len(sOA_copy) != 0):
             for obj in sOA_copy:
                 if (obj.gameObject.renderEnabled):
@@ -62,7 +67,7 @@ class Engine:
         return None
 
     def Render(self): #Note that the render function has literally no culling. Everything in the scene will be rendered no matter if it's even on the screen or not.
-        self.Globals._screen.fill((0,0,0)) #Background, can remove.
+        self._Globals._screen.fill((0,0,0)) #Background, can remove.
         renderOrderReturnVal = self.CalculateRenderOrder()
         if (renderOrderReturnVal == None):
             return
@@ -70,7 +75,7 @@ class Engine:
         to_render = pygame.sprite.Group()
         for i in array:
             to_render.add(i.gameObject.sprite)
-        to_render.draw(self.Globals.screen) 
+        to_render.draw(self._Globals.screen) 
         to_render.update()
         del to_render
         pygame.display.update()
@@ -91,11 +96,14 @@ class Engine:
         @display.setter
         def display(self, value):
             if (type(value) == tuple):
-                _display = value
+                self._display = value
             else:
-                _display = value.whole
+                self._display = value.whole
 
-            self._screen = self._screen = pygame.display.set_mode(_display)
+            self._screen = pygame.display.set_mode(self._display)
+        @display.getter
+        def display(self):
+            return self._display
         @property
         def gridDimensions(self):
             return self._gridDimensions
@@ -105,4 +113,7 @@ class Engine:
                 self._gridDimensions = value
             else:
                 self._gridDimensions = value.whole
+        @gridDimensions.getter
+        def gridDimensions(self):
+            return self._gridDimensions
             
