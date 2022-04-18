@@ -17,6 +17,14 @@ class InputHandler():
             self._InputHandler = handler
         def QUIT(self):
             return self._testFor(pygame.QUIT)[0]
+        def MOUSEPOS(self):
+            return pygame.mouse.get_pos()
+        def RIGHTMOUSEDOWN(self):
+            returnVal = self._testFor(pygame.MOUSEBUTTONDOWN)
+            if returnVal[0]:
+                if (returnVal[1].button == 1):
+                    return True
+            return False
         def KEYDOWN_ANY(self):
             return self._testFor(pygame.KEYDOWN)[0]
         def KEYDOWN(self, key):
@@ -29,3 +37,10 @@ class InputHandler():
                 if i.type == typeOf:
                     return (True, i)
             return (False, None)
+        def _testForRECURSIVE(self, typeOf):
+            eventsReturnList = []
+            for i in self._InputHandler._getEvents():
+                if i.type == typeOf:
+                    eventsReturnList.append(i)
+            success = False if (eventsReturnList.count == 0) else True
+            return (success, eventsReturnList)

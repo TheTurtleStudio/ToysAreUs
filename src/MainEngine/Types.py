@@ -102,7 +102,6 @@ class GameObject:
             valueAsV2 = Vector2(value[0], value[1])
         shouldScale = (not (self._size == valueAsV2)) or forceChange
         self._size = valueAsV2
-        print(value)
         horizontalFlip = (valueAsV2.x < 0)
         verticalFlip = (valueAsV2.y < 0)
         if shouldScale:
@@ -123,6 +122,8 @@ class GameObject:
             else:
                 self.sprite._flippedH, self.sprite._flippedV = False, False
                 self.sprite.image = pygame.transform.scale(self.sprite.ORIGINALIMAGE, abs(valueAsV2).whole)
+            self.sprite.rect = self.sprite.image.get_rect()
+            
     @property
     def color(self):
         return self._color
@@ -140,6 +141,7 @@ class GameObject:
     def _syncOriginalImage(self):
         self.sprite.image = self.sprite.ORIGINALIMAGE
         self.position = self._position
+        self.sprite.rect = self.sprite.image.get_rect()
         self._setSize(self._size, forceChange=True)
     def Destroy(self, engine):
         try:
@@ -162,4 +164,5 @@ class CollisionLayer():
     BACKGROUND = "BACKGROUND"
     WALL = "WALL"
     GENERIC_GAMEOBJECT = "GENERIC_GAMEOBJECT"
+    UI = "UI"
 

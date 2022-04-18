@@ -13,7 +13,6 @@ class PregameSettings():
             gridDimension = dimensions
         self.engine._Globals.screen = pygame.display.set_mode(dimensions.whole)
         self.engine._Globals.display = dimensions.whole
-        print("Set screen to" ,self.engine._Globals.display)
     
 class Engine:
     def __init__(self):
@@ -25,6 +24,7 @@ class Engine:
         pygame.key.set_repeat(1, 1)
         self._Globals.clock = pygame.time.Clock()
         self.Input = Input.InputHandler(self)
+        self.Collisions = Collision.Collision(self)
         main._POSTSTART()
         while True:
             self.FrameEvents()
@@ -85,7 +85,6 @@ class Engine:
         pygame.display.set_caption(value)
 
     class Globals():
-        Collisions = Collision.Collision()
         CollisionLayer = Types.CollisionLayer()
         _display = (512, 512)
         _gridDimensions = (32,32)

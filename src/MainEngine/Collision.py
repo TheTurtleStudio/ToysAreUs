@@ -20,6 +20,6 @@ class Collision():
     def _GrabList(self, layers):
         returnList = []
         for obj in self.engine._Globals.sceneObjectsArray:
-            if layers.contains(obj.gameObject.collisionLayer):
+            if (obj.gameObject.collisionLayer in layers):
                 returnList.append(obj.gameObject.sprite.rect)
         return returnList

@@ -1,4 +1,6 @@
 from GameObjects import GameObject
+from GameObjects import Button
+from MainEngine import Types
 import pygame, random
 
 class Objects():
@@ -9,9 +11,24 @@ class Objects():
         BackGround.gameObject.color = (106,181,102)
         self.ObjectList.append(BackGround)
         BaseWall = GameObject.Create(engine)
-        BaseWall.gameObject.size = (50, engine._Globals._display[0])
+        BaseWall.gameObject.size = (50, engine._Globals._display[1])
+        BaseWall.gameObject.position = Types.Vector3(engine._Globals._display[0]-50, 0, 0)
         BaseWall.gameObject.color = (50,50,50)
         self.ObjectList.append(BaseWall)
+        TopBar = GameObject.Create(engine)
+        TopBar.gameObject.size = (engine._Globals._display[0], 100)
+        TopBar.gameObject.color = (50,50,50)
+        TopBar.gameObject.position = Types.Vector3(0, 0, 4096)
+        self.ObjectList.append(TopBar)
+        for buttonNum in range(3):
+            MyButton = Button.Create(engine)
+            MyButton.gameObject.size = (60, 60)
+            MyButton.gameObject.color = (255,0,0)
+            MyButton.gameObject.position = Types.Vector3((buttonNum * 60) + ((buttonNum + 1) * 20), 20, 4097)
+            MyButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
+            MyButton.obj.assignedNumber = buttonNum
+            self.ObjectList.append(MyButton)
+
     def get(self):
         return tuple(self.ObjectList)
 class Injections():
