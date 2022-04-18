@@ -1,7 +1,8 @@
 import pygame, threading
 from MainEngine import BMathL
 from MainEngine import Input
-
+from MainEngine import Types
+from MainEngine import Collision
 
 
 class PregameSettings():
@@ -84,6 +85,8 @@ class Engine:
         pygame.display.set_caption(value)
 
     class Globals():
+        Collisions = Collision.Collision()
+        CollisionLayer = Types.CollisionLayer()
         _display = (512, 512)
         _gridDimensions = (32,32)
         clock = None

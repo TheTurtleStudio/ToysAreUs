@@ -8,12 +8,11 @@ class Objects():
         BackGround.gameObject.size = engine._Globals._display
         BackGround.gameObject.color = (106,181,102)
         self.ObjectList.append(BackGround)
-        Wall = GameObject.Create(engine)
-        Wall.gameObject.size = (50, engine._Globals._display[0])
-        Wall.gameObject.color = (50,50,50)
-        self.ObjectList.append(Wall)
+        BaseWall = GameObject.Create(engine)
+        BaseWall.gameObject.size = (50, engine._Globals._display[0])
+        BaseWall.gameObject.color = (50,50,50)
+        self.ObjectList.append(BaseWall)
     def get(self):
-        #return (self.test1, self.test2, self.test3, self.test4)
         return tuple(self.ObjectList)
 class Injections():
     def __init__(self):

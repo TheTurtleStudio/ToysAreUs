@@ -1,7 +1,5 @@
 import math
 import pygame
-from sympy import false, true
-
 
 class Vector2():
     def __init__(self, x=0, y=0):
@@ -66,6 +64,7 @@ class GameObject:
         self._size = Vector2(1,1)
         self.color = (255,255,255)
         self.name = "New GameObject"
+        self.collisionLayer = master._Globals.CollisionLayer.GENERIC_GAMEOBJECT
         self.renderEnabled = True
     @property
     def position(self):
@@ -157,3 +156,10 @@ class Sprite(pygame.sprite.Sprite):
         self.image.fill(color)
         self.rect = self.image.get_rect()
         self.ORIGINALIMAGE = self.image
+class CollisionLayer():
+    NONE = "NONE"
+    ALL = "ALL"
+    BACKGROUND = "BACKGROUND"
+    WALL = "WALL"
+    GENERIC_GAMEOBJECT = "GENERIC_GAMEOBJECT"
+

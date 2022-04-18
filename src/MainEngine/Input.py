@@ -1,5 +1,4 @@
 import pygame
-from sympy import true
 
 
 class InputHandler():
