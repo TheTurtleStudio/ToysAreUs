@@ -22,7 +22,6 @@ class Main():
   def _STARTENGINE(self):
     self._PRESTART()
     
-
   def _POSTSTART(self):
     injections = SceneObjects.Injections()
     Globals.engine.SetCaption(injections.caption) #Just change this to whatever

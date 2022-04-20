@@ -1,4 +1,3 @@
-import math
 import pygame
 
 class Vector2():
@@ -64,8 +63,30 @@ class GameObject:
         self._size = Vector2(1,1)
         self.color = (255,255,255)
         self.name = "New GameObject"
+        self._image = None
+        self.isImage = False
         self.collisionLayer = master._Globals.CollisionLayer.GENERIC_GAMEOBJECT
         self.renderEnabled = True
+    @property
+    def image(self):
+        return self._image
+    @image.setter
+    def image(self, value):
+        if (value is None):
+            self._image = None
+            self.sprite.ORIGINALIMAGE = pygame.Surface(self._size[0], self._size[1])
+            self._syncOriginalImage()
+            self.isImage = False
+            self.position = self._position
+        elif (type(value) is str):
+            self._image = pygame.image.load(value)
+            self.sprite.ORIGINALIMAGE = self._image
+            self._syncOriginalImage()
+            self.isImage = True
+            self.position = self._position
+        else:
+            print(f"Provided image is expected to be a file path. Given {type(value)} instead.")
+            return
     @property
     def position(self):
         return self._position
@@ -77,11 +98,12 @@ class GameObject:
             self._position = value
         
         try:
-            self.sprite.rect.x = self.position.x + self._positionOffset.x
-            self.sprite.rect.y = self.position.y + self._positionOffset.y
+            self.sprite.rect.x = self._position.x + self._positionOffset.x
+            self.sprite.rect.y = self._position.y + self._positionOffset.y
         except:
-            self.sprite.rect.x = self.position.x
-            self.sprite.rect.y = self.position.y
+            self.sprite.rect.x = self._position.x
+            self.sprite.rect.y = self._position.y
+        self.sprite.rect.x, self.sprite.rect.y = (self.position.x, self.position.y)
     @position.getter
     def position(self):
         return self._position
@@ -123,7 +145,6 @@ class GameObject:
                 self.sprite._flippedH, self.sprite._flippedV = False, False
                 self.sprite.image = pygame.transform.scale(self.sprite.ORIGINALIMAGE, abs(valueAsV2).whole)
             self.sprite.rect = self.sprite.image.get_rect()
-            
     @property
     def color(self):
         return self._color
@@ -131,7 +152,6 @@ class GameObject:
     def color(self, value):
         if ((type(value) == tuple) and (len(value) == 3)):
             self._color = (value[0], value[1], value[2])
-            self.sprite.ORIGINALIMAGE.fill(self._color)
             self._syncOriginalImage()
         else:
             raise Exception("Can only change colors to tuples of length 3! RGB values!")
@@ -139,6 +159,7 @@ class GameObject:
     def color(self):
         return self._color
     def _syncOriginalImage(self):
+        self.sprite.ORIGINALIMAGE.fill(self._color, special_flags=pygame.BLEND_MULT)
         self.sprite.image = self.sprite.ORIGINALIMAGE
         self.position = self._position
         self.sprite.rect = self.sprite.image.get_rect()

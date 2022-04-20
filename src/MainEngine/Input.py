@@ -25,6 +25,16 @@ class InputHandler():
                 if (returnVal[1].button == 1):
                     return True
             return False
+        def RIGHTMOUSESTATE(self):
+            return pygame.mouse.get_pressed()[0]
+        def LEFTMOUSEDOWN(self):
+            returnVal = self._testFor(pygame.MOUSEBUTTONDOWN)
+            if returnVal[0]:
+                if (returnVal[1].button == 3):
+                    return True
+            return False
+        def LEFTMOUSESTATE(self):
+            return pygame.mouse.get_pressed()[2]
         def KEYDOWN_ANY(self):
             return self._testFor(pygame.KEYDOWN)[0]
         def KEYDOWN(self, key):
