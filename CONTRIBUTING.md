@@ -1,0 +1,1 @@
+Please do not make any contributions unless you're part of the project! It is okay if you do, however, they will not even be reviewed nor considered to keep this solely a SCHOOL PROJECT! This is to keep the project fair and to eliminate any external assistance as this would be immoral considering the intended use of this repo. Thanks!
