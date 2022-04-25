@@ -190,6 +190,7 @@ class GameObject:
                 self.sprite.image = pygame.transform.scale(self.sprite.ORIGINALIMAGE, abs(valueAsV2).whole)
             self.sprite.rect = self.sprite.image.get_rect()
             self.position = self._position
+            self._updateColor()
     @property
     def color(self):
         return self._color
@@ -203,9 +204,11 @@ class GameObject:
     @color.getter
     def color(self):
         return self._color
+    def _updateColor(self):
+        self.sprite.image.fill(self._color, special_flags=pygame.BLEND_MULT)
     def _syncOriginalImage(self):
-        self.sprite.ORIGINALIMAGE.fill(self._color, special_flags=pygame.BLEND_MULT)
         self.sprite.image = self.sprite.ORIGINALIMAGE
+        self._updateColor
         self.position = self._position
         self.sprite.rect = self.sprite.image.get_rect()
         self._setSize(self._size, forceChange=True)

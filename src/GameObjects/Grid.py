@@ -15,7 +15,6 @@ class Grid(): #Change this to the name of your script
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
             cell = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
             if (type(cell) is Types.Cell):
-                print(cell.cell.whole)
                 self.gridMatrix.SetCell(cell.cell, cell)
             
     def GetGridCell(self, raycastPos):
