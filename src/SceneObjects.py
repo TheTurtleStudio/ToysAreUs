@@ -2,6 +2,8 @@ from GameObjects import GameObject
 from GameObjects import Button
 from GameObjects import Draggable
 from GameObjects import Grid
+from GameObjects import PlaceWall
+from GameObjects import PlaceHandler
 from MainEngine import Types
 import pygame, random
 
@@ -54,6 +56,9 @@ class Objects():
         BoardGrid.gameObject.position = (0,BaseWall.gameObject.position.y,8192)
         BoardGrid.gameObject.size = (engine._Globals._display[0]-BaseWall.gameObject.size.x, BaseWall.gameObject.size.y)
         self.ObjectList.append(BoardGrid)
+        PlaceObjectHandler = PlaceHandler.Create(engine)
+        PlaceObjectHandler.gameObject.name = "PLACEHANDLER"
+        self.ObjectList.append(PlaceObjectHandler)
 
     def get(self):
         return tuple(self.ObjectList)
