@@ -204,6 +204,8 @@ class GameObject:
     @color.getter
     def color(self):
         return self._color
+    def setOriginalColor(self, color):
+        self.sprite.ORIGINALIMAGE.fill(color, special_flags=pygame.BLEND_MULT)
     def _updateColor(self):
         self.sprite.image.fill(self._color, special_flags=pygame.BLEND_MULT)
     def _syncOriginalImage(self):
