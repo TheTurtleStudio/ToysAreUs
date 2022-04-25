@@ -69,6 +69,36 @@ class Vector3():
             return Vector3(self.x - other.x, self.y - other.y, self.z - other.z)
         except Exception:
             print("Can only subtract Vector3's from themselves or tuples of 3 elements or more.")
+class Matrix2x2:
+    def __init__(self, dim1, dim2):
+        self.dimensions = Vector2(dim1, dim2)
+        self.matrix = []
+        for potCell in range(dim1*dim2):
+            self.matrix.append(Cell())
+    def GetCell(self, position):
+        if not (type(position) == tuple or type(position) == Vector2):
+            raise ValueError
+        if (type(position) == tuple):
+            position = Vector2(position[0], position[1])
+        if (position.x < 1 or position.y < 1 or position.x > self.dimensions.x or position.y > self.dimensions.y):
+            raise IndexError
+        
+        return self.matrix[(position.y * self.dimensions.x) + position.x - 1]
+    def SetCell(self, position, replacement):
+        if not (type(position) == tuple or type(position) == Vector2):
+            raise ValueError
+        if (type(position) == tuple):
+            position = Vector2(position[0], position[1])
+        if (position.x < 0 or position.y < 0 or position.x >= self.dimensions.x or position.y >= self.dimensions.y):
+            raise IndexError
+        
+        self.matrix[(position.y * self.dimensions.x) + position.x] = replacement
+class Cell():
+    def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(0,0)):
+        self.position = _position
+        self.size = _size
+        self.center = Vector2(_position.x + (_size.x / 2), _position.y + (_size.y / 2))
+        self.cell = _cell
 class GameObject:
     def __init__(self, master): #Can optimize Update function to only call explicitly here
         self._master = master

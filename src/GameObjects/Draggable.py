@@ -13,6 +13,7 @@ class Draggable(): #Change this to the name of your script
     def Update(self): #This is called every rendercycle
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()): #Is this the frame the mousebutton was initially pressed?
             self.canDrag = True
+            print(self.engine.FindObject("GRID").gameObject.position.whole)
         elif ((self.pressed is False) and (self.engine.Input.TestFor.RIGHTMOUSEDOWN() is False)): #Is the mousebutton not pressed and the mouse was not pressed initially on this frame?
             self.canDrag = False
         if self.canDrag: #Can we drag this?
