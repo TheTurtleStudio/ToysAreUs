@@ -28,10 +28,11 @@ class Objects():
         TopBar.gameObject.color = (200,200,200)
         TopBar.gameObject.position = Types.Vector3(0, 0, 4096)
         self.ObjectList.append(TopBar)
-        for buttonNum in range(3):
-            MyButton = PlaceWall.Create(engine)
+        tepmColorIndex = [(255,0,0), (255,0,0), (255,0,0), (128,128,128), (255,0,0), (255,0,0), (255,0,0), (0,0,0), (0,255,0), (128,0,128), (0,0,0), (255,255,0)]
+        for buttonNum in range(12): #Red ("button"), Gray ("Garbage"), Black ("Nothing/Space") Green ("Start Button") Purple ("Money text and stuff") Yellow ("HealthBar")
+            MyButton = Button.Create(engine)
             MyButton.gameObject.size = (60, 60)
-            MyButton.gameObject.color = (255,0,0)
+            MyButton.gameObject.color = tepmColorIndex[buttonNum]
             MyButton.gameObject.position = Types.Vector3((buttonNum * 60) + ((buttonNum + 1) * 20), 5, 4097)
             MyButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
             MyButton.obj.assignedNumber = buttonNum
