@@ -29,6 +29,12 @@ class Engine:
         while True:
             self.FrameEvents()
     
+    def FindObject(self, name):
+        for subscriber in self._Globals.sceneObjectsArray:
+            if subscriber.gameObject.name == name:
+                return subscriber
+        return None
+
     def FrameEvents(self):
         self._Globals.clock.tick()
         self._PostEventsToInput()
@@ -37,7 +43,14 @@ class Engine:
             quit()
         self.Input.clearEvents()
         self.Render() #Call a render update
-        
+    
+    def CreateNewObject(self, _object):
+        try:
+            self._Globals.sceneObjectsArray.append(_object)
+            _object.obj.Start()
+        except AttributeError:
+            pass
+
     def _PostEventsToInput(self):
         self.Input.postEvents(pygame.event.get())
 
@@ -45,7 +58,7 @@ class Engine:
         for subscriber in self._Globals.sceneObjectsArray:
             try:
                 subscriber.obj.Update()
-            finally:
+            except AttributeError:
                 pass
 
     def GetDeltaTime(self): #Seconds since last frame

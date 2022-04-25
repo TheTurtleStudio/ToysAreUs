@@ -1,6 +1,7 @@
 from GameObjects import GameObject
 from GameObjects import Button
 from GameObjects import Draggable
+from GameObjects import Grid
 from MainEngine import Types
 import pygame, random
 
@@ -10,12 +11,13 @@ class Objects():
         BackGround = GameObject.Create(engine)
         BackGround.gameObject.size = engine._Globals._display
         BackGround.gameObject.color = (106,181,102)
+        BackGround.gameObject.name = "BackGround"
         self.ObjectList.append(BackGround)
         BaseWall = GameObject.Create(engine)
         BaseWall.gameObject.size = (75, engine._Globals._display[1]-100)
         BaseWall.gameObject.color = (50,50,50)
         BaseWall.gameObject.position = Types.Vector3(engine._Globals._display[0]-75, 85, 1)
-        
+        BaseWall.gameObject.name = "BaseWall"
         
         
         self.ObjectList.append(BaseWall)
@@ -46,6 +48,11 @@ class Objects():
         DemoDraggable2.gameObject.image = "Assets\\canDRAG.png"
         self.ObjectList.append(DemoDraggable)
         self.ObjectList.append(DemoDraggable2)
+        BoardGrid = Grid.Create(engine)
+        BoardGrid.gameObject.name = 'GRID'
+        BoardGrid.gameObject.position = (0,BaseWall.gameObject.position.y,8192)
+        BoardGrid.gameObject.size = (engine._Globals._display[0]-BaseWall.gameObject.size.x, BaseWall.gameObject.size.y)
+        self.ObjectList.append(BoardGrid)
 
     def get(self):
         return tuple(self.ObjectList)

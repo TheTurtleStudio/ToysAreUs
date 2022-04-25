@@ -6,10 +6,12 @@ class Vector2():
         self.y = y
         self.whole = (self.x, self.y) # don't know if the variables are pointers or not, python is weird as hell
     def __add__(self, other):
-        if (type(other) == type(self)):
+        try:
+            if (type(other) == tuple):
+                other = Vector2(other[0], other[1])
             return Vector2(self.x + other.x, self.y + other.y)
-        else:
-            raise Exception("Can only add Vector2 to Vector2!")
+        except Exception:
+            print("Can only add Vector2's with themselves or tuples of 2 elements or more.")
     def __abs__(self, exclude=[]):
         returnVal = Vector2(abs(self.x), abs(self.y))
         if ("x" in exclude):
@@ -19,13 +21,18 @@ class Vector2():
         return returnVal
     def __mul__(self, other):
         return Vector2(self.x * other, self.y * other)
-    def __rmul__(self, other):
-        return self.__mul__(other)
     def __eq__(self, other):
         try:
             return self.whole == other.whole
         except:
             return False
+    def __sub__(self, other):
+        try:
+            if (type(other) == tuple):
+                other = Vector2(other[0], other[1])
+            return Vector2(self.x - other.x, self.y - other.y)
+        except Exception:
+            print("Can only subtract Vector2's from themselves or tuples of 2 elements or more.")
 class Vector3():
     def __init__(self, x=0, y=0, z=0):
         self.x = x
@@ -33,10 +40,12 @@ class Vector3():
         self.z = z
         self.whole = (self.x, self.y, self.z) # don't know if the variables are pointers or not, python is weird as hell
     def __add__(self, other):
-        if (type(other) == type(self)):
+        try:
+            if (type(other) == tuple):
+                other = Vector3(other[0], other[1], other[2])
             return Vector3(self.x + other.x, self.y + other.y, self.z + other.z)
-        else:
-            raise Exception("Can only add Vector3 to Vector3!")
+        except Exception:
+            print("Can only add Vector3's with themselves or tuples of 3 elements or more.")
     def __abs__(self, exclude=[]):
         returnVal = Vector3(abs(self.x), abs(self.y), abs(self.z))
         if ("x" in exclude):
@@ -48,13 +57,18 @@ class Vector3():
         return returnVal
     def __mul__(self, other):
         return Vector3(self.x * other, self.y * other, self.z * other)
-    def __rmul__(self, other):
-        return self.__mul__(other)
     def __eq__(self, other):
         try:
             return self.whole == other.whole
         except:
             return False
+    def __sub__(self, other):
+        try:
+            if (type(other) == tuple):
+                other = Vector3(other[0], other[1], other[2])
+            return Vector3(self.x - other.x, self.y - other.y, self.z - other.z)
+        except Exception:
+            print("Can only subtract Vector3's from themselves or tuples of 3 elements or more.")
 class GameObject:
     def __init__(self, master): #Can optimize Update function to only call explicitly here
         self._master = master
@@ -145,6 +159,7 @@ class GameObject:
                 self.sprite._flippedH, self.sprite._flippedV = False, False
                 self.sprite.image = pygame.transform.scale(self.sprite.ORIGINALIMAGE, abs(valueAsV2).whole)
             self.sprite.rect = self.sprite.image.get_rect()
+            self.position = self._position
     @property
     def color(self):
         return self._color

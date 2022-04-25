@@ -17,7 +17,7 @@ class Main():
     
   def _APPENDSCENEOBJECT(self, objectTuple):
     for _object in objectTuple:
-      Globals.engine.Globals.sceneObjectsArray.append(_object)
+      Globals.engine.CreateNewObject(_object)
       
   def _STARTENGINE(self):
     self._PRESTART()
