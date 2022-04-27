@@ -93,7 +93,15 @@ class Matrix2x2:
             raise IndexError
 
         self.matrix[(position.y * self.dimensions.x) + position.x] = replacement
-        
+    def CellExistsCheck(self, position):
+        if not (type(position) == tuple or type(position) == Vector2):
+            raise ValueError
+        if (type(position) == tuple):
+            position = Vector2(position[0], position[1])
+        if (position.x < 0 or position.y < 0 or position.x >= self.dimensions.x or position.y >= self.dimensions.y):
+            return False
+        else:
+            return True
 class Cell():
     def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(0,0), _objectLink=None):
         self.position = _position
@@ -110,9 +118,34 @@ class GameObject:
         self.color = (255,255,255)
         self.name = "New GameObject"
         self._image = None
+        self._textFont = pygame.font.Font("Assets\\gameFont.ttf",  30)
+        self._text = None
+        self._textRender = None
+        self._fontSize = 30
         self.isImage = False
         self.collisionLayer = master._Globals.CollisionLayer.GENERIC_GAMEOBJECT
         self.renderEnabled = True
+    @property
+    def fontSize(self):
+        return self._fontSize
+    @fontSize.setter
+    def fontSize(self, value):
+        if (type(value) == int):
+            self._textFont = pygame.font.Font("Assets\\gameFont.ttf",  value)
+            self.text = self._text
+    @property
+    def text(self):
+        return self._text
+    @text.setter
+    def text(self, value):
+        if (type(value) == str):
+            self._text = value
+            self._textRender = self._textFont.render(self._text, True, (0,0,0))
+            self._syncOriginalImage()
+        else:
+            self._text = None
+            self._textRender = None
+            self._syncOriginalImage()
     @property
     def image(self):
         return self._image
@@ -216,6 +249,10 @@ class GameObject:
         self.position = self._position
         self.sprite.rect = self.sprite.image.get_rect()
         self._setSize(self._size, forceChange=True)
+        try:
+            self.sprite.image.blit(self._textRender, self._textRender.get_rect(center=(self.size.x/2, self._textRender.get_rect().height/2)))
+        except Exception:
+            pass
     def Destroy(self, engine):
         try:
             engine.Globals.sceneObjectsArray.remove(self)

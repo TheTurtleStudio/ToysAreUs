@@ -7,9 +7,9 @@ class Grid(): #Change this to the name of your script
     
     def __init__(self, engine):
         self.gameObject = Types.GameObject(engine)
-        self.gameObject.renderEnabled = False
+        #self.gameObject.renderEnabled = False
         self.engine = engine
-        self.gridSize = Types.Vector2(30,15)
+        self.gridSize = Types.Vector2(20,15)
         self.gridMatrix = Types.Matrix2x2(self.gridSize.x, self.gridSize.y)
         self.demoWall = GameObjects.GameObject.Create(engine)
         self.engine.CreateNewObject(self.demoWall)
@@ -17,7 +17,7 @@ class Grid(): #Change this to the name of your script
     def Update(self):
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
-            if (type(cellAtPos) is Types.Cell):
+            if ((type(cellAtPos) is Types.Cell) and (self.gridMatrix.CellExistsCheck(cellAtPos.cell))):
                 cellToChange = self.gridMatrix.GetCell(cellAtPos.cell)
                 cellToChange.cell = cellAtPos.cell
                 cellToChange.position = cellAtPos.position
@@ -25,7 +25,7 @@ class Grid(): #Change this to the name of your script
                 self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell))
         else:
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
-            if ((type(cellAtPos) is Types.Cell) and (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != None)):
+            if ((type(cellAtPos) is Types.Cell) and (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != None) and (self.gridMatrix.CellExistsCheck(cellAtPos.cell))):
                 cellToChange = self.gridMatrix.GetCell(cellAtPos.cell)
                 cellToChange.cell = cellAtPos.cell
                 cellToChange.position = cellAtPos.position

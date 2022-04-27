@@ -16,20 +16,30 @@ class Objects():
         BackGround.gameObject.name = "BackGround"
         self.ObjectList.append(BackGround)
         BaseWall = GameObject.Create(engine)
-        BaseWall.gameObject.size = (75, engine._Globals._display[1]-100)
+        BaseWall.gameObject.size = (75, engine._Globals._display[1]-140)
         BaseWall.gameObject.color = (50,50,50)
-        BaseWall.gameObject.position = Types.Vector3(engine._Globals._display[0]-75, 85, 1)
+        BaseWall.gameObject.position = Types.Vector3(engine._Globals._display[0]-75, 120, 1)
         BaseWall.gameObject.name = "BaseWall"
         
         
         self.ObjectList.append(BaseWall)
         TopBar = GameObject.Create(engine)
-        TopBar.gameObject.size = (engine._Globals._display[0], 70)
+        TopBar.gameObject.size = (engine._Globals._display[0], 100)
         TopBar.gameObject.color = (200,200,200)
         TopBar.gameObject.position = Types.Vector3(0, 0, 4096)
         self.ObjectList.append(TopBar)
+        WaveTitle = GameObject.Create(engine)
+        
+        WaveTitle.gameObject.size = (60, 60)
+        WaveTitle.gameObject.position = Types.Vector3((engine._Globals._display[0]/2) - (WaveTitle.gameObject.size.x / 2), 0, 4097)
+        WaveTitle.gameObject.color = TopBar.gameObject.color
+        WaveTitle.gameObject.text = "WAVE"
+        WaveTitle.gameObject.fontSize = 30
+       
+        
+        self.ObjectList.append(WaveTitle)
         tepmColorIndex = [(255,0,0), (255,0,0), (255,0,0), (128,128,128), (255,0,0), (255,0,0), (255,0,0), (0,0,0), (0,255,0), (128,0,128), (0,0,0), (255,255,0)]
-        for buttonNum in range(12): #Red ("button"), Gray ("Garbage"), Black ("Nothing/Space") Green ("Start Button") Purple ("Money text and stuff") Yellow ("HealthBar")
+        for buttonNum in range(3): #Red ("button"), Gray ("Garbage"), Black ("Nothing/Space") Green ("Start Button") Purple ("Money text and stuff") Yellow ("HealthBar")
             MyButton = PlaceWall.Create(engine)
             MyButton.gameObject.size = (60, 60)
             MyButton.gameObject.color = tepmColorIndex[buttonNum]
@@ -37,24 +47,11 @@ class Objects():
             MyButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
             MyButton.obj.assignedNumber = buttonNum
             self.ObjectList.append(MyButton)
-        DemoDraggable = Draggable.Create(engine)
-        DemoDraggable.gameObject.size = (60, 60)
-        DemoDraggable.gameObject.color = (255,255,255)
-        DemoDraggable.gameObject.position = Types.Vector3(500, 400, 4097)
-        DemoDraggable.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
-        DemoDraggable.gameObject.image = "Assets\\canDRAG.png" #RIGHT HERE
-        DemoDraggable2 = Draggable.Create(engine)
-        DemoDraggable2.gameObject.size = (60, 60)
-        DemoDraggable2.gameObject.color = (255,0,255)
-        DemoDraggable2.gameObject.position = Types.Vector3(540, 440, 4097)
-        DemoDraggable2.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
-        DemoDraggable2.gameObject.image = "Assets\\canDRAG.png"
-        self.ObjectList.append(DemoDraggable)
-        self.ObjectList.append(DemoDraggable2)
         BoardGrid = Grid.Create(engine)
         BoardGrid.gameObject.name = 'GRID'
-        BoardGrid.gameObject.position = (0,BaseWall.gameObject.position.y,8192)
-        BoardGrid.gameObject.size = (engine._Globals._display[0]-BaseWall.gameObject.size.x, BaseWall.gameObject.size.y)
+        BoardGrid.gameObject.size = ((engine._Globals._display[0]-BaseWall.gameObject.size.x) * 0.7, BaseWall.gameObject.size.y-10)
+        BoardGrid.gameObject.position = ((engine._Globals._display[0]-BaseWall.gameObject.size.x) * 0.3,BaseWall.gameObject.position.y+5,8192)
+        BoardGrid.gameObject.color = (96, 171, 92)
         self.ObjectList.append(BoardGrid)
         PlaceObjectHandler = PlaceHandler.Create(engine)
         PlaceObjectHandler.gameObject.name = "PLACEHANDLER"
