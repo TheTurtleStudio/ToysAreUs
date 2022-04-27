@@ -1,5 +1,6 @@
 import math
 import GameObjects
+from GameObjects import GameObject
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 import pygame
 class Grid(): #Change this to the name of your script
@@ -9,14 +10,30 @@ class Grid(): #Change this to the name of your script
         self.gameObject.renderEnabled = False
         self.engine = engine
         self.gridSize = Types.Vector2(30,15)
-        self.gridMatrix = Types.Matrix2x2(self.gridSize.x, self.gridSize.y) 
+        self.gridMatrix = Types.Matrix2x2(self.gridSize.x, self.gridSize.y)
+        self.demoWall = GameObjects.GameObject.Create(engine)
+        self.engine.CreateNewObject(self.demoWall)
 
     def Update(self):
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
             if (type(cellAtPos) is Types.Cell):
-                self.gridMatrix.SetCell(cellAtPos.cell, cellAtPos)
+                cellToChange = self.gridMatrix.GetCell(cellAtPos.cell)
+                cellToChange.cell = cellAtPos.cell
+                cellToChange.position = cellAtPos.position
+                cellToChange.size = cellAtPos.size
                 self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell))
+        else:
+            cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
+            if ((type(cellAtPos) is Types.Cell) and (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != None)):
+                cellToChange = self.gridMatrix.GetCell(cellAtPos.cell)
+                cellToChange.cell = cellAtPos.cell
+                cellToChange.position = cellAtPos.position
+                cellToChange.size = cellAtPos.size
+                self.engine.FindObject("PLACEHANDLER").obj.HANDLEDEMOPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell), self.demoWall)
+            else:
+                self.demoWall.gameObject.renderEnabled = False
+                
             
     def GetGridCell(self, raycastPos):
         relative = Types.Vector3(raycastPos[0], raycastPos[1], 0) - self.gameObject.position

@@ -83,7 +83,6 @@ class Matrix2x2:
             position = Vector2(position[0], position[1])
         if (position.x < 0 or position.y < 0 or position.x >= self.dimensions.x or position.y >= self.dimensions.y):
             raise IndexError
-        
         return self.matrix[(position.y * self.dimensions.x) + position.x]
     def SetCell(self, position, replacement):
         if not (type(position) == tuple or type(position) == Vector2):
@@ -94,6 +93,7 @@ class Matrix2x2:
             raise IndexError
 
         self.matrix[(position.y * self.dimensions.x) + position.x] = replacement
+        
 class Cell():
     def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(0,0), _objectLink=None):
         self.position = _position
