@@ -1,3 +1,4 @@
+from dataclasses import replace
 import pygame
 
 class Vector2():
@@ -80,10 +81,10 @@ class Matrix2x2:
             raise ValueError
         if (type(position) == tuple):
             position = Vector2(position[0], position[1])
-        if (position.x < 1 or position.y < 1 or position.x > self.dimensions.x or position.y > self.dimensions.y):
+        if (position.x < 0 or position.y < 0 or position.x >= self.dimensions.x or position.y >= self.dimensions.y):
             raise IndexError
         
-        return self.matrix[(position.y * self.dimensions.x) + position.x - 1]
+        return self.matrix[(position.y * self.dimensions.x) + position.x]
     def SetCell(self, position, replacement):
         if not (type(position) == tuple or type(position) == Vector2):
             raise ValueError
@@ -91,14 +92,15 @@ class Matrix2x2:
             position = Vector2(position[0], position[1])
         if (position.x < 0 or position.y < 0 or position.x >= self.dimensions.x or position.y >= self.dimensions.y):
             raise IndexError
-        
+
         self.matrix[(position.y * self.dimensions.x) + position.x] = replacement
 class Cell():
-    def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(0,0)):
+    def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(0,0), _objectLink=None):
         self.position = _position
         self.size = _size
         self.center = Vector2(_position.x + (_size.x / 2), _position.y + (_size.y / 2))
         self.cell = _cell
+        self.objectLink = _objectLink
 class GameObject:
     def __init__(self, master): #Can optimize Update function to only call explicitly here
         self._master = master

@@ -9,13 +9,14 @@ class Grid(): #Change this to the name of your script
         self.gameObject.renderEnabled = False
         self.engine = engine
         self.gridSize = Types.Vector2(30,15)
-        self.gridMatrix = Types.Matrix2x2(self.gridSize.x, self.gridSize.y)
+        self.gridMatrix = Types.Matrix2x2(self.gridSize.x, self.gridSize.y) 
 
     def Update(self):
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
-            cell = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
-            if (type(cell) is Types.Cell):
-                self.gridMatrix.SetCell(cell.cell, cell)
+            cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
+            if (type(cellAtPos) is Types.Cell):
+                self.gridMatrix.SetCell(cellAtPos.cell, cellAtPos)
+                self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell))
             
     def GetGridCell(self, raycastPos):
         relative = Types.Vector3(raycastPos[0], raycastPos[1], 0) - self.gameObject.position

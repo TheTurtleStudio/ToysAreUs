@@ -14,9 +14,11 @@ class PlaceWall(): #Change this to the name of your script
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
             if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [self.engine._Globals.CollisionLayer.UI])):
                 if (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject is not None):
-                    self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject.gameObject.color = self.gameObject.sprite.ORIGINALIMAG
-                self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject = self
-                self.gameObject.color = (105,0,0)
+                    self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject.gameObject.color = (255,255,255)
+                self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject = self if (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != self) else None
+                self.gameObject.color = (105,0,0) if (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != self) else (255,255,255)
+
+
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():
