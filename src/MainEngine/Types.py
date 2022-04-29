@@ -103,12 +103,16 @@ class Matrix2x2:
         else:
             return True
 class Cell():
-    def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(0,0), _objectLink=None):
+    def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(-1,-1), _objectLink=None):
         self.position = _position
         self.size = _size
         self.center = Vector2(_position.x + (_size.x / 2), _position.y + (_size.y / 2))
         self.cell = _cell
         self.objectLink = _objectLink
+        self.aboveCell_OL = None
+        self.belowCell_OL = None
+        self.rightCell_OL = None
+        self.leftCell_OL = None
 class GameObject:
     def __init__(self, master): #Can optimize Update function to only call explicitly here
         self._master = master
@@ -158,7 +162,7 @@ class GameObject:
             self.isImage = False
             self.position = self._position
         elif (type(value) is str):
-            self._image = pygame.image.load(value)
+            self._image = pygame.image.load(value).convert_alpha()
             self.sprite.ORIGINALIMAGE = self._image
             self._syncOriginalImage()
             self.isImage = True

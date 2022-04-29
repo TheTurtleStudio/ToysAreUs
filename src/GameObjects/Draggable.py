@@ -4,6 +4,7 @@ class Draggable(): #Change this to the name of your script
     def __init__(self, engine):
         self.gameObject = Types.GameObject(engine)
         self.engine = engine
+        self.creator = None
 
     def Start(self): #Called when the object is added to the scene.
         self.pressed = False
@@ -34,6 +35,7 @@ class Draggable(): #Change this to the name of your script
 class Create():
     def __init__(self, engine):
         self.obj = Draggable(engine) #Replace Template with the name of your class
+        self.obj.creator = self
     @property
     def gameObject(self):
         return self.obj.gameObject

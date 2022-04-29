@@ -4,6 +4,7 @@ class Button(): #Change this to the name of your script
     def __init__(self, engine):
         self.gameObject = Types.GameObject(engine)
         self.engine = engine
+        self.creator = None
 
     def Update(self): #This is called every rendercycle
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
@@ -14,6 +15,7 @@ class Button(): #Change this to the name of your script
 class Create():
     def __init__(self, engine):
         self.obj = Button(engine) #Replace Template with the name of your class
+        self.obj.creator = self
     @property
     def gameObject(self):
         return self.obj.gameObject

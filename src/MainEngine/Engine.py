@@ -86,12 +86,12 @@ class Engine:
         if (renderOrderReturnVal == None):
             return
         array = renderOrderReturnVal[0]
-        to_render = pygame.sprite.Group()
+        #to_render = pygame.sprite.Group()
         for i in array:
-            to_render.add(i.gameObject.sprite)
-        to_render.draw(self._Globals.screen) 
-        to_render.update()
-        del to_render
+            self._Globals.screen.blit(i.gameObject.sprite.image, (i.gameObject.position.x, i.gameObject.position.y))
+            #to_render.add(i.gameObject.sprite)
+        #to_render.draw(self._Globals.screen) 
+        #del to_render
         pygame.display.update()
 
     def SetCaption(self, value):

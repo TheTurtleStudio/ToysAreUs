@@ -7,8 +7,8 @@ class Grid(): #Change this to the name of your script
     
     def __init__(self, engine):
         self.gameObject = Types.GameObject(engine)
-        #self.gameObject.renderEnabled = False
         self.engine = engine
+        self.creator = None
         self.gridSize = Types.Vector2(20,15)
         self.gridMatrix = Types.Matrix2x2(self.gridSize.x, self.gridSize.y)
         self.demoWall = GameObjects.GameObject.Create(engine)
@@ -19,10 +19,19 @@ class Grid(): #Change this to the name of your script
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
             if ((type(cellAtPos) is Types.Cell) and (self.gridMatrix.CellExistsCheck(cellAtPos.cell))):
                 cellToChange = self.gridMatrix.GetCell(cellAtPos.cell)
-                cellToChange.cell = cellAtPos.cell
-                cellToChange.position = cellAtPos.position
-                cellToChange.size = cellAtPos.size
-                self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell))
+                if (not self.engine.FindObject("PLACEHANDLER").obj.removingTile):
+                    cellToChange.cell = cellAtPos.cell
+                    cellToChange.position = cellAtPos.position
+                    cellToChange.size = cellAtPos.size
+                    self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell))
+                else:
+                    if (cellToChange.objectLink != None):
+                        initialPairs = [cellToChange.aboveCell_OL, cellToChange.belowCell_OL, cellToChange.rightCell_OL, cellToChange.leftCell_OL]
+                        cellToChange.objectLink.obj.DestroyWall()
+                        for stem in initialPairs:
+                            if (stem != None):
+                                if (stem != None):
+                                    self.DestroyFloatingWalls(stem)
         else:
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
             if ((type(cellAtPos) is Types.Cell) and (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != None) and (self.gridMatrix.CellExistsCheck(cellAtPos.cell))):
@@ -33,7 +42,37 @@ class Grid(): #Change this to the name of your script
                 self.engine.FindObject("PLACEHANDLER").obj.HANDLEDEMOPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell), self.demoWall)
             else:
                 self.demoWall.gameObject.renderEnabled = False
-                
+    
+    def DestroyFloatingWalls(self, initialStem):
+        queue = [initialStem]
+        visited = []
+        foundWallConnection = False
+        while queue:
+            current = queue.pop(0)
+            if (current == None):
+                return
+            if (current.objectLink == None):
+                return
+            if not (current in visited):
+                visited.append(current)
+                if (current.cell.x == self.gridSize.x - 1):
+                    foundWallConnection = True
+                    break
+                if (current.aboveCell_OL != None): #If the above cell exists
+                    if (current.aboveCell_OL.objectLink != None):
+                        queue.append(current.aboveCell_OL)
+                if (current.belowCell_OL != None): #If the below cell exists
+                    if (current.belowCell_OL.objectLink != None):
+                        queue.append(current.belowCell_OL)
+                if (current.rightCell_OL != None): #If the right cell exists
+                    if (current.rightCell_OL.objectLink != None):
+                        queue.append(current.rightCell_OL)
+                if (current.leftCell_OL != None): #If the left cell exists
+                    if (current.leftCell_OL.objectLink != None):
+                        queue.append(current.leftCell_OL)
+        if not foundWallConnection:
+            for cell in visited:
+                cell.objectLink.obj.DestroyWall()
             
     def GetGridCell(self, raycastPos):
         relative = Types.Vector3(raycastPos[0], raycastPos[1], 0) - self.gameObject.position
@@ -53,6 +92,7 @@ class Grid(): #Change this to the name of your script
 class Create():
     def __init__(self, engine):
         self.obj = Grid(engine) #Replace Template with the name of your class
+        self.obj.creator = self
     @property
     def gameObject(self):
         return self.obj.gameObject
