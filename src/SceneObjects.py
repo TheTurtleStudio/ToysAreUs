@@ -10,10 +10,16 @@ import pygame, random
 
 class Objects():
     def __init__(self, engine):
+        engine.AddImageAsset("TRASH_CLOSED", "Assets\\trashcanClosed.png")
+        engine.AddImageAsset("TRASH_OPEN", "Assets\\trashcanOpen.png")
+        engine.AddImageAsset("SELECT_FRAME", "Assets\\selectedFrame.png")
+        engine.AddImageAsset("FLOOR", "Assets\\floor.png")
+
+
         self.ObjectList = []
         BackGround = GameObject.Create(engine)
         BackGround.gameObject.size = engine._Globals._display
-        BackGround.gameObject.color = (106,181,102)
+        BackGround.gameObject.image = "FLOOR"
         BackGround.gameObject.name = "BackGround"
         self.ObjectList.append(BackGround)
         BaseWall = GameObject.Create(engine)
@@ -26,12 +32,12 @@ class Objects():
         self.ObjectList.append(BaseWall)
         TopBar = GameObject.Create(engine)
         TopBar.gameObject.size = (engine._Globals._display[0], 100)
-        TopBar.gameObject.color = (128,128,128)
+        TopBar.gameObject.color = (69,10,30)
         TopBar.gameObject.position = Types.Vector3(0, 0, 4083)
         TopBarBorder = GameObject.Create(engine)
-        TopBarBorder.gameObject.size = TopBar.gameObject.size + Types.Vector2(0, 1)
+        TopBarBorder.gameObject.size = TopBar.gameObject.size + Types.Vector2(0, 3)
         TopBarBorder.gameObject.position = TopBar.gameObject.position - Types.Vector3(0, 0, 1)
-        TopBarBorder.gameObject.color = (20,20,20)
+        TopBarBorder.gameObject.color = (35, 6, 15)
         self.ObjectList.append(TopBar)
         self.ObjectList.append(TopBarBorder)
         
@@ -46,35 +52,60 @@ class Objects():
         
         self.ObjectList.append(WaveTitle)
         WallsTitle = GameObject.Create(engine)
-        for buttonNum in range(3): #Red ("button"), Gray ("Garbage"), Black ("Nothing/Space") Green ("Start Button") Purple ("Money text and stuff") Yellow ("HealthBar")
-            WallButton = PlaceWall.Create(engine)
-            WallButtonHighlight = GameObject.Create(engine)
-            WallButton.gameObject.size = (60, 60)
-            WallButtonHighlight.gameObject.size = WallButton.gameObject.size + Types.Vector2(6, 6)
-            WallButton.gameObject.color = (255,255,255)
-            WallButtonHighlight.gameObject.color = (20,20,20)
-            WallButton.gameObject.position = Types.Vector3((buttonNum * 60) + ((buttonNum + 1) * 20), TopBar.gameObject.size.y-WallButton.gameObject.size.y-10, 4097)
-            WallButtonHighlight.gameObject.position = WallButton.gameObject.position - Types.Vector3(3, 3, 1)
-            WallButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
-            WallButtonHighlight.gameObject.renderEnabled = False
-            WallButton.obj.highlightedIndicator = WallButtonHighlight
-            if buttonNum == 1:
-                WallsTitle.gameObject.size = (60, 60)
-                WallsTitle.gameObject.position = WallButton.gameObject.position + Types.Vector3(0,-WallButton.gameObject.position.y,-5)
-                WallsTitle.gameObject.color = TopBar.gameObject.color
-                WallsTitle.gameObject.text = "WALLS"
-                WallsTitle.gameObject.fontSize = 20
-                self.ObjectList.append(WallsTitle)
-            self.ObjectList.append(WallButton)
-            self.ObjectList.append(WallButtonHighlight)
-        
-        DestroyWallButton = RemoveTile.Create(engine)
-        DestroyWallButton.gameObject.size = (60, 60)
-        DestroyWallButton.gameObject.color = (255,255,255)
-        DestroyWallButton.gameObject.position = Types.Vector3(300, TopBar.gameObject.size.y-WallButton.gameObject.size.y-10, 4097)
-        DestroyWallButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
-        DestroyWallButton.gameObject.image = "Assets\\trashcanClosed.png"
-        DestroyWallButton.gameObject.name = "TRASHCANBUTTON"
+        for buttonNum in range(8): #Red ("button"), Gray ("Garbage"), Black ("Nothing/Space") Green ("Start Button") Purple ("Money text and stuff") Yellow ("HealthBar")
+            if buttonNum < 3:
+                WallButton = PlaceWall.Create(engine)
+                WallButtonHighlight = GameObject.Create(engine)
+                WallButton.gameObject.size = (60, 60)
+                WallButtonHighlight.gameObject.size = WallButton.gameObject.size + Types.Vector2(4, 4)
+                WallButton.gameObject.color = (255,255,255)
+                WallButtonHighlight.gameObject.color = (255,255,255)
+                WallButton.gameObject.position = Types.Vector3((buttonNum * 60) + ((buttonNum + 1) * 20), TopBar.gameObject.size.y-WallButton.gameObject.size.y-10, 4097)
+                WallButtonHighlight.gameObject.position = WallButton.gameObject.position - Types.Vector3(2, 2, -1)
+                WallButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
+                WallButtonHighlight.gameObject.renderEnabled = False
+                WallButton.obj.highlightedIndicator = WallButtonHighlight
+                WallButtonHighlight.gameObject.image = "SELECT_FRAME"
+                if buttonNum == 1:
+                    WallsTitle.gameObject.size = (60, 60)
+                    WallsTitle.gameObject.position = WallButton.gameObject.position + Types.Vector3(0,-WallButton.gameObject.position.y,-5)
+                    WallsTitle.gameObject.color = TopBar.gameObject.color
+                    WallsTitle.gameObject.text = "WALLS"
+                    WallsTitle.gameObject.fontSize = 20
+                    self.ObjectList.append(WallsTitle)
+                self.ObjectList.append(WallButton)
+                self.ObjectList.append(WallButtonHighlight)
+            if buttonNum == 3:
+                DestroyWallButton = RemoveTile.Create(engine)
+                DestroyWallButton.gameObject.size = (64, 64)
+                DestroyWallButton.gameObject.color = (255,255,255)
+                DestroyWallButton.gameObject.position = Types.Vector3((buttonNum * 60) + ((buttonNum + 1) * 20) - 0, TopBar.gameObject.size.y-WallButton.gameObject.size.y - 16, 4097)
+                DestroyWallButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
+                DestroyWallButton.gameObject.image = "TRASH_CLOSED"
+                DestroyWallButton.gameObject.name = "TRASHCANBUTTON"
+            if buttonNum >= 4:
+                WeaponsButton = PlaceWall.Create(engine)
+                WeaponsButtonHighlight = GameObject.Create(engine)
+                WeaponsButton.gameObject.size = (60, 60)
+                WeaponsButtonHighlight.gameObject.size = WeaponsButton.gameObject.size + Types.Vector2(4, 4)
+                WeaponsButton.gameObject.color = (255,255,255)
+                WeaponsButtonHighlight.gameObject.color = (255,255,255)
+                WeaponsButton.gameObject.position = Types.Vector3((buttonNum * 60) + ((buttonNum + 1) * 20), TopBar.gameObject.size.y-WeaponsButton.gameObject.size.y-10, 4097)
+                WeaponsButtonHighlight.gameObject.position = WeaponsButton.gameObject.position - Types.Vector3(2, 2, -1)
+                WeaponsButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
+                WeaponsButtonHighlight.gameObject.renderEnabled = False
+                WeaponsButton.obj.highlightedIndicator = WeaponsButtonHighlight
+                WeaponsButtonHighlight.gameObject.image = "SELECT_FRAME"
+                if buttonNum == 6:
+                    WeaponsTitle = GameObject.Create(engine)
+                    WeaponsTitle.gameObject.size = (100, 60)
+                    WeaponsTitle.gameObject.position = WeaponsButton.gameObject.position + Types.Vector3(0,-WeaponsButton.gameObject.position.y,-5)
+                    WeaponsTitle.gameObject.color = TopBar.gameObject.color
+                    WeaponsTitle.gameObject.text = "WEAPONS"
+                    WeaponsTitle.gameObject.fontSize = 20
+                    self.ObjectList.append(WeaponsTitle)
+                self.ObjectList.append(WeaponsButton)
+                self.ObjectList.append(WeaponsButtonHighlight)
         self.ObjectList.append(DestroyWallButton)
         BoardGrid = Grid.Create(engine)
         BoardGrid.gameObject.name = 'GRID'

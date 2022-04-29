@@ -86,18 +86,18 @@ class Engine:
         if (renderOrderReturnVal == None):
             return
         array = renderOrderReturnVal[0]
-        #to_render = pygame.sprite.Group()
         for i in array:
             self._Globals.screen.blit(i.gameObject.sprite.image, (i.gameObject.position.x, i.gameObject.position.y))
-            #to_render.add(i.gameObject.sprite)
-        #to_render.draw(self._Globals.screen) 
-        #del to_render
         pygame.display.update()
+
+    def AddImageAsset(self, key, value, transparency=True):
+        self._Globals.Assets[key] = pygame.image.load(value).convert_alpha() if transparency else pygame.image.load(value)
 
     def SetCaption(self, value):
         pygame.display.set_caption(value)
 
     class Globals():
+        Assets = {}
         CollisionLayer = Types.CollisionLayer()
         _display = (512, 512)
         _gridDimensions = (32,32)

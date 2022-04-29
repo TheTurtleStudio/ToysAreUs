@@ -144,7 +144,7 @@ class GameObject:
     def text(self, value):
         if (type(value) == str):
             self._text = value
-            self._textRender = self._textFont.render(self._text, True, (0,0,0))
+            self._textRender = self._textFont.render(self._text, True, (255,255,255))
             self._syncOriginalImage()
         else:
             self._text = None
@@ -162,7 +162,7 @@ class GameObject:
             self.isImage = False
             self.position = self._position
         elif (type(value) is str):
-            self._image = pygame.image.load(value).convert_alpha()
+            self._image = self._master._Globals.Assets[value]
             self.sprite.ORIGINALIMAGE = self._image
             self._syncOriginalImage()
             self.isImage = True
