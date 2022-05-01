@@ -24,7 +24,6 @@ class Engine:
         pygame.key.set_repeat(1, 1)
         self._Globals.clock = pygame.time.Clock()
         self.Input = Input.InputHandler(self)
-        self.SheetsManipulation = ImageManipulation.Sheets(self)
         self.Collisions = Collision.Collision(self)
         main._POSTSTART()
         while True:

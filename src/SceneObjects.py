@@ -19,9 +19,9 @@ class Objects():
         engine.AddImageAsset("SELECT_FRAME", "Assets\\selectedFrame.png")
         engine.AddImageAsset("FLOOR", "Assets\\floor.png")
 
-        #engine.AddAnimation("yoursheet", engine.SheetsManipulation.Disect("Assets\\yoursheet.png", (32,32), 5), framerate=3, loop=False) #Spritesheet
+        #engine.AddAnimation("temp", ImageManipulation.Sheets.Disect("Assets\\canDRAG.png", (85, 85), 9), framerate=3, loop=False) #Spritesheet
 
-        engine.AddAnimation("temp", ["TRASH_OPEN", "TRASH_CLOSED"], framerate=3, loop=False)
+        #engine.AddAnimation("temp", ["TRASH_OPEN", "TRASH_CLOSED"], framerate=3, loop=False)
 
 
         
