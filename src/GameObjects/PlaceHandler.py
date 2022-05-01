@@ -67,12 +67,14 @@ class PlaceWall(): #Change this to the name of your script
         cellOffsets = [Types.Vector2(0,1), Types.Vector2(0,-1), Types.Vector2(1,0), Types.Vector2(-1,0)]
         for i in range(4):
             if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell + cellOffsets[i])):
-                if (self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell + cellOffsets[i]).objectLink != None):
+                current = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell + cellOffsets[i])
+                if current.objectLink != None:
                     condition2 = True
             else:
-                if (i == 2):
+                if (i == 2): #If neighboring the main wall
                     condition2 = True
-        return (condition1 and condition2)
+        condition3 = cell.enemyLink == None
+        return (condition1 and condition2 and condition3)
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():

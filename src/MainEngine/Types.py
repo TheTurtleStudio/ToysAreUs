@@ -1,4 +1,4 @@
-from dataclasses import replace
+import math
 import pygame
 
 class Vector2():
@@ -103,16 +103,22 @@ class Matrix2x2:
         else:
             return True
 class Cell():
-    def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(-1,-1), _objectLink=None):
+    def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(-1,-1), _objectLink=None, _enemyLink=None):
         self.position = _position
         self.size = _size
-        self.center = Vector2(_position.x + (_size.x / 2), _position.y + (_size.y / 2))
+        #
+        self._center = None
         self.cell = _cell
         self.objectLink = _objectLink
+        self.enemyLink = _enemyLink
         self.aboveCell_OL = None
         self.belowCell_OL = None
         self.rightCell_OL = None
         self.leftCell_OL = None
+    @property
+    def center(self):
+        self._center = Vector2(self.position.x + (self.size.x / 2), self.position.y + (self.size.y / 2))
+        return self._center
 class GameObject:
     def __init__(self, master): #Can optimize Update function to only call explicitly here
         self._master = master
@@ -127,7 +133,7 @@ class GameObject:
         self._textRender = None
         self._fontSize = 30
         self.isImage = False
-        self.collisionLayer = master._Globals.CollisionLayer.GENERIC_GAMEOBJECT
+        self.collisionLayer = CollisionLayer.GENERIC_GAMEOBJECT
         self.renderEnabled = True
     @property
     def fontSize(self):
@@ -154,27 +160,27 @@ class GameObject:
     def image(self):
         return self._image
     @image.setter
-    def image(self, value):
+    def image(self, value: str):
         if (value is None):
             self._image = None
             self.sprite.ORIGINALIMAGE = pygame.Surface(self._size[0], self._size[1])
             self._syncOriginalImage()
             self.isImage = False
             self.position = self._position
-        elif (type(value) is str):
-            self._image = self._master._Globals.Assets[value]
+        elif (type(value) is str) or (type(value) is pygame.Surface):
+            self._image = self._master.GetImageAsset(value) if (type(value) is str) else value
             self.sprite.ORIGINALIMAGE = self._image
             self._syncOriginalImage()
             self.isImage = True
             self.position = self._position
         else:
-            print(f"Provided image is expected to be a file path. Given {type(value)} instead.")
+            print(f"Provided image is expected to be a file path or Surface object. Given {type(value)} instead.")
             return
     @property
-    def position(self):
+    def position(self) -> Vector3:
         return self._position
     @position.setter
-    def position(self, value):
+    def position(self, value: Vector3):
         if (type(value) == tuple):
             self._position = Vector3(value[0], value[1], value[2])
         else:
@@ -187,19 +193,13 @@ class GameObject:
             self.sprite.rect.x = self._position.x
             self.sprite.rect.y = self._position.y
         self.sprite.rect.x, self.sprite.rect.y = (self.position.x, self.position.y)
-    @position.getter
-    def position(self):
-        return self._position
     @property
-    def size(self):
+    def size(self) -> Vector2:
         return self._size
     @size.setter
-    def size(self, value):
+    def size(self, value: str):
         newValue = value
         self._setSize(newValue)
-    @size.getter
-    def size(self):
-        return self._size
     def _setSize(self, value, forceChange=False):
         valueAsV2 = value
         shouldScale = not (self._size == valueAsV2)
@@ -263,6 +263,74 @@ class GameObject:
         except ValueError:
             pass
         del self
+class Animation:
+    def __init__(self, p_collection: list, p_framerate: float, p_loop=True):
+        self.collection = p_collection
+        self.framerate = p_framerate
+        self.loop = p_loop
+class Animator:
+    def __init__(self, gameObject: GameObject):
+        self.animStates = {}
+        self.currentlyPlaying = None #Is type Animation
+        self.currentFrame = 0
+        self.lastRefreshTime = -1
+        self.lastCycleTime = -1
+        self.effector = gameObject
+        self.firstIteration = True
+        self.finished = False
+
+    def GetRawAnimationData(self, name: str) -> list: #Grabs the images
+        return self.effector._master.GetAnimation(name)
+
+    def _PlayAnimation(self, name: str): #Will restart animation every time it is called
+        self.currentFrame = -1
+        self.currentlyPlaying = self.GetRawAnimationData(name=name)
+        self.firstIteration = True
+        self.lastCycleTime = self.effector._master.GetTotalTime()
+        self.finished = False
+
+    def ResetAnimationState(self): #Makes it so you can play two non-loop animations back to back.
+        self.currentlyPlaying = None
+        self.finished = True
+
+    def AnimationStep(self, name: str, restart=False): #Continues the animation cycle, doing nothing if a non-looped animation has completed
+        if (restart):
+            self.ResetAnimationState()
+        if self.currentlyPlaying != self.GetRawAnimationData(name=name):
+            self._PlayAnimation(name=name)
+        if not self.finished:
+            self._Refresh()
+    
+    def _CalculateFrame(self):
+        elapsedTimeSinceCycle = self.effector._master.GetTotalTime() - self.lastCycleTime
+        return math.floor(elapsedTimeSinceCycle * self.currentlyPlaying.framerate)
+
+    def _Refresh(self):
+        oldFrame = self.currentFrame + 0
+        toReset = False
+        if (self.currentlyPlaying == None):
+            return
+        if (not self.currentlyPlaying.loop) and (not self.firstIteration):
+            self.finished = True
+            return
+        
+        if self.currentlyPlaying.framerate <= 0: #Fix invalid framerame to be 0
+            self.currentFrame = 0
+        else:
+            calculatedFrame = self._CalculateFrame()
+            self.currentFrame = calculatedFrame % len(self.currentlyPlaying.collection) #Set the current frame according to time. If overflow, restart from beginning of sequence.
+            if (calculatedFrame != self.currentFrame):
+                self.firstIteration = False
+                toReset = True
+        if (not self.firstIteration and not self.currentlyPlaying.loop): 
+            self.effector.image = self.currentlyPlaying.collection[-1]
+            self.finished = True
+            return
+        else:
+            if toReset: #Reset cycletime
+                self.lastCycleTime = self.effector._master.GetTotalTime()
+            if (self.currentFrame != oldFrame): #Only redraw if it's a new image from the animation
+                self.effector.image = self.currentlyPlaying.collection[self.currentFrame]
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, dimensions=(32,32), color=(255,255,255)):
         if not (type(dimensions) == tuple):
@@ -279,4 +347,10 @@ class CollisionLayer():
     WALL = "WALL"
     GENERIC_GAMEOBJECT = "GENERIC_GAMEOBJECT"
     UI = "UI"
-
+class WallTypes():
+    class Domino():
+        health = 100
+    class LincolnLog():
+        health = 100
+    class Lego():
+        health = 100

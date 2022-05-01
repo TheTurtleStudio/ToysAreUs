@@ -1,20 +1,30 @@
 from GameObjects import GameObject
 from GameObjects import Button
-from GameObjects import Draggable
 from GameObjects import Grid
 from GameObjects import PlaceWall
 from GameObjects import PlaceHandler
 from GameObjects import RemoveTile
+from GameObjects import Enemy
+from GameObjects import Healthbar
+
+from MainEngine import ImageManipulation
 from MainEngine import Types
+from MainEngine.Engine import Engine
 import pygame, random
 
 class Objects():
-    def __init__(self, engine):
+    def __init__(self, engine: Engine):
         engine.AddImageAsset("TRASH_CLOSED", "Assets\\trashcanClosed.png")
         engine.AddImageAsset("TRASH_OPEN", "Assets\\trashcanOpen.png")
         engine.AddImageAsset("SELECT_FRAME", "Assets\\selectedFrame.png")
         engine.AddImageAsset("FLOOR", "Assets\\floor.png")
 
+        #engine.AddAnimation("yoursheet", engine.SheetsManipulation.Disect("Assets\\yoursheet.png", (32,32), 5), framerate=3, loop=False) #Spritesheet
+
+        engine.AddAnimation("temp", ["TRASH_OPEN", "TRASH_CLOSED"], framerate=3, loop=False)
+
+
+        
 
         self.ObjectList = []
         BackGround = GameObject.Create(engine)
@@ -48,9 +58,29 @@ class Objects():
         WaveTitle.gameObject.color = TopBar.gameObject.color
         WaveTitle.gameObject.text = "WAVE"
         WaveTitle.gameObject.fontSize = 30
-       
+
+        HealthBar = Healthbar.Create(engine)
+        HealthBar.gameObject.size = Types.Vector2(TopBar.gameObject.size.x * 0.35 - 20, 60)
+        HealthBar.gameObject.position = Types.Vector3(TopBar.gameObject.size.x * 0.65, TopBar.gameObject.size.y-70, 4097)
+        HealthBar.gameObject.color = (200, 60, 60)
+        HealthBar.obj._fullnessBar.gameObject.color = (100, 185, 115)
+        HealthBar.obj._fullnessBar.gameObject.position = HealthBar.gameObject.position + Types.Vector3(0, 0, 1)
+        HealthBar.obj._fullnessBar.gameObject.size = HealthBar.gameObject.size
+        HealthBar.obj.maxHealth = 500
+        HealthBar.gameObject.name = "HEALTHBAR"
+        
+        HealthTitle = GameObject.Create(engine)
+        HealthTitle.gameObject.size = (HealthBar.gameObject.size.x, 60)
+        HealthTitle.gameObject.position = Types.Vector3(HealthBar.gameObject.position.x, 0, 4097)
+        HealthTitle.gameObject.color = TopBar.gameObject.color
+        HealthTitle.gameObject.text = "WALL HEALTH"
+        HealthTitle.gameObject.fontSize = 20
+
+        self.ObjectList.append(HealthBar)
         
         self.ObjectList.append(WaveTitle)
+
+        self.ObjectList.append(HealthTitle)
         WallsTitle = GameObject.Create(engine)
         for buttonNum in range(8): #Red ("button"), Gray ("Garbage"), Black ("Nothing/Space") Green ("Start Button") Purple ("Money text and stuff") Yellow ("HealthBar")
             if buttonNum < 3:
@@ -62,7 +92,7 @@ class Objects():
                 WallButtonHighlight.gameObject.color = (255,255,255)
                 WallButton.gameObject.position = Types.Vector3((buttonNum * 60) + ((buttonNum + 1) * 20), TopBar.gameObject.size.y-WallButton.gameObject.size.y-10, 4097)
                 WallButtonHighlight.gameObject.position = WallButton.gameObject.position - Types.Vector3(2, 2, -1)
-                WallButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
+                WallButton.gameObject.collisionLayer = Types.CollisionLayer.UI
                 WallButtonHighlight.gameObject.renderEnabled = False
                 WallButton.obj.highlightedIndicator = WallButtonHighlight
                 WallButtonHighlight.gameObject.image = "SELECT_FRAME"
@@ -79,8 +109,8 @@ class Objects():
                 DestroyWallButton = RemoveTile.Create(engine)
                 DestroyWallButton.gameObject.size = (64, 64)
                 DestroyWallButton.gameObject.color = (255,255,255)
-                DestroyWallButton.gameObject.position = Types.Vector3((buttonNum * 60) + ((buttonNum + 1) * 20) - 0, TopBar.gameObject.size.y-WallButton.gameObject.size.y - 16, 4097)
-                DestroyWallButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
+                DestroyWallButton.gameObject.position = Types.Vector3((buttonNum * 60) + ((buttonNum + 1) * 20) - 2, TopBar.gameObject.size.y-WallButton.gameObject.size.y - 12, 4097)
+                DestroyWallButton.gameObject.collisionLayer = Types.CollisionLayer.UI
                 DestroyWallButton.gameObject.image = "TRASH_CLOSED"
                 DestroyWallButton.gameObject.name = "TRASHCANBUTTON"
             if buttonNum >= 4:
@@ -92,14 +122,14 @@ class Objects():
                 WeaponsButtonHighlight.gameObject.color = (255,255,255)
                 WeaponsButton.gameObject.position = Types.Vector3((buttonNum * 60) + ((buttonNum + 1) * 20), TopBar.gameObject.size.y-WeaponsButton.gameObject.size.y-10, 4097)
                 WeaponsButtonHighlight.gameObject.position = WeaponsButton.gameObject.position - Types.Vector3(2, 2, -1)
-                WeaponsButton.gameObject.collisionLayer = engine._Globals.CollisionLayer.UI
+                WeaponsButton.gameObject.collisionLayer = Types.CollisionLayer.UI
                 WeaponsButtonHighlight.gameObject.renderEnabled = False
                 WeaponsButton.obj.highlightedIndicator = WeaponsButtonHighlight
                 WeaponsButtonHighlight.gameObject.image = "SELECT_FRAME"
-                if buttonNum == 6:
+                if buttonNum == 5:
                     WeaponsTitle = GameObject.Create(engine)
                     WeaponsTitle.gameObject.size = (100, 60)
-                    WeaponsTitle.gameObject.position = WeaponsButton.gameObject.position + Types.Vector3(0,-WeaponsButton.gameObject.position.y,-5)
+                    WeaponsTitle.gameObject.position = WeaponsButton.gameObject.position + Types.Vector3(20,-WeaponsButton.gameObject.position.y,-5)
                     WeaponsTitle.gameObject.color = TopBar.gameObject.color
                     WeaponsTitle.gameObject.text = "WEAPONS"
                     WeaponsTitle.gameObject.fontSize = 20
@@ -116,6 +146,11 @@ class Objects():
         PlaceObjectHandler = PlaceHandler.Create(engine)
         PlaceObjectHandler.gameObject.name = "PLACEHANDLER"
         self.ObjectList.append(PlaceObjectHandler)
+        enemy = Enemy.Create(engine)
+        enemy.gameObject.size = Types.Vector2(50,50)
+        enemy.gameObject.position = Types.Vector3(0,320,500000)
+        
+        self.ObjectList.append(enemy)
 
     def get(self):
         return tuple(self.ObjectList)

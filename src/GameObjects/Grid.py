@@ -1,5 +1,6 @@
 import math
 import GameObjects
+from GameObjects import Wall
 from GameObjects import GameObject
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 import pygame
@@ -13,6 +14,7 @@ class Grid(): #Change this to the name of your script
         self.gridMatrix = Types.Matrix2x2(self.gridSize.x, self.gridSize.y)
         self.demoWall = GameObjects.GameObject.Create(engine)
         self.engine.CreateNewObject(self.demoWall)
+        self.ConfigureAllCells()
 
     def Update(self):
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
@@ -25,13 +27,7 @@ class Grid(): #Change this to the name of your script
                     cellToChange.size = cellAtPos.size
                     self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell))
                 else:
-                    if (cellToChange.objectLink != None):
-                        initialPairs = [cellToChange.aboveCell_OL, cellToChange.belowCell_OL, cellToChange.rightCell_OL, cellToChange.leftCell_OL]
-                        cellToChange.objectLink.obj.DestroyWall()
-                        for stem in initialPairs:
-                            if (stem != None):
-                                if (stem != None):
-                                    self.DestroyFloatingWalls(stem)
+                    self.DestroyWallChain(cellToChange)
         else:
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
             if ((type(cellAtPos) is Types.Cell) and (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != None) and (self.gridMatrix.CellExistsCheck(cellAtPos.cell))):
@@ -40,17 +36,23 @@ class Grid(): #Change this to the name of your script
                 cellToChange.position = cellAtPos.position
                 cellToChange.size = cellAtPos.size
                 self.engine.FindObject("PLACEHANDLER").obj.HANDLEDEMOPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell), self.demoWall)
+                
             else:
                 self.demoWall.gameObject.renderEnabled = False
-    
-    def DestroyFloatingWalls(self, initialStem):
+    def DestroyWallChain(self, rootWall: Wall.Create):
+        if (rootWall.objectLink != None):
+            initialPairs = [rootWall.aboveCell_OL, rootWall.belowCell_OL, rootWall.rightCell_OL, rootWall.leftCell_OL]
+            rootWall.objectLink.obj.DestroyWall()
+            for stem in initialPairs:
+                if (stem != None):
+                    if (stem != None):
+                        self.DestroyFloatingWalls(stem)
+    def DestroyFloatingWalls(self, initialStem: Wall.Create):
         queue = [initialStem]
         visited = []
         foundWallConnection = False
         while queue:
             current = queue.pop(0)
-            if (current == None):
-                return
             if (current.objectLink == None):
                 return
             if not (current in visited):
@@ -73,8 +75,29 @@ class Grid(): #Change this to the name of your script
         if not foundWallConnection:
             for cell in visited:
                 cell.objectLink.obj.DestroyWall()
-            
-    def GetGridCell(self, raycastPos):
+    
+    def ConfigureAllCells(self):
+        for x in range(self.gridSize.x):
+            for y in range(self.gridSize.y):
+                setCell = self.gridMatrix.GetCell((x,y))
+                setCell.cell = Types.Vector2(x,y)
+                setCell.position = self.CellToPosition((x,y))
+                setCell.size = Types.Vector2(self.gameObject.size.x / self.gridSize.x, self.gameObject.size.y / self.gridSize.y)
+
+    def GetGridCellFULL(self, raycastPos: Types.Vector2):
+        if (type(raycastPos) == Types.Vector2):
+            raycastPos = (raycastPos.x, raycastPos.y)
+        relative = Types.Vector3(raycastPos[0], raycastPos[1], 0) - self.gameObject.position
+        gridCellSize = Types.Vector2(self.gameObject.size.x / self.gridSize.x, self.gameObject.size.y / self.gridSize.y)
+        if (relative.x < 0 or relative.y < 0 or relative.x > self.gameObject.size.x or relative.y > self.gameObject.size.y):
+            return None
+        else: #If in the grid system do this
+            cell = Types.Vector2(math.floor(relative.x / gridCellSize.x), math.floor(relative.y / gridCellSize.y))
+            return self.gridMatrix.GetCell((cell.x, cell.y))
+
+    def GetGridCell(self, raycastPos: Types.Vector2):
+        if (type(raycastPos) == Types.Vector2):
+            raycastPos = (raycastPos.x, raycastPos.y)
         relative = Types.Vector3(raycastPos[0], raycastPos[1], 0) - self.gameObject.position
         gridCellSize = Types.Vector2(self.gameObject.size.x / self.gridSize.x, self.gameObject.size.y / self.gridSize.y)
         if (relative.x < 0 or relative.y < 0 or relative.x > self.gameObject.size.x or relative.y > self.gameObject.size.y):
@@ -85,7 +108,21 @@ class Grid(): #Change this to the name of your script
             cellPos = Types.Vector2(cell.x * gridCellSize.x, cell.y * gridCellSize.y) + Types.Vector2(self.gameObject.position.x, self.gameObject.position.y)
             return Types.Cell(cellPos, gridCellSize, cell)
 
+    def CellToPosition(self, cellGridPosition: Types.Vector2):
+        if type(cellGridPosition) == tuple:
+            cellGridPosition = Types.Vector2(cellGridPosition[0], cellGridPosition[1])
 
+        gridCellSize = Types.Vector2(self.gameObject.size.x / self.gridSize.x, self.gameObject.size.y / self.gridSize.y)
+        return Types.Vector2(cellGridPosition.x * gridCellSize.x, cellGridPosition.y * gridCellSize.y) + Types.Vector2(self.gameObject.position.x, self.gameObject.position.y)
+
+    def PositionToCell(self, position: Types.Vector2):
+        if (type(position) == Types.Vector3):
+            position = (position.x, position.y)
+        if (type(position) == Types.Vector2):
+            position = (position.x, position.y)
+        relative = Types.Vector3(position[0], position[1], 0) - self.gameObject.position
+        gridCellSize = Types.Vector2(self.gameObject.size.x / self.gridSize.x, self.gameObject.size.y / self.gridSize.y)
+        return Types.Vector2(math.floor(relative.x / gridCellSize.x), math.floor(relative.y / gridCellSize.y))
 
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.

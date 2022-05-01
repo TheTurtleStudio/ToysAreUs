@@ -37,7 +37,7 @@ class InputHandler():
             return pygame.mouse.get_pressed()[2]
         def KEYDOWN_ANY(self):
             return self._testFor(pygame.KEYDOWN)[0]
-        def KEYDOWN(self, key):
+        def KEYDOWN(self, key: pygame.key):
             keys = pygame.key.get_pressed()
             if (keys[key]):
                 return True

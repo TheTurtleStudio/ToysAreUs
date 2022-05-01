@@ -1,10 +1,11 @@
 import pygame
+from MainEngine import Types
 
 
 class Collision():
     def __init__(self, engine):
         self.engine = engine
-        self.CollisionLayersRef = self.engine._Globals.CollisionLayer
+        self.CollisionLayersRef = Types.CollisionLayer
     def RectCollide(self, obj, layers=None):
         if (layers == None):
             layers = [self.CollisionLayersRef.NONE]

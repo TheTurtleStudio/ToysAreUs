@@ -8,7 +8,7 @@ class RemoveTile(): #Change this to the name of your script
 
     def Update(self): #This is called every rendercycle
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
-            if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [self.engine._Globals.CollisionLayer.UI])):
+            if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [Types.CollisionLayer.UI])):
                 if (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != None):
                     self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject.highlightedIndicator.gameObject.renderEnabled = False
                 self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject = None

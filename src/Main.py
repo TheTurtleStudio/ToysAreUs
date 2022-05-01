@@ -30,6 +30,6 @@ class Main():
     objects = SceneObjects.Objects(Globals.engine)
     self._APPENDSCENEOBJECT(objects.get())
 
-
-main = Main()
-Globals.engine.Start(main)
+if __name__ == "__main__":
+  main = Main()
+  Globals.engine.Start(main)

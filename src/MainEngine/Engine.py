@@ -3,14 +3,14 @@ from MainEngine import BMathL
 from MainEngine import Input
 from MainEngine import Types
 from MainEngine import Collision
+from MainEngine import ImageManipulation
+import Main
 
 
 class PregameSettings():
     def __init__(self, engine):
         self.engine = engine
-    def SetScreenDimensions(self, dimensions, gridDimension=None): #We expect dimensions to be a type Types.Vector2 but python is implicit (yucky) so we can't specify this.
-        if (gridDimension == None):
-            gridDimension = dimensions
+    def SetScreenDimensions(self, dimensions: Types.Vector2):
         self.engine._Globals.screen = pygame.display.set_mode(dimensions.whole)
         self.engine._Globals.display = dimensions.whole
     
@@ -19,17 +19,24 @@ class Engine:
         pygame.mixer.pre_init(44100, 16, 2, 4096) #Audio mixer settings
         self._Globals = self.Globals()
         
-    def Start(self, main): #Start the main gameloop
+    def Start(self, main: Main.Main): #Start the main gameloop
         pygame.init() #Initialize pygame duh
         pygame.key.set_repeat(1, 1)
         self._Globals.clock = pygame.time.Clock()
         self.Input = Input.InputHandler(self)
+        self.SheetsManipulation = ImageManipulation.Sheets(self)
         self.Collisions = Collision.Collision(self)
         main._POSTSTART()
         while True:
             self.FrameEvents()
     
-    def FindObject(self, name):
+    def SetUniversal(self, key: str, value):
+        self._Globals.Universals[key] = value
+
+    def GetUniversal(self, key: str):
+        return self._Globals.Universals[key]
+
+    def FindObject(self, name: str):
         for subscriber in self._Globals.sceneObjectsArray:
             if subscriber.gameObject.name == name:
                 return subscriber
@@ -64,6 +71,9 @@ class Engine:
     def GetDeltaTime(self): #Seconds since last frame
         return self._Globals.clock.get_rawtime() / 1000 * self._Globals.timeScale
 
+    def GetTotalTime(self):
+        return pygame.time.get_ticks() / 1000
+
     def CalculateRenderOrder(self):
         array = []
         linkedObjArray = []
@@ -90,19 +100,28 @@ class Engine:
             self._Globals.screen.blit(i.gameObject.sprite.image, (i.gameObject.position.x, i.gameObject.position.y))
         pygame.display.update()
 
-    def AddImageAsset(self, key, value, transparency=True):
+    def AddImageAsset(self, key: str, value: str, transparency=True):
         self._Globals.Assets[key] = pygame.image.load(value).convert_alpha() if transparency else pygame.image.load(value)
 
-    def SetCaption(self, value):
+    def GetImageAsset(self, key: str) -> pygame.Surface:
+        return self._Globals.Assets[key]
+
+    def AddAnimation(self, key: str, sequence: list, framerate: float, loop=True):
+        self._Globals.Animations[key] = Types.Animation(sequence, framerate, loop)
+
+    def GetAnimation(self, key: str) -> Types.Animation:
+        return self._Globals.Animations[key]
+
+    def SetCaption(self, value: str):
         pygame.display.set_caption(value)
 
     class Globals():
         Assets = {}
-        CollisionLayer = Types.CollisionLayer()
-        _display = (512, 512)
-        _gridDimensions = (32,32)
-        clock = None
+        Animations = {}
         sceneObjectsArray = []
+        _display = (512, 512)
+        clock = None
+        
         _screen = pygame.display.set_mode(_display)
         timeScale = 1
         @property
@@ -116,19 +135,4 @@ class Engine:
                 self._display = value.whole
 
             self._screen = pygame.display.set_mode(self._display)
-        @display.getter
-        def display(self):
-            return self._display
-        @property
-        def gridDimensions(self):
-            return self._gridDimensions
-        @gridDimensions.setter
-        def gridDimensions(self, value):
-            if (type(value) == tuple):
-                self._gridDimensions = value
-            else:
-                self._gridDimensions = value.whole
-        @gridDimensions.getter
-        def gridDimensions(self):
-            return self._gridDimensions
             

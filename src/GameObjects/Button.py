@@ -8,7 +8,7 @@ class Button(): #Change this to the name of your script
 
     def Update(self): #This is called every rendercycle
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
-            if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [self.engine._Globals.CollisionLayer.UI])):
+            if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [Types.CollisionLayer.UI])):
                 print(self.assignedNumber)
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
