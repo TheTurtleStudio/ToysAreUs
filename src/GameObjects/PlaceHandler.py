@@ -1,7 +1,9 @@
+import random
 from GameObjects.PlaceWall import PlaceWall
 from GameObjects.PlaceWeapon import PlaceWeapon
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 from GameObjects import Wall
+from GameObjects import GameObject
 import pygame
 
 from MainEngine.Engine import Engine
@@ -22,7 +24,13 @@ class PlaceHandler(): #Change this to the name of your script
                 placeObject = objectType.methodReference.Create(self.engine)
                 placeObject.obj.maxHealth = objectType.health
                 placeObject.obj.health = objectType.health
-                placeObject.gameObject.image = objectType._FieldTexture
+                toPlugin = None 
+                if (type(objectType._FieldTexture) == str):
+                    objectType._FieldTexture
+                else:
+                    (self.engine.GetImageAsset(objectType._FieldTexture)[random.randint(0, len(self.engine.GetImageAsset(objectType._FieldTexture)) - 1)])
+                print(type(toPlugin))
+                placeObject.gameObject.image = toPlugin
                 placeObject.obj.cell = cell
                 self.engine.CreateNewObject(placeObject)
                 placeObject.gameObject.size = cell.size
@@ -56,9 +64,10 @@ class PlaceHandler(): #Change this to the name of your script
             self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell + Types.Vector2(-1, 0)).rightCell_OL = cell
         else:
             cell.leftCell_OL = None
-    def HANDLEDEMOPLACEMENT(self, cell, demoObj):
+    def HANDLEDEMOPLACEMENT(self, cell, demoObj: GameObject.Create):
         if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell)):
             if (self.selectedPlaceObject != None):
+                demoObj.gameObject.transparency = 128
                 demoObj.gameObject.renderEnabled = True
                 demoObj.gameObject.color = (255,255,255)
                 demoObj.gameObject.size = cell.size

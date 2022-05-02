@@ -125,8 +125,10 @@ class GameObject():
         self.position = Vector3() #Default is (0,0,0)
         self._size = Vector2(1,1)
         self._rotation = 0
+        self._transparency = 0
         self.color = (255,255,255)
         self.name = "New GameObject"
+        
         
         self._image = None
         self._textFont = pygame.font.Font("Assets\\gameFont.ttf",  30)
@@ -136,7 +138,15 @@ class GameObject():
         self.isImage = False
         self.collisionLayer = CollisionLayer.GENERIC_GAMEOBJECT
         self.renderEnabled = True
-        
+    
+
+    @property
+    def transparency(self):
+        return self._transparency
+    @transparency.setter
+    def transparency(self, value):
+        self._transparency = value
+        self._syncOriginalImage()
     @property
     def fontSize(self):
         return self._fontSize
@@ -171,10 +181,10 @@ class GameObject():
     def image(self):
         return self._image
     @image.setter
-    def image(self, value: str):
+    def image(self, value: str or pygame.Surface):
         if (value is None):
             self._image = None
-            self.sprite.ORIGINALIMAGE = pygame.Surface(self._size[0], self._size[1])
+            self.sprite.ORIGINALIMAGE = pygame.Surface(self._size.x, self._size.y)
             self._syncOriginalImage()
             self.isImage = False
             self.position = self._position
@@ -268,7 +278,12 @@ class GameObject():
             self.sprite.image.blit(self._textRender, self._textRender.get_rect(center=(self.size.x/2, self._textRender.get_rect().height/2)))
         except Exception:
             pass
+        
+        
         self.sprite.image = pygame.transform.rotate(self.sprite.image, self._rotation)
+        
+        
+        
     def Destroy(self, engine):
         try:
             engine.Globals.sceneObjectsArray.remove(self)
@@ -372,10 +387,14 @@ class WallTypes():
         methodReference = Wall
     class Domino(_GENERIC): #Weak
         health = 50
+        _FieldTexture = "TRASH_CLOSED"
+        _UITexture = "TRASH_OPEN"
     class LincolnLog(_GENERIC): #Medium
         health = 100
+        _FieldTexture = "LLW"
     class Lego(_GENERIC): #Strong
         health = 150
+        _FieldTexture = "LEGOWALLS_MULTI"
 class WeaponTypes():
     class _GENERIC(PlacementType):
         methodReference = Weapon
@@ -399,9 +418,8 @@ class EnemyTypes():
         health = 1
         damage = 1
         speed = 100
-        _WalkingAnimation = "NOTEXTURE"
-        _IdleAnimation = "NOTEXTURE"
-        _AttackAnimation = "NOTEXTURE"
+        _WalkingAnimation = ["NOTEXTURE"]
+        _AttackAnimation = ["NOTEXTURE"]
         _AttackAnimationAttackFrame = 0
     class ToyCar(_GENERIC): #Fast and weak
         pass
@@ -409,8 +427,8 @@ class EnemyTypes():
         pass
     class TeddyBear(_GENERIC): #Slow and strong
         damage = 50
-        speed = 150
-        _WalkingAnimation = "WALK_TEMP"
+        speed = 60
+        _WalkingAnimation = ["TEDDYBEAR1_WALK", "TEDDYBEAR2_WALK", "TEDDYBEAR3_WALK"]
         _AttackAnimation = "ATTACK_TEMP"
         _AttackAnimationAttackFrame = 2
     

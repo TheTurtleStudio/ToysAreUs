@@ -23,11 +23,17 @@ class Objects():
         engine.AddImageAsset("TRASH_OPEN", "Assets\\trashcanOpen.png")
         engine.AddImageAsset("SELECT_FRAME", "Assets\\selectedFrame.png")
         engine.AddImageAsset("FLOOR", "Assets\\floor.png")
+        engine.AddImageAsset("RUG", "Assets\\rug.png")
+        engine.AddImageAsset("LLW", "Assets\\LLW.png")
+        engine.AddImageAsset("_PLUGWALK", "Assets\\enemyWalk.png")
+        engine.AddImageAsset("LEGOWALLS_MULTI", ImageManipulation.Sheets.Disect(engine, "Assets\\legoWalls.png", (32, 32), 6))
         
 
-        engine.AddAnimation("ATTACK_TEMP", ImageManipulation.Sheets.Disect("Assets\\attackingAnimation.png", (32, 32), 4), framerate=2, loop=False) #Spritesheet
+        engine.AddAnimation("ATTACK_TEMP", ImageManipulation.Sheets.Disect(engine, "Assets\\attackingAnimation.png", (32, 32), 4), framerate=2, loop=False) #Spritesheet
 
-        engine.AddAnimation("WALK_TEMP", ImageManipulation.Sheets.Disect("Assets\\movingAnimation.png", (32, 32), 4), framerate=4, loop=True)
+        engine.AddAnimation("TEDDYBEAR1_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 6, 12), framerate=5, loop=True)
+        engine.AddAnimation("TEDDYBEAR2_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 6, 18), framerate=5, loop=True)
+        engine.AddAnimation("TEDDYBEAR3_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 6, 24), framerate=5, loop=True)
 
         
 
@@ -39,9 +45,9 @@ class Objects():
         BackGround.gameObject.name = "BackGround"
         self.ObjectList.append(BackGround)
         BaseWall = GameObject.Create(engine)
-        BaseWall.gameObject.size = (75, engine._Globals._display[1]-140)
+        BaseWall.gameObject.size = (75, engine._Globals._display[1]-120)
         BaseWall.gameObject.color = (50,50,50)
-        BaseWall.gameObject.position = Types.Vector3(engine._Globals._display[0]-75, 120, 1)
+        BaseWall.gameObject.position = Types.Vector3(engine._Globals._display[0]-75, 110, 1)
         BaseWall.gameObject.name = "BaseWall"
         
         
@@ -151,8 +157,9 @@ class Objects():
         self.ObjectList.append(DestroyWallButton)
         BoardGrid = Grid.Create(engine)
         BoardGrid.gameObject.name = 'GRID'
-        BoardGrid.gameObject.size = ((engine._Globals._display[0]-BaseWall.gameObject.size.x) * 0.7, BaseWall.gameObject.size.y-10)
-        BoardGrid.gameObject.position = ((engine._Globals._display[0]-BaseWall.gameObject.size.x) * 0.3,BaseWall.gameObject.position.y+5,8192)
+        BoardGrid.gameObject.size = (1088, 768)
+        BoardGrid.gameObject.image = "RUG"
+        BoardGrid.gameObject.position = (BaseWall.gameObject.position.x - BoardGrid.gameObject.size.x, BaseWall.gameObject.position.y + ((BaseWall.gameObject.size.y - BoardGrid.gameObject.size.y) / 2)    ,8192)
         BoardGrid.gameObject.color = (96, 171, 92)
         self.ObjectList.append(BoardGrid)
         PlaceObjectHandler = PlaceHandler.Create(engine)

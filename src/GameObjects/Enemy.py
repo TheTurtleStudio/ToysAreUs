@@ -1,4 +1,3 @@
-from sympy import true
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 from GameObjects import Grid, Healthbar, Wall
 from GameObjects import GameObject
@@ -16,6 +15,7 @@ class Enemy(): #Change this to the name of your script
         self._oldCurrentCell2: Types.Cell = None
         self.Animator = Types.Animator(self.gameObject)
         self.enemyType: Types.EnemyTypes._GENERIC = Types.EnemyTypes._GENERIC
+        self.animationVariationIndex = 0
         self._hasAttackedThisCycle = False
         self._attackAnimationPlaying = False
     def Start(self):
@@ -24,11 +24,12 @@ class Enemy(): #Change this to the name of your script
         self.gameObject.position = Types.Vector3(-self.gameObject.size.x - 1, yPos, 500000)
         self.gameObject.image = "NOTEXTURE"
         self._destination = None
+        self.animationVariationIndex = random.randint(0, len(self.enemyType._WalkingAnimation) - 1)
         
 
     def Update(self):
         if (self._destination != None):
-            self.Animator.AnimationStep(self.enemyType._WalkingAnimation)
+            self.Animator.AnimationStep(self.enemyType._WalkingAnimation[self.animationVariationIndex])
             currentCell: Types.Cell = self.gridAccessor.obj.GetGridCellFULL(Types.Vector2(self.gameObject.position.x + (self.gameObject.size.x / 2), self.gameObject.position.y + (self.gameObject.size.y / 2)))
             yCellOffset = -(currentCell.cell.y - self._destination.y) #-1=up, 1=down
             yChange = ((1 if (yCellOffset > 0) else -1) * self.enemyType.speed * self.engine.GetDeltaTime())
@@ -55,7 +56,7 @@ class Enemy(): #Change this to the name of your script
             tempPos = Types.Vector2(self.gameObject.position.x + (self.gameObject.size.x / 2), self.gameObject.position.y + (self.gameObject.size.y / 2))
             if self.gridAccessor.obj.gridMatrix.CellExistsCheck(self.gridAccessor.obj.PositionToCell(tempPos)):
                 currentCell = self.gridAccessor.obj.GetGridCellFULL(tempPos)
-            tempPos = Types.Vector2(self.gameObject.position.x + self.gameObject.size.x + self.enemyType.speed * self.engine.GetDeltaTime(), self.gameObject.position.y + (self.gameObject.size.y / 2))
+            tempPos = Types.Vector2(self.gameObject.position.x + self.gameObject.size.x + (self.enemyType.speed * self.engine.GetDeltaTime()), self.gameObject.position.y + (self.gameObject.size.y / 2))
             if self.gridAccessor.obj.gridMatrix.CellExistsCheck(self.gridAccessor.obj.PositionToCell(tempPos)):
                 futureCell = self.gridAccessor.obj.GetGridCellFULL(tempPos)
             
@@ -72,7 +73,7 @@ class Enemy(): #Change this to the name of your script
                         self._attackAnimationPlaying = not self.Animator.finished
                     else:
                         self.gameObject.position += Types.Vector3(self.enemyType.speed * self.engine.GetDeltaTime(), 0, 0)
-                        self.Animator.AnimationStep(self.enemyType._WalkingAnimation)
+                        self.Animator.AnimationStep(self.enemyType._WalkingAnimation[self.animationVariationIndex])
                 self.UpdateLink()
                 
             else: #If there's something in the way (a wall)
@@ -116,7 +117,6 @@ class Enemy(): #Change this to the name of your script
             self._attackAnimationPlaying = not self.Animator.finished
         else:
             self.Animator.ResetAnimationState() #Play idle here instead
-            self.Animator.AnimationStep(self.enemyType._IdleAnimation)
 
     def HandleWallAttack(self, wall: Types.Cell):
         self.Animator.AnimationStep(self.enemyType._AttackAnimation)

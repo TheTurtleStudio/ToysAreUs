@@ -42,7 +42,7 @@ class Engine:
         return None
 
     def FrameEvents(self):
-        self._Globals.clock.tick()
+        self._Globals.clock.tick(60)
         self._PostEventsToInput()
         self._UpdateSubscribers() #Tell every GameObject to call their Update function.
         if (self.Input.TestFor.QUIT()):
@@ -68,7 +68,7 @@ class Engine:
                 pass
 
     def GetDeltaTime(self): #Seconds since last frame
-        return self._Globals.clock.get_rawtime() / 1000 * self._Globals.timeScale
+        return ((pygame.time.get_ticks() - self._Globals.lastRenderTime) / 1000) * self._Globals.timeScale
 
     def GetTotalTime(self):
         return pygame.time.get_ticks() / 1000
@@ -98,18 +98,30 @@ class Engine:
         for i in array:
             self._Globals.screen.blit(i.gameObject.sprite.image, (i.gameObject.position.x, i.gameObject.position.y))
         pygame.display.update()
+        self._Globals.lastRenderTime = pygame.time.get_ticks()
 
-    def AddImageAsset(self, key: str, value: str, transparency=True):
-        self._Globals.Assets[key] = pygame.image.load(value).convert_alpha() if transparency else pygame.image.load(value)
+    def AddImageAsset(self, key: str, value: str or list, transparency=True):
+        if type(value) == str:
+            self._Globals.Assets[key] = pygame.image.load(value).convert_alpha() if transparency else pygame.image.load(value)
+        elif type(value == list):
+            self._Globals.Assets[key] = [(img.convert_alpha() if transparency else img) for img in value]
+        else:
+            print("Can only import lists of paths or paths.")
 
-    def GetImageAsset(self, key: str) -> pygame.Surface:
-        return self._Globals.Assets[key]
+    def GetImageAsset(self, key: str or pygame.Surface) -> pygame.Surface:
+        try:
+            return self._Globals.Assets[key]
+        except KeyError:
+            return None
 
     def AddAnimation(self, key: str, sequence: list, framerate: float, loop=True):
         self._Globals.Animations[key] = Types.Animation(sequence, framerate, loop)
 
     def GetAnimation(self, key: str) -> Types.Animation:
-        return self._Globals.Animations[key]
+        try:
+            return self._Globals.Animations[key]
+        except KeyError:
+            return None
 
     def SetCaption(self, value: str):
         pygame.display.set_caption(value)
@@ -120,7 +132,8 @@ class Engine:
         sceneObjectsArray = []
         _display = (512, 512)
         clock = None
-        
+        lastRenderTime = pygame.time.get_ticks()
+
         _screen = pygame.display.set_mode(_display)
         timeScale = 1
         @property
