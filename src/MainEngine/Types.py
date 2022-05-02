@@ -106,10 +106,9 @@ class Cell():
     def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(-1,-1), _objectLink=None, _enemyLink=None):
         self.position = _position
         self.size = _size
-        #
         self._center = None
         self.cell = _cell
-        self.objectLink = _objectLink
+        self.objectLink: Wall.Create = _objectLink
         self.enemyLink = _enemyLink
         self.aboveCell_OL = None
         self.belowCell_OL = None
@@ -119,14 +118,16 @@ class Cell():
     def center(self):
         self._center = Vector2(self.position.x + (self.size.x / 2), self.position.y + (self.size.y / 2))
         return self._center
-class GameObject:
-    def __init__(self, master): #Can optimize Update function to only call explicitly here
+class GameObject():
+    def __init__(self, master):
         self._master = master
         self.sprite = Sprite()
         self.position = Vector3() #Default is (0,0,0)
         self._size = Vector2(1,1)
+        self._rotation = 0
         self.color = (255,255,255)
         self.name = "New GameObject"
+        
         self._image = None
         self._textFont = pygame.font.Font("Assets\\gameFont.ttf",  30)
         self._text = None
@@ -135,6 +136,7 @@ class GameObject:
         self.isImage = False
         self.collisionLayer = CollisionLayer.GENERIC_GAMEOBJECT
         self.renderEnabled = True
+        
     @property
     def fontSize(self):
         return self._fontSize
@@ -143,6 +145,7 @@ class GameObject:
         if (type(value) == int):
             self._textFont = pygame.font.Font("Assets\\gameFont.ttf",  value)
             self.text = self._text
+            self._fontSize = value
     @property
     def text(self):
         return self._text
@@ -155,6 +158,14 @@ class GameObject:
         else:
             self._text = None
             self._textRender = None
+            self._syncOriginalImage()
+    @property
+    def rotation(self):
+        return self._rotation
+    @rotation.setter
+    def rotation(self, value):
+        if (self._rotation != value):
+            self._rotation = value
             self._syncOriginalImage()
     @property
     def image(self):
@@ -257,6 +268,7 @@ class GameObject:
             self.sprite.image.blit(self._textRender, self._textRender.get_rect(center=(self.size.x/2, self._textRender.get_rect().height/2)))
         except Exception:
             pass
+        self.sprite.image = pygame.transform.rotate(self.sprite.image, self._rotation)
     def Destroy(self, engine):
         try:
             engine.Globals.sceneObjectsArray.remove(self)
@@ -290,7 +302,7 @@ class Animator:
         self.finished = False
 
     def ResetAnimationState(self): #Makes it so you can play two non-loop animations back to back.
-        self.currentlyPlaying = None
+        self.currentlyPlaying: Animation = None
         self.finished = True
 
     def AnimationStep(self, name: str, restart=False): #Continues the animation cycle, doing nothing if a non-looped animation has completed
@@ -315,14 +327,14 @@ class Animator:
             return
         
         if self.currentlyPlaying.framerate <= 0: #Fix invalid framerame to be 0
-            self.currentFrame = 0
+            self.currentlyPlaying.framerate = 0
         else:
             calculatedFrame = self._CalculateFrame()
             self.currentFrame = calculatedFrame % len(self.currentlyPlaying.collection) #Set the current frame according to time. If overflow, restart from beginning of sequence.
-            if (calculatedFrame != self.currentFrame):
+            if (calculatedFrame != self.currentFrame) or (len(self.currentlyPlaying.collection) <= 1):
                 self.firstIteration = False
                 toReset = True
-        if (not self.firstIteration and not self.currentlyPlaying.loop): 
+        if (not self.firstIteration and not self.currentlyPlaying.loop) or (self.currentlyPlaying.framerate == 0): 
             self.effector.image = self.currentlyPlaying.collection[-1]
             self.finished = True
             return
@@ -347,10 +359,58 @@ class CollisionLayer():
     WALL = "WALL"
     GENERIC_GAMEOBJECT = "GENERIC_GAMEOBJECT"
     UI = "UI"
+
+class PlacementType():
+    health = 1
+    methodReference = None
+    _UITexture = "NOTEXTURE"
+    _FieldTexture = "NOTEXTURE"
+from GameObjects import Wall
+from GameObjects import Weapon
 class WallTypes():
-    class Domino():
+    class _GENERIC(PlacementType):
+        methodReference = Wall
+    class Domino(_GENERIC): #Weak
+        health = 50
+    class LincolnLog(_GENERIC): #Medium
         health = 100
-    class LincolnLog():
-        health = 100
-    class Lego():
-        health = 100
+    class Lego(_GENERIC): #Strong
+        health = 150
+class WeaponTypes():
+    class _GENERIC(PlacementType):
+        methodReference = Weapon
+        damage = 1
+        canPlace_ROOT = True
+        canPlace_ABOVE = False
+        canPlace_BELOW = False
+        canPlace_LEFT = False
+        canPlace_RIGHT = False
+    class NerfGun(_GENERIC): #Long range
+        pass
+    class ToothpickTrap(_GENERIC): #Short range
+        pass
+    class BottleRocket(_GENERIC): #Overshot mortar
+        pass
+    class BarrelOfMonkeys(_GENERIC): #Trap
+        pass
+
+class EnemyTypes():
+    class _GENERIC():
+        health = 1
+        damage = 1
+        speed = 100
+        _WalkingAnimation = "NOTEXTURE"
+        _IdleAnimation = "NOTEXTURE"
+        _AttackAnimation = "NOTEXTURE"
+        _AttackAnimationAttackFrame = 0
+    class ToyCar(_GENERIC): #Fast and weak
+        pass
+    class ToySoldier(_GENERIC): #Basic, medium speed and medium strength
+        pass
+    class TeddyBear(_GENERIC): #Slow and strong
+        damage = 50
+        speed = 150
+        _WalkingAnimation = "WALK_TEMP"
+        _AttackAnimation = "ATTACK_TEMP"
+        _AttackAnimationAttackFrame = 2
+    

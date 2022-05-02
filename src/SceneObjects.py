@@ -1,4 +1,4 @@
-from GameObjects import GameObject
+from GameObjects import GameObject, PlaceWeapon
 from GameObjects import Button
 from GameObjects import Grid
 from GameObjects import PlaceWall
@@ -14,19 +14,25 @@ import pygame, random
 
 class Objects():
     def __init__(self, engine: Engine):
+        self.ObjectList = []
+        engine.AddImageAsset("NOTEXTURE", "_ROOT\\NOTEXTURE.png") #WILL POSSIBLY MOVE TO DIFFERENT FILE LATER, AS OF RIGHT NOW DO NOT REMOVE THIS
+        engine.AddAnimation("NOTEXTURE", ["NOTEXTURE"], framerate=1, loop=False) #WILL POSSIBLY MOVE TO DIFFERENT FILE LATER, AS OF RIGHT NOW DO NOT REMOVE THIS
+        
+
         engine.AddImageAsset("TRASH_CLOSED", "Assets\\trashcanClosed.png")
         engine.AddImageAsset("TRASH_OPEN", "Assets\\trashcanOpen.png")
         engine.AddImageAsset("SELECT_FRAME", "Assets\\selectedFrame.png")
         engine.AddImageAsset("FLOOR", "Assets\\floor.png")
+        
 
-        #engine.AddAnimation("temp", ImageManipulation.Sheets.Disect("Assets\\canDRAG.png", (85, 85), 9), framerate=3, loop=False) #Spritesheet
+        engine.AddAnimation("ATTACK_TEMP", ImageManipulation.Sheets.Disect("Assets\\attackingAnimation.png", (32, 32), 4), framerate=2, loop=False) #Spritesheet
 
-        #engine.AddAnimation("temp", ["TRASH_OPEN", "TRASH_CLOSED"], framerate=3, loop=False)
-
+        engine.AddAnimation("WALK_TEMP", ImageManipulation.Sheets.Disect("Assets\\movingAnimation.png", (32, 32), 4), framerate=4, loop=True)
 
         
 
-        self.ObjectList = []
+
+        
         BackGround = GameObject.Create(engine)
         BackGround.gameObject.size = engine._Globals._display
         BackGround.gameObject.image = "FLOOR"
@@ -82,6 +88,8 @@ class Objects():
 
         self.ObjectList.append(HealthTitle)
         WallsTitle = GameObject.Create(engine)
+        walls = [Types.WallTypes.Domino, Types.WallTypes.LincolnLog, Types.WallTypes.Lego]
+        weapons = [Types.WeaponTypes.ToothpickTrap, Types.WeaponTypes.NerfGun, Types.WeaponTypes.BottleRocket, Types.WeaponTypes.BarrelOfMonkeys]
         for buttonNum in range(8): #Red ("button"), Gray ("Garbage"), Black ("Nothing/Space") Green ("Start Button") Purple ("Money text and stuff") Yellow ("HealthBar")
             if buttonNum < 3:
                 WallButton = PlaceWall.Create(engine)
@@ -96,6 +104,8 @@ class Objects():
                 WallButtonHighlight.gameObject.renderEnabled = False
                 WallButton.obj.highlightedIndicator = WallButtonHighlight
                 WallButtonHighlight.gameObject.image = "SELECT_FRAME"
+                WallButton.obj.objectType = walls[buttonNum]
+                WallButton.gameObject.image = walls[buttonNum]._UITexture
                 if buttonNum == 1:
                     WallsTitle.gameObject.size = (60, 60)
                     WallsTitle.gameObject.position = WallButton.gameObject.position + Types.Vector3(0,-WallButton.gameObject.position.y,-5)
@@ -114,7 +124,7 @@ class Objects():
                 DestroyWallButton.gameObject.image = "TRASH_CLOSED"
                 DestroyWallButton.gameObject.name = "TRASHCANBUTTON"
             if buttonNum >= 4:
-                WeaponsButton = PlaceWall.Create(engine)
+                WeaponsButton: PlaceWeapon.Create = PlaceWeapon.Create(engine)
                 WeaponsButtonHighlight = GameObject.Create(engine)
                 WeaponsButton.gameObject.size = (60, 60)
                 WeaponsButtonHighlight.gameObject.size = WeaponsButton.gameObject.size + Types.Vector2(4, 4)
@@ -126,6 +136,8 @@ class Objects():
                 WeaponsButtonHighlight.gameObject.renderEnabled = False
                 WeaponsButton.obj.highlightedIndicator = WeaponsButtonHighlight
                 WeaponsButtonHighlight.gameObject.image = "SELECT_FRAME"
+                WeaponsButton.obj.objectType = weapons[buttonNum - 4]
+                WeaponsButton.gameObject.image = weapons[buttonNum - 4]._UITexture
                 if buttonNum == 5:
                     WeaponsTitle = GameObject.Create(engine)
                     WeaponsTitle.gameObject.size = (100, 60)
@@ -146,12 +158,17 @@ class Objects():
         PlaceObjectHandler = PlaceHandler.Create(engine)
         PlaceObjectHandler.gameObject.name = "PLACEHANDLER"
         self.ObjectList.append(PlaceObjectHandler)
+        
+
+
+        #CREATE ENEMY
         enemy = Enemy.Create(engine)
+        enemy.obj.enemyType = Types.EnemyTypes.TeddyBear
         enemy.gameObject.size = Types.Vector2(50,50)
         enemy.gameObject.position = Types.Vector3(0,320,500000)
-        
+        #enemy.gameObject.rotation = 0
         self.ObjectList.append(enemy)
-
+        #END CREATE ENEMY
     def get(self):
         return tuple(self.ObjectList)
 class Injections():

@@ -1,11 +1,16 @@
+from GameObjects import GameObject
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 import pygame
-class PlaceWall(): #Change this to the name of your script
-    def __init__(self, engine):
+from MainEngine.Engine import Engine
+
+
+class PlaceWeapon(): #Change this to the name of your script
+    def __init__(self, engine: Engine):
         self.gameObject = Types.GameObject(engine)
         self.engine = engine
         self.creator = None
-        self.highlightedIndicator = None
+        self.highlightedIndicator: GameObject.Create = None
+        self.objectType: Types.WeaponTypes._GENERIC = None
 
     def Update(self): #This is called every rendercycle
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
@@ -23,8 +28,8 @@ class PlaceWall(): #Change this to the name of your script
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():
     def __init__(self, engine):
-        self.obj = PlaceWall(engine) #Replace Template with the name of your class
+        self.obj: PlaceWeapon = PlaceWeapon(engine) #Replace Template with the name of your class
         self.obj.creator = self
     @property
-    def gameObject(self):
+    def gameObject(self) -> Types.GameObject:
         return self.obj.gameObject

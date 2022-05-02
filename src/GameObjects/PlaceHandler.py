@@ -1,29 +1,37 @@
+from GameObjects.PlaceWall import PlaceWall
+from GameObjects.PlaceWeapon import PlaceWeapon
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 from GameObjects import Wall
 import pygame
-class PlaceWall(): #Change this to the name of your script
+
+from MainEngine.Engine import Engine
+class PlaceHandler(): #Change this to the name of your script
     def __init__(self, engine):
         self.gameObject = Types.GameObject(engine)
-        self.engine = engine
+        self.engine: Engine = engine
         self.creator = None
         self.selectedPlaceObject = None
         self.removingTile = False
         self.gameObject.renderEnabled = False
 
     def HANDLEPLACEMENT(self, cell):
-        if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell)):
-            if (self.selectedPlaceObject != None):
-                if self.CHECKIFCANPLACE(cell):
-                    wall = Wall.Create(self.engine)
-                    wall.obj.cell = cell
-                    self.engine.CreateNewObject(wall)
-                    wall.gameObject.size = cell.size
-                    pos = cell.position
-                    wall.gameObject.position = Types.Vector3(pos.x, pos.y, 40000)
-                    cell.objectLink = wall
-                    self.UpdateLinkedMatrix(cell)
+        if (self.selectedPlaceObject != None): #Kinda far in the process but check if we even are placing anything
+            if self.CHECKIFCANPLACE(cell): #Check if we can place the tile
+                cell: Types.Cell = cell
+                objectType: Types.PlacementType = self.selectedPlaceObject.objectType
+                placeObject = objectType.methodReference.Create(self.engine)
+                placeObject.obj.maxHealth = objectType.health
+                placeObject.obj.health = objectType.health
+                placeObject.gameObject.image = objectType._FieldTexture
+                placeObject.obj.cell = cell
+                self.engine.CreateNewObject(placeObject)
+                placeObject.gameObject.size = cell.size
+                pos = cell.position
+                placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40000)
+                cell.objectLink = placeObject
+                self.UpdateLinkedMatrix(cell)
                     
-                    self.engine.FindObject("GRID").obj.gridMatrix.SetCell(cell.cell, cell)
+                self.engine.FindObject("GRID").obj.gridMatrix.SetCell(cell.cell, cell)
     def UpdateLinkedMatrix(self, cell):
         if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell + Types.Vector2(0, -1))):
             cell.aboveCell_OL = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell + Types.Vector2(0, -1))
@@ -54,6 +62,7 @@ class PlaceWall(): #Change this to the name of your script
                 demoObj.gameObject.renderEnabled = True
                 demoObj.gameObject.color = (255,255,255)
                 demoObj.gameObject.size = cell.size
+                #print(cell.size, demoObj.gameObject.size)
                 pos = cell.position
                 demoObj.gameObject.position = Types.Vector3(pos.x, pos.y, 400000)
                 if self.CHECKIFCANPLACE(cell):
@@ -64,22 +73,32 @@ class PlaceWall(): #Change this to the name of your script
     def CHECKIFCANPLACE(self, cell):
         condition1 = cell.objectLink == None
         condition2 = False
-        cellOffsets = [Types.Vector2(0,1), Types.Vector2(0,-1), Types.Vector2(1,0), Types.Vector2(-1,0)]
-        for i in range(4):
-            if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell + cellOffsets[i])):
-                current = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell + cellOffsets[i])
-                if current.objectLink != None:
-                    condition2 = True
-            else:
-                if (i == 2): #If neighboring the main wall
-                    condition2 = True
+        if (type(self.selectedPlaceObject) == PlaceWall):
+            cellOffsets = [Types.Vector2(0,1), Types.Vector2(0,-1), Types.Vector2(1,0), Types.Vector2(-1,0)]
+            for i in range(4):
+                if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell + cellOffsets[i])):
+                    current = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell + cellOffsets[i])
+                    if current.objectLink != None:
+                        condition2 = True
+                else:
+                    if (i == 2): #If neighboring the main wall
+                        condition2 = True
+            #print(cell.objectLink)
+            #if (cell.objectLink):
+             #   print(cell.objectLink.gameObject.position.whole)
+             #   print(cell.objectLink.gameObject.size.whole)
+            #print()
+        elif (type(self.selectedPlaceObject) == PlaceWeapon):
+            pass #We'll want to do something here to determine weapon placemeant but for right now we don't care! WOOOOO!
+
+
         condition3 = cell.enemyLink == None
         return (condition1 and condition2 and condition3)
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():
     def __init__(self, engine):
-        self.obj = PlaceWall(engine) #Replace Template with the name of your class
+        self.obj: PlaceHandler = PlaceHandler(engine) #Replace Template with the name of your class
         self.obj.creator = self
     @property
     def gameObject(self):
