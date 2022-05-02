@@ -26,14 +26,23 @@ class Objects():
         engine.AddImageAsset("RUG", "Assets\\rug.png")
         engine.AddImageAsset("LLW", "Assets\\LLW.png")
         engine.AddImageAsset("_PLUGWALK", "Assets\\enemyWalk.png")
-        engine.AddImageAsset("LEGOWALLS_MULTI", ImageManipulation.Sheets.Disect(engine, "Assets\\legoWalls.png", (32, 32), 6))
+        engine.AddImageAsset("LEGOWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\legoWalls.png", (32, 32), 6))
+        engine.AddImageAsset("LEGOWALLS_UI", "Assets\\legoWallsUI.png")
         
 
         engine.AddAnimation("ATTACK_TEMP", ImageManipulation.Sheets.Disect(engine, "Assets\\attackingAnimation.png", (32, 32), 4), framerate=2, loop=False) #Spritesheet
 
+        engine.AddAnimation("SOLDIER1_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4), framerate=5, loop=True)
+        engine.AddAnimation("SOLDIER2_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 4), framerate=5, loop=True)
+        engine.AddAnimation("SOLDIER3_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 8), framerate=5, loop=True)
         engine.AddAnimation("TEDDYBEAR1_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 6, 12), framerate=5, loop=True)
         engine.AddAnimation("TEDDYBEAR2_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 6, 18), framerate=5, loop=True)
         engine.AddAnimation("TEDDYBEAR3_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 6, 24), framerate=5, loop=True)
+        engine.AddAnimation("CAR1_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 30), framerate=5, loop=True)
+        engine.AddAnimation("CAR2_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 34), framerate=5, loop=True)
+        engine.AddAnimation("CAR3_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 38), framerate=5, loop=True)
+
+        
 
         
 
@@ -169,12 +178,13 @@ class Objects():
 
 
         #CREATE ENEMY
-        enemy = Enemy.Create(engine)
-        enemy.obj.enemyType = Types.EnemyTypes.TeddyBear
-        enemy.gameObject.size = Types.Vector2(50,50)
-        enemy.gameObject.position = Types.Vector3(0,320,500000)
-        #enemy.gameObject.rotation = 0
-        self.ObjectList.append(enemy)
+        for i in range(15):
+            enemy = Enemy.Create(engine)
+            enemy.obj.enemyType = random.choice([Types.EnemyTypes.TeddyBear, Types.EnemyTypes.ToyCar, Types.EnemyTypes.ToySoldier])
+            enemy.gameObject.size = Types.Vector2(50,50)
+            enemy.gameObject.position = Types.Vector3(0,320,500000)
+            #enemy.gameObject.rotation = 0
+            self.ObjectList.append(enemy)
         #END CREATE ENEMY
     def get(self):
         return tuple(self.ObjectList)

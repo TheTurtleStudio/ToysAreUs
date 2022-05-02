@@ -24,12 +24,14 @@ class PlaceHandler(): #Change this to the name of your script
                 placeObject = objectType.methodReference.Create(self.engine)
                 placeObject.obj.maxHealth = objectType.health
                 placeObject.obj.health = objectType.health
+                images = self.engine.GetImageAsset(objectType._FieldTexture)
                 toPlugin = None 
-                if (type(objectType._FieldTexture) == str):
-                    objectType._FieldTexture
+                if (type(images) == pygame.Surface):
+                    toPlugin = objectType._FieldTexture
                 else:
-                    (self.engine.GetImageAsset(objectType._FieldTexture)[random.randint(0, len(self.engine.GetImageAsset(objectType._FieldTexture)) - 1)])
+                    toPlugin = (self.engine.GetImageAsset(objectType._FieldTexture)[random.randint(0, len(self.engine.GetImageAsset(objectType._FieldTexture)) - 1)])
                 print(type(toPlugin))
+                print(toPlugin)
                 placeObject.gameObject.image = toPlugin
                 placeObject.obj.cell = cell
                 self.engine.CreateNewObject(placeObject)

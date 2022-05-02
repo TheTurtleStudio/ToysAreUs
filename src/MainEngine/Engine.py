@@ -42,7 +42,7 @@ class Engine:
         return None
 
     def FrameEvents(self):
-        self._Globals.clock.tick(60)
+        self._Globals.clock.tick()
         self._PostEventsToInput()
         self._UpdateSubscribers() #Tell every GameObject to call their Update function.
         if (self.Input.TestFor.QUIT()):
@@ -68,7 +68,7 @@ class Engine:
                 pass
 
     def GetDeltaTime(self): #Seconds since last frame
-        return ((pygame.time.get_ticks() - self._Globals.lastRenderTime) / 1000) * self._Globals.timeScale
+        return ((self._Globals.lastRenderTime - self._Globals.currentRenderTime) / 1000) * self._Globals.timeScale
 
     def GetTotalTime(self):
         return pygame.time.get_ticks() / 1000
@@ -90,6 +90,7 @@ class Engine:
         return None
 
     def Render(self): #Note that the render function has literally no culling. Everything in the scene will be rendered no matter if it's even on the screen or not.
+        self._Globals.currentRenderTime = pygame.time.get_ticks()
         self._Globals._screen.fill((0,0,0)) #Background, can remove.
         renderOrderReturnVal = self.CalculateRenderOrder()
         if (renderOrderReturnVal == None):
@@ -133,6 +134,7 @@ class Engine:
         _display = (512, 512)
         clock = None
         lastRenderTime = pygame.time.get_ticks()
+        currentRenderTime = pygame.time.get_ticks()
 
         _screen = pygame.display.set_mode(_display)
         timeScale = 1
