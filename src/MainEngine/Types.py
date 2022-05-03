@@ -386,10 +386,11 @@ from GameObjects import Weapon
 class WallTypes():
     class _GENERIC(PlacementType):
         methodReference = Wall
-    class Domino(_GENERIC): #Weak
+    class Dice(_GENERIC): #Weak
         health = 50
-        _FieldTexture = "TRASH_CLOSED"
-        _UITexture = "TRASH_OPEN"
+        _UITexture = "DICEWALLS_UI"
+        _GRAYTexture = "DICEWALLS_UI_GRAYSCALE"
+        _FieldTexture = "DICEWALLS"
     class LincolnLog(_GENERIC): #Medium
         health = 100
         _FieldTexture = "LLW"

@@ -27,6 +27,10 @@ class Objects():
         engine.AddImageAsset("RUG", "Assets\\Common\\rug.png")
         engine.AddImageAsset("LLW", "Assets\\Lincoln\\LLW.png")
         engine.AddImageAsset("_PLUGWALK", "Assets\\Common\\enemyWalk.png")
+
+        engine.AddImageAsset("DICEWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Dice\\diceWalls.png", (32, 32), 6))
+        engine.AddImageAsset("DICEWALLS_UI", "Assets\\Dice\\diceWallsUI.png")
+        engine.AddImageAsset("DICEWALLS_UI_GRAYSCALE", "Assets\\Dice\\diceWallsUIGRAYSCALE.png")
         engine.AddImageAsset("LEGOWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Lego\\legoWalls.png", (32, 32), 6))
         engine.AddImageAsset("LEGOWALLS_UI", "Assets\\Lego\\legoWallsUI.png")
         engine.AddImageAsset("LEGOWALLS_UI_GRAYSCALE", "Assets\\Lego\\legoWallsUIGRAYSCALE.png")
@@ -107,7 +111,7 @@ class Objects():
 
         self.ObjectList.append(HealthTitle)
         WallsTitle = GameObject.Create(engine)
-        walls = [Types.WallTypes.Domino, Types.WallTypes.LincolnLog, Types.WallTypes.Lego]
+        walls = [Types.WallTypes.Dice, Types.WallTypes.LincolnLog, Types.WallTypes.Lego]
         weapons = [Types.WeaponTypes.ToothpickTrap, Types.WeaponTypes.NerfGun, Types.WeaponTypes.BottleRocket, Types.WeaponTypes.BarrelOfMonkeys]
         for buttonNum in range(8): #Red ("button"), Gray ("Garbage"), Black ("Nothing/Space") Green ("Start Button") Purple ("Money text and stuff") Yellow ("HealthBar")
             if buttonNum < 3:
