@@ -12,8 +12,8 @@ class Grid(): #Change this to the name of your script
         self.creator = None
         self.gridSize = Types.Vector2(20,15)
         self.gridMatrix: Types.Matrix2x2 = Types.Matrix2x2(self.gridSize.x, self.gridSize.y)
-        self.demoWall = GameObjects.GameObject.Create(engine)
-        self.engine.CreateNewObject(self.demoWall)
+        self.demoPlacement = GameObjects.GameObject.Create(engine)
+        self.engine.CreateNewObject(self.demoPlacement)
 
     def Start(self):
         self.ConfigureAllCells()
@@ -34,10 +34,10 @@ class Grid(): #Change this to the name of your script
                 cellToChange.cell = cellAtPos.cell
                 cellToChange.position = cellAtPos.position
                 cellToChange.size = cellAtPos.size
-                self.engine.FindObject("PLACEHANDLER").obj.HANDLEDEMOPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell), self.demoWall)
+                self.engine.FindObject("PLACEHANDLER").obj.HANDLEDEMOPLACEMENT(self.gridMatrix.GetCell(cellAtPos.cell), self.demoPlacement)
                 
             else:
-                self.demoWall.gameObject.renderEnabled = False
+                self.demoPlacement.gameObject.renderEnabled = False
     def DestroyWallChain(self, rootWall: Wall.Create):
         if (rootWall.objectLink != None):
             initialPairs = [rootWall.aboveCell_OL, rootWall.belowCell_OL, rootWall.rightCell_OL, rootWall.leftCell_OL]

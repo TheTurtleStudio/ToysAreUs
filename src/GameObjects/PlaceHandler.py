@@ -30,8 +30,6 @@ class PlaceHandler(): #Change this to the name of your script
                     toPlugin = objectType._FieldTexture
                 else:
                     toPlugin = (self.engine.GetImageAsset(objectType._FieldTexture)[random.randint(0, len(self.engine.GetImageAsset(objectType._FieldTexture)) - 1)])
-                print(type(toPlugin))
-                print(toPlugin)
                 placeObject.gameObject.image = toPlugin
                 placeObject.obj.cell = cell
                 self.engine.CreateNewObject(placeObject)
@@ -69,17 +67,17 @@ class PlaceHandler(): #Change this to the name of your script
     def HANDLEDEMOPLACEMENT(self, cell, demoObj: GameObject.Create):
         if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell)):
             if (self.selectedPlaceObject != None):
-                demoObj.gameObject.transparency = 128
+                #demoObj.gameObject.transparency = 128
                 demoObj.gameObject.renderEnabled = True
+                demoObj.gameObject.image = self.selectedPlaceObject.objectType._GRAYTexture
                 demoObj.gameObject.color = (255,255,255)
                 demoObj.gameObject.size = cell.size
-                #print(cell.size, demoObj.gameObject.size)
                 pos = cell.position
                 demoObj.gameObject.position = Types.Vector3(pos.x, pos.y, 400000)
                 if self.CHECKIFCANPLACE(cell):
-                    demoObj.gameObject.color = (0, 128, 0)
+                    demoObj.gameObject.color = (0, 255, 0)
                 else:
-                    demoObj.gameObject.color = (128, 0, 0)
+                    demoObj.gameObject.color = (255, 0, 0)
 
     def CHECKIFCANPLACE(self, cell):
         condition1 = cell.objectLink == None
@@ -94,11 +92,6 @@ class PlaceHandler(): #Change this to the name of your script
                 else:
                     if (i == 2): #If neighboring the main wall
                         condition2 = True
-            #print(cell.objectLink)
-            #if (cell.objectLink):
-             #   print(cell.objectLink.gameObject.position.whole)
-             #   print(cell.objectLink.gameObject.size.whole)
-            #print()
         elif (type(self.selectedPlaceObject) == PlaceWeapon):
             pass #We'll want to do something here to determine weapon placemeant but for right now we don't care! WOOOOO!
 

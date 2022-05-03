@@ -131,7 +131,7 @@ class GameObject():
         
         
         self._image = None
-        self._textFont = pygame.font.Font("Assets\\gameFont.ttf",  30)
+        self._textFont = pygame.font.Font("Assets\\Common\\gameFont.ttf",  30)
         self._text = None
         self._textRender = None
         self._fontSize = 30
@@ -153,7 +153,7 @@ class GameObject():
     @fontSize.setter
     def fontSize(self, value):
         if (type(value) == int):
-            self._textFont = pygame.font.Font("Assets\\gameFont.ttf",  value)
+            self._textFont = pygame.font.Font("Assets\\Common\\gameFont.ttf",  value)
             self.text = self._text
             self._fontSize = value
     @property
@@ -380,6 +380,7 @@ class PlacementType():
     methodReference = None
     _UITexture = "NOTEXTURE"
     _FieldTexture = "NOTEXTURE"
+    _GRAYTexture = "NOTEXTURE_GRAYSCALE"
 from GameObjects import Wall
 from GameObjects import Weapon
 class WallTypes():
@@ -395,6 +396,7 @@ class WallTypes():
     class Lego(_GENERIC): #Strong
         health = 150
         _UITexture = "LEGOWALLS_UI"
+        _GRAYTexture = "LEGOWALLS_UI_GRAYSCALE"
         _FieldTexture = "LEGOWALLS"
 class WeaponTypes():
     class _GENERIC(PlacementType):
@@ -424,20 +426,20 @@ class EnemyTypes():
         _AttackAnimationAttackFrame = 0
     class ToyCar(_GENERIC): #Fast and weak
         damage = 20
-        speed = 250
+        speed = 193
         _WalkingAnimation = ["CAR1_WALK", "CAR2_WALK", "CAR3_WALK"]
-        _AttackAnimation = "ATTACK_TEMP"
+        _AttackAnimation = ["ATTACK_TEMP", "ATTACK_TEMP", "ATTACK_TEMP"]
         _AttackAnimationAttackFrame = 2
     class ToySoldier(_GENERIC): #Basic, medium speed and medium strength
         damage = 40
-        speed = 120
+        speed = 97
         _WalkingAnimation = ["SOLDIER1_WALK", "SOLDIER2_WALK", "SOLDIER3_WALK"]
-        _AttackAnimation = "ATTACK_TEMP"
+        _AttackAnimation = ["ATTACK_TEMP", "ATTACK_TEMP", "ATTACK_TEMP"]
         _AttackAnimationAttackFrame = 2
     class TeddyBear(_GENERIC): #Slow and strong
         damage = 75
         speed = 60
         _WalkingAnimation = ["TEDDYBEAR1_WALK", "TEDDYBEAR2_WALK", "TEDDYBEAR3_WALK"]
-        _AttackAnimation = "ATTACK_TEMP"
+        _AttackAnimation = ["ATTACK_TEMP", "ATTACK_TEMP", "ATTACK_TEMP"]
         _AttackAnimationAttackFrame = 2
     

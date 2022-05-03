@@ -69,7 +69,7 @@ class Enemy(): #Change this to the name of your script
                     self.HandleBaseWallDamage()
                 else:
                     if self._attackAnimationPlaying:
-                        self.Animator.AnimationStep(self.enemyType._AttackAnimation)
+                        self.Animator.AnimationStep(self.enemyType._AttackAnimation[self.animationVariationIndex])
                         self._attackAnimationPlaying = not self.Animator.finished
                     else:
                         self.gameObject.position += Types.Vector3(self.enemyType.speed * self.engine.GetDeltaTime(), 0, 0)
@@ -104,22 +104,20 @@ class Enemy(): #Change this to the name of your script
 
     def HandleBaseWallDamage(self):
         healthBarObj: Healthbar.Healthbar = self.engine.FindObject("HEALTHBAR").obj
+        self.Animator.AnimationStep(self.enemyType._AttackAnimation[self.animationVariationIndex])
+        if (self.Animator.finished):
+                self.Animator.ResetAnimationState()
         if healthBarObj.health != 0:
-            self.Animator.AnimationStep(self.enemyType._AttackAnimation)
             if (self.Animator.currentFrame == self.enemyType._AttackAnimationAttackFrame):
                 if not self._hasAttackedThisCycle:
                     healthBarObj.health -= self.enemyType.damage
                     self._hasAttackedThisCycle = True
             else:
                 self._hasAttackedThisCycle = False
-            if (self.Animator.finished):
-                self.Animator.ResetAnimationState()
             self._attackAnimationPlaying = not self.Animator.finished
-        else:
-            self.Animator.ResetAnimationState() #Play idle here instead
 
     def HandleWallAttack(self, wall: Types.Cell):
-        self.Animator.AnimationStep(self.enemyType._AttackAnimation)
+        self.Animator.AnimationStep(self.enemyType._AttackAnimation[self.animationVariationIndex])
         if (self.Animator.currentFrame == self.enemyType._AttackAnimationAttackFrame):
             if not self._hasAttackedThisCycle:
                 wall.objectLink.obj.health -= self.enemyType.damage

@@ -16,21 +16,25 @@ class Objects():
     def __init__(self, engine: Engine):
         self.ObjectList = []
         engine.AddImageAsset("NOTEXTURE", "_ROOT\\NOTEXTURE.png") #WILL POSSIBLY MOVE TO DIFFERENT FILE LATER, AS OF RIGHT NOW DO NOT REMOVE THIS
+        engine.AddImageAsset("NOTEXTURE_GRAYSCALE", "_ROOT\\NOTEXTUREGRAYSCALE.png") #WILL POSSIBLY MOVE TO DIFFERENT FILE LATER, AS OF RIGHT NOW DO NOT REMOVE THIS
         engine.AddAnimation("NOTEXTURE", ["NOTEXTURE"], framerate=1, loop=False) #WILL POSSIBLY MOVE TO DIFFERENT FILE LATER, AS OF RIGHT NOW DO NOT REMOVE THIS
         
 
-        engine.AddImageAsset("TRASH_CLOSED", "Assets\\trashcanClosed.png")
-        engine.AddImageAsset("TRASH_OPEN", "Assets\\trashcanOpen.png")
-        engine.AddImageAsset("SELECT_FRAME", "Assets\\selectedFrame.png")
-        engine.AddImageAsset("FLOOR", "Assets\\floor.png")
-        engine.AddImageAsset("RUG", "Assets\\rug.png")
-        engine.AddImageAsset("LLW", "Assets\\LLW.png")
-        engine.AddImageAsset("_PLUGWALK", "Assets\\enemyWalk.png")
-        engine.AddImageAsset("LEGOWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\legoWalls.png", (32, 32), 6))
-        engine.AddImageAsset("LEGOWALLS_UI", "Assets\\legoWallsUI.png")
+        engine.AddImageAsset("TRASH_CLOSED", "Assets\\Common\\trashcanClosed.png")
+        engine.AddImageAsset("TRASH_OPEN", "Assets\\Common\\trashcanOpen.png")
+        engine.AddImageAsset("SELECT_FRAME", "Assets\\Common\\selectedFrame.png")
+        engine.AddImageAsset("FLOOR", "Assets\\Common\\floor.png")
+        engine.AddImageAsset("RUG", "Assets\\Common\\rug.png")
+        engine.AddImageAsset("LLW", "Assets\\Lincoln\\LLW.png")
+        engine.AddImageAsset("_PLUGWALK", "Assets\\Common\\enemyWalk.png")
+        engine.AddImageAsset("LEGOWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Lego\\legoWalls.png", (32, 32), 6))
+        engine.AddImageAsset("LEGOWALLS_UI", "Assets\\Lego\\legoWallsUI.png")
+        engine.AddImageAsset("LEGOWALLS_UI_GRAYSCALE", "Assets\\Lego\\legoWallsUIGRAYSCALE.png")
+        
+        engine.AddImageAsset("ARROW", "Assets\\Common\\arrow.png")
         
 
-        engine.AddAnimation("ATTACK_TEMP", ImageManipulation.Sheets.Disect(engine, "Assets\\attackingAnimation.png", (32, 32), 4), framerate=2, loop=False) #Spritesheet
+        engine.AddAnimation("ATTACK_TEMP", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\attackingAnimation.png", (32, 32), 4), framerate=2, loop=False) #Spritesheet
 
         engine.AddAnimation("SOLDIER1_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4), framerate=5, loop=True)
         engine.AddAnimation("SOLDIER2_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 4), framerate=5, loop=True)
@@ -81,8 +85,8 @@ class Objects():
         WaveTitle.gameObject.fontSize = 30
 
         HealthBar = Healthbar.Create(engine)
-        HealthBar.gameObject.size = Types.Vector2(TopBar.gameObject.size.x * 0.35 - 20, 60)
-        HealthBar.gameObject.position = Types.Vector3(TopBar.gameObject.size.x * 0.65, TopBar.gameObject.size.y-70, 4097)
+        HealthBar.gameObject.size = Types.Vector2(TopBar.gameObject.size.x * 0.25 - 20, 60)
+        HealthBar.gameObject.position = Types.Vector3(TopBar.gameObject.size.x * 0.75, TopBar.gameObject.size.y-70, 4097)
         HealthBar.gameObject.color = (200, 60, 60)
         HealthBar.obj._fullnessBar.gameObject.color = (100, 185, 115)
         HealthBar.obj._fullnessBar.gameObject.position = HealthBar.gameObject.position + Types.Vector3(0, 0, 1)
