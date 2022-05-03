@@ -64,10 +64,12 @@ class PlaceHandler(): #Change this to the name of your script
             self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell + Types.Vector2(-1, 0)).rightCell_OL = cell
         else:
             cell.leftCell_OL = None
-    def HANDLEDEMOPLACEMENT(self, cell, demoObj: GameObject.Create):
+    def HANDLEDEMOPLACEMENT(self, cell, demoObj: GameObject.Create):    #This
         if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell)):
             if (self.selectedPlaceObject != None):
-                #demoObj.gameObject.transparency = 128
+                if self.engine.Input.TestFor.LEFTMOUSEDOWN():
+                    demoObj.gameObject.rotation += 90
+                    demoObj.gameObject.rotation %= 360 #Engine might handle this, I don't remember
                 demoObj.gameObject.renderEnabled = True
                 demoObj.gameObject.image = self.selectedPlaceObject.objectType._GRAYTexture
                 demoObj.gameObject.color = (255,255,255)
