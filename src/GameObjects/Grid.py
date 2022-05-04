@@ -10,7 +10,7 @@ class Grid(): #Change this to the name of your script
         self.gameObject = Types.GameObject(engine)
         self.engine = engine
         self.creator = None
-        self.gridSize = Types.Vector2(20,15)
+        self.gridSize = Types.Vector2(17,12)
         self.gridMatrix: Types.Matrix2x2 = Types.Matrix2x2(self.gridSize.x, self.gridSize.y)
         self.demoPlacement = GameObjects.GameObject.Create(engine)
         self.engine.CreateNewObject(self.demoPlacement)
@@ -41,7 +41,7 @@ class Grid(): #Change this to the name of your script
     def DestroyWallChain(self, rootWall: Wall.Create):
         if (rootWall.objectLink != None):
             initialPairs = [rootWall.aboveCell_OL, rootWall.belowCell_OL, rootWall.rightCell_OL, rootWall.leftCell_OL]
-            rootWall.objectLink.obj.DestroyWall()
+            rootWall.objectLink.obj.Destroy()
             for stem in initialPairs:
                 if (stem != None):
                     if (stem != None):
@@ -73,7 +73,7 @@ class Grid(): #Change this to the name of your script
                         queue.append(current.leftCell_OL)
         if not foundWallConnection:
             for cell in visited:
-                cell.objectLink.obj.DestroyWall()
+                cell.objectLink.obj.Destroy()
     
     def ConfigureAllCells(self):
         for x in range(self.gridSize.x):

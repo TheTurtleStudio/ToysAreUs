@@ -17,6 +17,8 @@ class PlaceWeapon(): #Change this to the name of your script
             if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [Types.CollisionLayer.UI])):
                 if (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != None):
                     self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject.highlightedIndicator.gameObject.renderEnabled = False
+                print(self.engine.FindObject("GRID").obj.demoPlacement)
+                self.engine.FindObject("GRID").obj.demoPlacement.gameObject.rotation = 0
                 self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject = self if (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != self) else None
                 self.highlightedIndicator.gameObject.renderEnabled = (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject == self)
                 

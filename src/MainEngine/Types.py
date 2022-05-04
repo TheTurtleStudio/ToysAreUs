@@ -103,13 +103,14 @@ class Matrix2x2:
         else:
             return True
 class Cell():
-    def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(-1,-1), _objectLink=None, _enemyLink=None):
+    def __init__(self, _position=Vector3(0,0,0), _size=Vector2(0,0), _cell=Vector2(-1,-1), _objectLink=None, _enemyLink=None, _weaponLink=None):
         self.position = _position
         self.size = _size
         self._center = None
         self.cell = _cell
         self.objectLink: Wall.Create = _objectLink
         self.enemyLink = _enemyLink
+        self.weaponLink = _weaponLink
         self.aboveCell_OL = None
         self.belowCell_OL = None
         self.rightCell_OL = None
@@ -381,6 +382,7 @@ class PlacementType():
     _UITexture = "NOTEXTURE"
     _FieldTexture = "NOTEXTURE"
     _GRAYTexture = "NOTEXTURE_GRAYSCALE"
+    canRotate = False
 from GameObjects import Wall
 from GameObjects import Weapon
 class WallTypes():
@@ -391,9 +393,9 @@ class WallTypes():
         _UITexture = "DICEWALLS_UI"
         _GRAYTexture = "DICEWALLS_UI_GRAYSCALE"
         _FieldTexture = "DICEWALLS"
-    class LincolnLog(_GENERIC): #Medium
+    class LetterBlock(_GENERIC): #Medium
         health = 100
-        _FieldTexture = "LLW"
+        _FieldTexture = "BLOCKWALLS"
     class Lego(_GENERIC): #Strong
         health = 150
         _UITexture = "LEGOWALLS_UI"
@@ -403,17 +405,19 @@ class WeaponTypes():
     class _GENERIC(PlacementType):
         methodReference = Weapon
         damage = 1
-        canPlace_ROOT = True
-        canPlace_ABOVE = False
-        canPlace_BELOW = False
-        canPlace_LEFT = False
-        canPlace_RIGHT = False
+        canPlace_ROOT = False
+        canPlace_SIDE = False
+        _FieldTexture = "ARROW"
+        _GRAYTexture = "ARROW"
     class NerfGun(_GENERIC): #Long range
         pass
+        
     class ToothpickTrap(_GENERIC): #Short range
-        pass
+        canRotate = True
+        canPlace_SIDE = True
+        canPlace_ROOT = True
     class BottleRocket(_GENERIC): #Overshot mortar
-        pass
+        canPlace_ROOT = True
     class BarrelOfMonkeys(_GENERIC): #Trap
         pass
 
@@ -429,18 +433,18 @@ class EnemyTypes():
         damage = 20
         speed = 193
         _WalkingAnimation = ["CAR1_WALK", "CAR2_WALK", "CAR3_WALK"]
-        _AttackAnimation = ["ATTACK_TEMP", "ATTACK_TEMP", "ATTACK_TEMP"]
+        _AttackAnimation = ["CAR1_ATTACK", "CAR2_ATTACK", "CAR3_ATTACK"]
         _AttackAnimationAttackFrame = 2
     class ToySoldier(_GENERIC): #Basic, medium speed and medium strength
         damage = 40
         speed = 97
         _WalkingAnimation = ["SOLDIER1_WALK", "SOLDIER2_WALK", "SOLDIER3_WALK"]
-        _AttackAnimation = ["ATTACK_TEMP", "ATTACK_TEMP", "ATTACK_TEMP"]
+        _AttackAnimation = ["SOLDIER1_ATTACK", "SOLDIER2_ATTACK", "SOLDIER3_ATTACK"]
         _AttackAnimationAttackFrame = 2
     class TeddyBear(_GENERIC): #Slow and strong
         damage = 75
         speed = 60
         _WalkingAnimation = ["TEDDYBEAR1_WALK", "TEDDYBEAR2_WALK", "TEDDYBEAR3_WALK"]
-        _AttackAnimation = ["ATTACK_TEMP", "ATTACK_TEMP", "ATTACK_TEMP"]
+        _AttackAnimation = ["TEDDYBEAR1_ATTACK", "TEDDYBEAR2_ATTACK", "TEDDYBEAR3_ATTACK"]
         _AttackAnimationAttackFrame = 2
     

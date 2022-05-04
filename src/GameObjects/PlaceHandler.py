@@ -3,6 +3,7 @@ from GameObjects.PlaceWall import PlaceWall
 from GameObjects.PlaceWeapon import PlaceWeapon
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 from GameObjects import Wall
+from GameObjects import Weapon
 from GameObjects import GameObject
 import pygame
 
@@ -36,7 +37,10 @@ class PlaceHandler(): #Change this to the name of your script
                 placeObject.gameObject.size = cell.size
                 pos = cell.position
                 placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40000)
-                cell.objectLink = placeObject
+                if objectType.__bases__[0] == Types.WallTypes._GENERIC:
+                    cell.objectLink = placeObject
+                elif objectType.__bases__[0] == Types.WeaponTypes._GENERIC:
+                    cell.weaponLink = placeObject
                 self.UpdateLinkedMatrix(cell)
                     
                 self.engine.FindObject("GRID").obj.gridMatrix.SetCell(cell.cell, cell)
@@ -67,9 +71,9 @@ class PlaceHandler(): #Change this to the name of your script
     def HANDLEDEMOPLACEMENT(self, cell, demoObj: GameObject.Create):    #This
         if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell)):
             if (self.selectedPlaceObject != None):
-                if self.engine.Input.TestFor.LEFTMOUSEDOWN():
-                    demoObj.gameObject.rotation += 90
-                    demoObj.gameObject.rotation %= 360 #Engine might handle this, I don't remember
+                if self.engine.Input.TestFor.LEFTMOUSEDOWN() and (type(self.selectedPlaceObject) == PlaceWeapon) and self.selectedPlaceObject.objectType.canRotate:
+                    demoObj.gameObject.rotation -= 90
+                    demoObj.gameObject.rotation %= 360
                 demoObj.gameObject.renderEnabled = True
                 demoObj.gameObject.image = self.selectedPlaceObject.objectType._GRAYTexture
                 demoObj.gameObject.color = (255,255,255)
@@ -82,23 +86,34 @@ class PlaceHandler(): #Change this to the name of your script
                     demoObj.gameObject.color = (255, 0, 0)
 
     def CHECKIFCANPLACE(self, cell):
-        condition1 = cell.objectLink == None
-        condition2 = False
+        condition1 = False
+        condition3 = True
         if (type(self.selectedPlaceObject) == PlaceWall):
+            condition3 = cell.objectLink == None
             cellOffsets = [Types.Vector2(0,1), Types.Vector2(0,-1), Types.Vector2(1,0), Types.Vector2(-1,0)]
             for i in range(4):
                 if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell + cellOffsets[i])):
                     current = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell + cellOffsets[i])
                     if current.objectLink != None:
-                        condition2 = True
+                        condition1 = True
                 else:
                     if (i == 2): #If neighboring the main wall
-                        condition2 = True
+                        condition1 = True
         elif (type(self.selectedPlaceObject) == PlaceWeapon):
-            pass #We'll want to do something here to determine weapon placemeant but for right now we don't care! WOOOOO!
-
-
-        condition3 = cell.enemyLink == None
+            condition3 = cell.weaponLink == None
+            if self.selectedPlaceObject.objectType.canPlace_ROOT:
+                if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell)):
+                    current = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell)
+                    if (current.objectLink != None) and (type(current.objectLink) == Wall.Create) and (current.weaponLink == None):
+                        condition1 = True
+            if self.selectedPlaceObject.objectType.canPlace_SIDE:
+                cellOffsets = [Types.Vector2(0,1), Types.Vector2(0,-1), Types.Vector2(1,0), Types.Vector2(-1,0)]
+                for i in range(4):
+                    if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell + cellOffsets[i])):
+                        current = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell + cellOffsets[i])
+                        if (current.objectLink != None) and (type(current.objectLink) == Wall.Create):
+                            condition1 = True
+        condition2 = cell.enemyLink == None
         return (condition1 and condition2 and condition3)
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.

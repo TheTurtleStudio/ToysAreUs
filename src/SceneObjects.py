@@ -25,8 +25,8 @@ class Objects():
         engine.AddImageAsset("SELECT_FRAME", "Assets\\Common\\selectedFrame.png")
         engine.AddImageAsset("FLOOR", "Assets\\Common\\floor.png")
         engine.AddImageAsset("RUG", "Assets\\Common\\rug.png")
-        engine.AddImageAsset("LLW", "Assets\\Lincoln\\LLW.png")
         engine.AddImageAsset("_PLUGWALK", "Assets\\Common\\enemyWalk.png")
+        engine.AddImageAsset("_ENEMYATTACK", "Assets\\Common\\enemyAttack.png")
 
         engine.AddImageAsset("DICEWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Dice\\diceWalls.png", (32, 32), 6))
         engine.AddImageAsset("DICEWALLS_UI", "Assets\\Dice\\diceWallsUI.png")
@@ -34,6 +34,9 @@ class Objects():
         engine.AddImageAsset("LEGOWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Lego\\legoWalls.png", (32, 32), 6))
         engine.AddImageAsset("LEGOWALLS_UI", "Assets\\Lego\\legoWallsUI.png")
         engine.AddImageAsset("LEGOWALLS_UI_GRAYSCALE", "Assets\\Lego\\legoWallsUIGRAYSCALE.png")
+        engine.AddImageAsset("BLOCKWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Woodblocks\\blockWalls.png", (64, 64), 3))
+        #engine.AddImageAsset("LEGOWALLS_UI", "Assets\\Lego\\legoWallsUI.png")
+        #engine.AddImageAsset("LEGOWALLS_UI_GRAYSCALE", "Assets\\Lego\\legoWallsUIGRAYSCALE.png")
         
         engine.AddImageAsset("ARROW", "Assets\\Common\\arrow.png")
         
@@ -49,6 +52,16 @@ class Objects():
         engine.AddAnimation("CAR1_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 30), framerate=5, loop=True)
         engine.AddAnimation("CAR2_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 34), framerate=5, loop=True)
         engine.AddAnimation("CAR3_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 38), framerate=5, loop=True)
+        
+        engine.AddAnimation("SOLDIER1_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 8), framerate=5, loop=False)
+        engine.AddAnimation("SOLDIER2_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 8, 8), framerate=5, loop=False)
+        engine.AddAnimation("SOLDIER3_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 8, 16), framerate=5, loop=False)
+        engine.AddAnimation("TEDDYBEAR1_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 6, 22), framerate=5, loop=False)
+        engine.AddAnimation("TEDDYBEAR2_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 6, 28), framerate=5, loop=False)
+        engine.AddAnimation("TEDDYBEAR3_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 6, 34), framerate=5, loop=False)
+        engine.AddAnimation("CAR1_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 46), framerate=5, loop=False)
+        engine.AddAnimation("CAR2_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 58), framerate=5, loop=False)
+        engine.AddAnimation("CAR3_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 70), framerate=5, loop=False)
 
         
 
@@ -111,7 +124,7 @@ class Objects():
 
         self.ObjectList.append(HealthTitle)
         WallsTitle = GameObject.Create(engine)
-        walls = [Types.WallTypes.Dice, Types.WallTypes.LincolnLog, Types.WallTypes.Lego]
+        walls = [Types.WallTypes.Dice, Types.WallTypes.LetterBlock, Types.WallTypes.Lego]
         weapons = [Types.WeaponTypes.ToothpickTrap, Types.WeaponTypes.NerfGun, Types.WeaponTypes.BottleRocket, Types.WeaponTypes.BarrelOfMonkeys]
         for buttonNum in range(8): #Red ("button"), Gray ("Garbage"), Black ("Nothing/Space") Green ("Start Button") Purple ("Money text and stuff") Yellow ("HealthBar")
             if buttonNum < 3:
@@ -189,7 +202,7 @@ class Objects():
         for i in range(15):
             enemy = Enemy.Create(engine)
             enemy.obj.enemyType = random.choice([Types.EnemyTypes.TeddyBear, Types.EnemyTypes.ToyCar, Types.EnemyTypes.ToySoldier])
-            enemy.gameObject.size = Types.Vector2(50,50)
+            enemy.gameObject.size = Types.Vector2(BoardGrid.gameObject.size.y / BoardGrid.obj.gridSize.y, BoardGrid.gameObject.size.y / BoardGrid.obj.gridSize.y)
             enemy.gameObject.position = Types.Vector3(0,320,500000)
             #enemy.gameObject.rotation = 0
             self.ObjectList.append(enemy)
@@ -198,10 +211,10 @@ class Objects():
         return tuple(self.ObjectList)
 class Injections():
     def __init__(self):
-        self.caption = "ToysWereUs"
+        self.caption = "ToysWarUs"
         self.abstract = [
             "#This is raw code to be after all other injections are made. Yes, I know this is vulnerable to ACE and very unsafe in general. No, I don't care. Why? Because I'm a thug.",
             "#It's pretty intuitive, just put every piece of code encapsulated in a string as a new item in the array.",
             "#You can really just delete all this, just needed to explain somewhat what the hell this is.",
-            "print(\"Injections complete\") #This is for debugging though!"
+            "print(\"Injections complete\") #This is for debugging though!",
         ]

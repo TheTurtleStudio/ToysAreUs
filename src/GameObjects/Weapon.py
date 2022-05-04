@@ -8,7 +8,7 @@ class Weapon(): #Change this to the name of your script
         self.cell = None
         self.maxHealth = None
         self.health = None
-    def DestroyWall(self):
+    def Destroy(self):
         self._UpdateLinkedMatrix()
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
         del self
@@ -16,7 +16,7 @@ class Weapon(): #Change this to the name of your script
 
         if (self.cell == None):
             return
-        if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(self.cell.cell + Types.Vector2(0, -1))):
+        '''if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(self.cell.cell + Types.Vector2(0, -1))):
             self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell + Types.Vector2(0, -1)).belowCell_OL = None
         
         if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(self.cell.cell + Types.Vector2(0, 1))):
@@ -26,8 +26,8 @@ class Weapon(): #Change this to the name of your script
             self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell + Types.Vector2(1, 0)).leftCell_OL = None
 
         if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(self.cell.cell + Types.Vector2(-1, 0))):
-            self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell + Types.Vector2(-1, 0)).rightCell_OL = None
-        self.cell.objectLink = None
+            self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell + Types.Vector2(-1, 0)).rightCell_OL = None'''
+        self.cell.weaponLink = None
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():
     def __init__(self, engine):

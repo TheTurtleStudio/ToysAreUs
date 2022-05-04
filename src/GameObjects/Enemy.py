@@ -66,6 +66,7 @@ class Enemy(): #Change this to the name of your script
 
             if move:
                 if (currentCell != None) and (currentCell.cell.x == self.gridAccessor.obj.gridSize.x - 1) and (futureCell == None): #If they've reached the main wall
+                    self.gameObject.position = Types.Vector3(self.gridAccessor.obj.CellToPosition(currentCell.cell).x, self.gridAccessor.obj.CellToPosition(currentCell.cell).y, self.gameObject.position.z)
                     self.HandleBaseWallDamage()
                 else:
                     if self._attackAnimationPlaying:
