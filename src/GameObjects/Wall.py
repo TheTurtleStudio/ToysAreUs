@@ -11,7 +11,7 @@ class Wall(): #Change this to the name of your script
     def Destroy(self):
         self._UpdateLinkedMatrix()
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
-        del self
+        del self #Should garbage collect now but there's still a reference somewhere in stack
     def _UpdateLinkedMatrix(self):
 
         if (self.cell == None):
