@@ -173,12 +173,9 @@ class GameObject():
     def rotation(self):
         return self._rotation
     @rotation.setter
-    def rotation(self, value: int):
-        if (type(value) != int) or (type(value) != float):
-            print("Rotation provided must be float or int.")
-            return
+    def rotation(self, value):
         if (self._rotation != value):
-            self._rotation = value % 360
+            self._rotation = value
             self._syncOriginalImage()
     @property
     def image(self):
@@ -205,14 +202,10 @@ class GameObject():
         return self._position
     @position.setter
     def position(self, value: Vector3):
-        if (type(value) != Vector3):
-            if (type(value) == tuple) and (len(value) <= 3): #Logical statement, shortcircuitting
-                self._position = Vector3(value[0] if len(tuple) >= 1 else 0, value[1] if len(tuple) >= 2 else 0, value[2] if len(tuple) == 3 else 0)
-            elif (type(value) == Vector2):
-                self._position = Vector3(value.x, value.y, 0)
-            else:
-                print("Position must be Vector3, Vector2, or tuple containing integers or floats.")
-                return
+        if (type(value) == tuple):
+            self._position = Vector3(value[0], value[1], value[2])
+        else:
+            self._position = value
         
         try:
             self.sprite.rect.x = self._position.x + self._positionOffset.x
@@ -411,7 +404,10 @@ class WeaponTypes():
         methodReference = Weapon
         damage = 1
         canPlace_ROOT = True
-        canPlace_ADJACENT = False
+        canPlace_ABOVE = False
+        canPlace_BELOW = False
+        canPlace_LEFT = False
+        canPlace_RIGHT = False
     class NerfGun(_GENERIC): #Long range
         pass
     class ToothpickTrap(_GENERIC): #Short range
