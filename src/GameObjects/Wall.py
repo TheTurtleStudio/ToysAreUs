@@ -8,8 +8,13 @@ class Wall(): #Change this to the name of your script
         self.cell = None
         self.maxHealth = None
         self.health = None
+        self.attachedWeapons = []
     def Destroy(self):
         self._UpdateLinkedMatrix()
+        for weapon in self.attachedWeapons.copy():
+            weapon.Destroy()
+            self.attachedWeapons.remove(weapon)
+            del weapon
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
         del self #Should garbage collect now but there's still a reference somewhere in stack
     def _UpdateLinkedMatrix(self):
@@ -28,8 +33,6 @@ class Wall(): #Change this to the name of your script
         if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(self.cell.cell + Types.Vector2(-1, 0))):
             self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell + Types.Vector2(-1, 0)).rightCell_OL = None
         self.cell.objectLink = None
-        if self.cell.weaponLink != None:
-            self.cell.weaponLink.obj.Destroy()
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():
     def __init__(self, engine):

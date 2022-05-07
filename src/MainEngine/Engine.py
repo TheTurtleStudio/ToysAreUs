@@ -14,14 +14,23 @@ class PregameSettings():
         self.engine._Globals.screen = pygame.display.set_mode(dimensions.whole)
         self.engine._Globals.display = dimensions.whole
     
-class Engine:
+class Engine():
     def __init__(self):
         pygame.mixer.pre_init(44100, 16, 2, 4096) #Audio mixer settings
         self._Globals = self.Globals()
         
+    @property
+    def timeScale(self):
+        return self._Globals.timeScale
+    @timeScale.setter
+    def timeScale(self, value):
+        if (type(value) == float) or (type(value) == int):
+            self._Globals.timeScale = value
+        else:
+            print("Can't set timeScale to an arbitrary value; only integers and floats allowed.")
+
     def Start(self, main: Main.Main): #Start the main gameloop
         pygame.init() #Initialize pygame duh
-        pygame.key.set_repeat(1, 1)
         self._Globals.clock = pygame.time.Clock()
         self.Input = Input.InputHandler(self)
         self.Collisions = Collision.Collision(self)
@@ -44,6 +53,7 @@ class Engine:
     def FrameEvents(self):
         self._Globals.clock.tick()
         self._PostEventsToInput()
+        self._Globals._totalTime += self.GetDeltaTime()
         self._UpdateSubscribers() #Tell every GameObject to call their Update function.
         if (self.Input.TestFor.QUIT()):
             quit()
@@ -71,7 +81,7 @@ class Engine:
         return ((self._Globals.lastRenderTime - self._Globals.currentRenderTime) / 1000) * self._Globals.timeScale
 
     def GetTotalTime(self):
-        return pygame.time.get_ticks() / 1000
+        return self._Globals._totalTime
 
     def CalculateRenderOrder(self):
         array = []
@@ -128,6 +138,7 @@ class Engine:
         pygame.display.set_caption(value)
 
     class Globals():
+        _totalTime = 0
         Assets = {}
         Animations = {}
         sceneObjectsArray = []

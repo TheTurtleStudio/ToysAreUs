@@ -1,3 +1,4 @@
+import math
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 from GameObjects import Grid, Healthbar, Wall
 from GameObjects import GameObject
@@ -21,10 +22,11 @@ class Enemy(): #Change this to the name of your script
     def Start(self):
         self.gridAccessor = self.engine.FindObject("GRID")
         yPos = self.gridAccessor.obj.CellToPosition((0, random.randint(1, self.gridAccessor.obj.gridSize.y - 2))).y
-        self.gameObject.position = Types.Vector3(-self.gameObject.size.x - 1, yPos, 500000)
+        self.gameObject.position = Types.Vector3(-self.gameObject.size.x - 1, yPos, 32768 + random.random())
         self.gameObject.image = "NOTEXTURE"
         self._destination = None
         self.animationVariationIndex = random.randint(0, len(self.enemyType._WalkingAnimation) - 1)
+        print(self.gameObject.color)
         
 
     def Update(self):
@@ -35,13 +37,13 @@ class Enemy(): #Change this to the name of your script
             yChange = ((1 if (yCellOffset > 0) else -1) * self.enemyType.speed * self.engine.GetDeltaTime())
             checkPos = Types.Vector2(self.gameObject.position.x + (self.gameObject.size.x / 2), self.gameObject.position.y + (self.gameObject.size.y if (yCellOffset > 0) else 0) + yChange)
             if (not self.gridAccessor.obj.gridMatrix.CellExistsCheck(self.gridAccessor.obj.PositionToCell(checkPos))):
-                self.gameObject.position = Types.Vector3(self.gameObject.position.x, self.gridAccessor.obj.CellToPosition(currentCell.cell).y, self.gameObject.position.z)
+                self.gameObject.position = Types.Vector3(math.ceil(self.gridAccessor.obj.CellToPosition(currentCell.cell).x), math.ceil(self.gridAccessor.obj.CellToPosition(currentCell.cell).y), self.gameObject.position.z)
                 self.UpdateLink(False)
                 self._destination = None
                 return
             futureCell: Types.Cell = self.gridAccessor.obj.GetGridCellFULL(checkPos)
             if (futureCell.cell.y == self._destination.y):
-                self.gameObject.position = Types.Vector3(self.gameObject.position.x, self.gridAccessor.obj.CellToPosition(currentCell.cell).y, self.gameObject.position.z)
+                self.gameObject.position = Types.Vector3(math.ceil(self.gridAccessor.obj.CellToPosition(currentCell.cell).x), math.ceil(self.gridAccessor.obj.CellToPosition(currentCell.cell).y), self.gameObject.position.z)
                 self._destination = None
             else:
                 self.gameObject.rotation = 270 if (yCellOffset > 0) else 90
@@ -61,12 +63,12 @@ class Enemy(): #Change this to the name of your script
                 futureCell = self.gridAccessor.obj.GetGridCellFULL(tempPos)
             
             if (futureCell != None) and (type(futureCell.objectLink) == Wall.Create):
-                self.gameObject.position = Types.Vector3(self.gameObject.position.x, self.gridAccessor.obj.CellToPosition(currentCell.cell).y, self.gameObject.position.z)
+                self.gameObject.position = Types.Vector3(math.ceil(self.gridAccessor.obj.CellToPosition(currentCell.cell).x), math.ceil(self.gridAccessor.obj.CellToPosition(currentCell.cell).y), self.gameObject.position.z)
                 move = False
 
             if move:
                 if (currentCell != None) and (currentCell.cell.x == self.gridAccessor.obj.gridSize.x - 1) and (futureCell == None): #If they've reached the main wall
-                    self.gameObject.position = Types.Vector3(self.gridAccessor.obj.CellToPosition(currentCell.cell).x, self.gridAccessor.obj.CellToPosition(currentCell.cell).y, self.gameObject.position.z)
+                    self.gameObject.position = Types.Vector3(math.ceil(self.gridAccessor.obj.CellToPosition(currentCell.cell).x), math.ceil(self.gridAccessor.obj.CellToPosition(currentCell.cell).y), self.gameObject.position.z)
                     self.HandleBaseWallDamage()
                 else:
                     if self._attackAnimationPlaying:

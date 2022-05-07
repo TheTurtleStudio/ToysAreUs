@@ -13,12 +13,13 @@ class PlaceWeapon(): #Change this to the name of your script
         self.objectType: Types.WeaponTypes._GENERIC = None
 
     def Update(self): #This is called every rendercycle
+        if self.engine.timeScale == 0:
+            return
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
             if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [Types.CollisionLayer.UI])):
                 if (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != None):
                     self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject.highlightedIndicator.gameObject.renderEnabled = False
-                print(self.engine.FindObject("GRID").obj.demoPlacement)
-                self.engine.FindObject("GRID").obj.demoPlacement.gameObject.rotation = 0
+                self.engine.FindObject("GRID").obj.placeRotation = 0
                 self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject = self if (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != self) else None
                 self.highlightedIndicator.gameObject.renderEnabled = (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject == self)
                 

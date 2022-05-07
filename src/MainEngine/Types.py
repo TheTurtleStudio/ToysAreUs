@@ -185,7 +185,7 @@ class GameObject():
     def image(self, value: str or pygame.Surface):
         if (value is None):
             self._image = None
-            self.sprite.ORIGINALIMAGE = pygame.Surface(self._size.x, self._size.y)
+            self.sprite.ORIGINALIMAGE = pygame.Surface((self._size.x, self._size.y), pygame.SRCALPHA)
             self._syncOriginalImage()
             self.isImage = False
             self.position = self._position
@@ -275,14 +275,15 @@ class GameObject():
         self.position = self._position
         self.sprite.rect = self.sprite.image.get_rect()
         self._setSize(self._size, forceChange=True)
+        self.sprite.image.set_alpha(255 - self.transparency)
+        
         try:
-            self.sprite.image.blit(self._textRender, self._textRender.get_rect(center=(self.size.x/2, self._textRender.get_rect().height/2)))
+            copyTextRender = self._textRender.copy()
+            self.sprite.image.blit(copyTextRender, copyTextRender.get_rect(center=(self.size.x/2, copyTextRender.get_rect().height/2)))
         except Exception:
             pass
         
-        
         self.sprite.image = pygame.transform.rotate(self.sprite.image, self._rotation)
-        
         
         
     def Destroy(self, engine):
@@ -291,6 +292,7 @@ class GameObject():
         except ValueError:
             pass
         del self
+
 class Animation:
     def __init__(self, p_collection: list, p_framerate: float, p_loop=True):
         self.collection = p_collection
@@ -364,7 +366,7 @@ class Sprite(pygame.sprite.Sprite):
         if not (type(dimensions) == tuple):
             dimensions = dimensions.whole
         super().__init__()
-        self.image = pygame.Surface(dimensions)
+        self.image = pygame.Surface(dimensions, pygame.SRCALPHA)
         self.image.fill(color)
         self.rect = self.image.get_rect()
         self.ORIGINALIMAGE = self.image
@@ -425,26 +427,26 @@ class EnemyTypes():
     class _GENERIC():
         health = 1
         damage = 1
-        speed = 100
+        speed = 50
         _WalkingAnimation = ["NOTEXTURE"]
         _AttackAnimation = ["NOTEXTURE"]
         _AttackAnimationAttackFrame = 0
     class ToyCar(_GENERIC): #Fast and weak
         damage = 20
-        speed = 193
+        speed = 90
         _WalkingAnimation = ["CAR1_WALK", "CAR2_WALK", "CAR3_WALK"]
         _AttackAnimation = ["CAR1_ATTACK", "CAR2_ATTACK", "CAR3_ATTACK"]
-        _AttackAnimationAttackFrame = 2
+        _AttackAnimationAttackFrame = 7
     class ToySoldier(_GENERIC): #Basic, medium speed and medium strength
         damage = 40
-        speed = 97
+        speed = 49
         _WalkingAnimation = ["SOLDIER1_WALK", "SOLDIER2_WALK", "SOLDIER3_WALK"]
         _AttackAnimation = ["SOLDIER1_ATTACK", "SOLDIER2_ATTACK", "SOLDIER3_ATTACK"]
-        _AttackAnimationAttackFrame = 2
+        _AttackAnimationAttackFrame = 1
     class TeddyBear(_GENERIC): #Slow and strong
         damage = 75
-        speed = 60
+        speed = 30
         _WalkingAnimation = ["TEDDYBEAR1_WALK", "TEDDYBEAR2_WALK", "TEDDYBEAR3_WALK"]
         _AttackAnimation = ["TEDDYBEAR1_ATTACK", "TEDDYBEAR2_ATTACK", "TEDDYBEAR3_ATTACK"]
-        _AttackAnimationAttackFrame = 2
+        _AttackAnimationAttackFrame = 5
     

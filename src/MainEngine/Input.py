@@ -42,11 +42,13 @@ class InputHandler():
             if (keys[key]):
                 return True
             return False
-        def _testFor(self, typeOf):
+        def _testFor(self, typeOf: pygame.event) -> tuple((bool, object)):
             for i in self._InputHandler._getEvents():
                 if i.type == typeOf:
+
                     return (True, i)
             return (False, None)
+
         def _testForRECURSIVE(self, typeOf):
             eventsReturnList = []
             for i in self._InputHandler._getEvents():

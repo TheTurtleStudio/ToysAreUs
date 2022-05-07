@@ -4,31 +4,47 @@ from GameObjects import Wall
 from GameObjects import GameObject
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 import pygame
+
+from MainEngine.Engine import Engine
 class Grid(): #Change this to the name of your script
     
     def __init__(self, engine):
         self.gameObject = Types.GameObject(engine)
-        self.engine = engine
+        self.engine: Engine = engine
         self.creator = None
         self.gridSize = Types.Vector2(17,12)
         self.gridMatrix: Types.Matrix2x2 = Types.Matrix2x2(self.gridSize.x, self.gridSize.y)
         self.demoPlacement = GameObjects.GameObject.Create(engine)
         self.engine.CreateNewObject(self.demoPlacement)
+        self.dragStart = None
+        self.dragging = False
 
     def Start(self):
         self.ConfigureAllCells()
+        self.demoPlacement.gameObject.transparency = 128
 
     def Update(self):
-        if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()): #Did the player click to place something this frame?
+        if self.engine.timeScale == 0:
+            return
+        if (self.engine.Input.TestFor.RIGHTMOUSESTATE()): #Did the player click to place something this frame?
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS()) #Convert their mouse position to a cell position
             if ((type(cellAtPos) is Types.Cell) and (self.gridMatrix.CellExistsCheck(cellAtPos.cell))): #Checks if the cell they clicked even exists, is it in our cell matrix? (Just math to figure it out, not a search algorithm)
-                cellToChange = self.gridMatrix.GetCell(cellAtPos.cell) #Get the actual cell now that we know it exists
-                if (not self.engine.FindObject("PLACEHANDLER").obj.removingTile): #If we're meant to be placing a tile, this doesn't know what type of tile yet though.
-                    self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(cellToChange) #Tell our handler to do it, this is in SRC\GameObjects\PlaceHandler.py
-                else: #Are we removing the tile?
-                    self.DestroyWallChain(cellToChange) #Attempt to the cell as well as any now floating artifacts once attached to it.
+                if (self.dragging is False):
+                    self.dragStart = self.engine.GetTotalTime()
+                self.dragging = True
+                elapsedSinceDrag = self.engine.GetTotalTime() - self.dragStart
+                if self.engine.Input.TestFor.RIGHTMOUSEDOWN() or (elapsedSinceDrag > 0.15):
+                    cellToChange = self.gridMatrix.GetCell(cellAtPos.cell) #Get the actual cell now that we know it exists
+                    if (not self.engine.FindObject("PLACEHANDLER").obj.removingTile): #If we're meant to be placing a tile, this doesn't know what type of tile yet though.
+                        self.engine.FindObject("PLACEHANDLER").obj.HANDLEDEMOPLACEMENT(cellToChange, self.demoPlacement)
+                        self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(cellToChange) #Tell our handler to do it, this is in SRC\GameObjects\PlaceHandler.py
+                    else: #Are we removing the tile?
+                        self.DestroyWallChain(cellToChange) #Attempt to the cell as well as any now floating artifacts once attached to it.
         else:
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
+            if self.gridMatrix.CellExistsCheck(cellAtPos.cell):
+                self.dragging = False
+                self.dragStart = None
             if ((type(cellAtPos) is Types.Cell) and (self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject != None) and (self.gridMatrix.CellExistsCheck(cellAtPos.cell))):
                 cellToChange = self.gridMatrix.GetCell(cellAtPos.cell)
                 cellToChange.cell = cellAtPos.cell
