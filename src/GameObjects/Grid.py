@@ -21,7 +21,7 @@ class Grid(): #Change this to the name of your script
 
     def Start(self):
         self.ConfigureAllCells()
-        self.demoPlacement.gameObject.transparency = 128
+        self.demoPlacement.gameObject.transparency = 60
 
     def Update(self):
         if self.engine.timeScale == 0:

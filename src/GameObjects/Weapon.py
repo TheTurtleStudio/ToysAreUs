@@ -1,3 +1,4 @@
+from GameObjects import GameObject
 from GameObjects.Wall import Wall
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 import pygame
@@ -9,9 +10,13 @@ class Weapon(): #Change this to the name of your script
         self.cell = None
         self.maxHealth = None
         self.health = None
+        self.hasBase = None
+        self.baseGO = None
     def Destroy(self):
         self._UpdateLinkedMatrix()
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
+        if self.self.hasBase:
+            self.engine._Globals.sceneObjectsArray.remove(self.baseGO)
     def _UpdateLinkedMatrix(self):
         if (self.cell == None):
             return

@@ -104,16 +104,10 @@ class Engine():
         for item in self._Globals.sceneObjectsArray.copy():
             self._Globals.sceneObjectsArray.remove(item)
             del item
-        print("del inp")
         del self.Input
-        print("del col")
         del self.Collisions
-        print("del globals")
         del self._Globals
-        print("reloading main")
         self.mainReference.Reload()
-        print("I shouldn't be here")
-        del self
 
     def Render(self): #Note that the render function has literally no culling. Everything in the scene will be rendered no matter if it's even on the screen or not.
         self._Globals.currentRenderTime = pygame.time.get_ticks()
@@ -130,8 +124,10 @@ class Engine():
     def AddImageAsset(self, key: str, value: str or list, transparency=True):
         if type(value) == str:
             self._Globals.Assets[key] = pygame.image.load(value).convert_alpha() if transparency else pygame.image.load(value)
-        elif type(value == list):
+        elif type(value) == list:
             self._Globals.Assets[key] = [(img.convert_alpha() if transparency else img) for img in value]
+        elif type(value) == pygame.Surface:
+            self._Globals.Assets[key] = value.convert_alpha() if transparency else value
         else:
             print("Can only import lists of paths or paths.")
 
@@ -152,6 +148,9 @@ class Engine():
 
     def SetCaption(self, value: str):
         pygame.display.set_caption(value)
+
+    def SetIcon(self, value: str):
+        pygame.display.set_icon(pygame.image.load(value))
 
     class Globals():
         _totalTime = 0

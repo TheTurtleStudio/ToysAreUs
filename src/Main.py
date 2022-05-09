@@ -30,7 +30,8 @@ class Main():
     self._PRESTART(initialStart=initialStart)
     
   def _POSTSTART(self):
-    Globals.engine.SetCaption(SceneObjects.Injections.caption) #Just change this to whatever
+    Globals.engine.SetCaption(SceneObjects.Injections.caption)
+    Globals.engine.SetIcon(SceneObjects.Injections.icon)
     for rawCode in SceneObjects.Injections.abstract:
       exec(rawCode)
     objects = SceneObjects.Objects(Globals.engine)

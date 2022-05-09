@@ -22,5 +22,6 @@ class Collision():
         returnList = []
         for obj in self.engine._Globals.sceneObjectsArray:
             if (obj.gameObject.collisionLayer in layers):
-                returnList.append(obj.gameObject.sprite.rect)
+                if (obj.gameObject.renderEnabled is True):
+                    returnList.append(obj.gameObject.sprite.rect)
         return returnList

@@ -2,7 +2,7 @@ import random
 from GameObjects.PlaceWall import PlaceWall
 from GameObjects.PlaceWeapon import PlaceWeapon
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
-from GameObjects import Wall
+from GameObjects import MoneyManager, Wall
 from GameObjects import Weapon
 from GameObjects import GameObject
 import pygame
@@ -25,6 +25,9 @@ class PlaceHandler(): #Change this to the name of your script
             if self.CHECKIFCANPLACE(cell): #Check if we can place the tile
                 cell: Types.Cell = cell
                 objectType: Types.PlacementType = self.selectedPlaceObject.objectType
+                moneyManagement: MoneyManager.MoneyManager = self.engine.FindObject("MONEYMANAGEMENT").obj
+                if moneyManagement.money < objectType.cost:
+                    return
                 placeObject = objectType.methodReference.Create(self.engine)
                 placeObject.obj.maxHealth = objectType.health
                 placeObject.obj.health = objectType.health
@@ -47,8 +50,14 @@ class PlaceHandler(): #Change this to the name of your script
                     attached = self._GetWeaponAttachedWall(cell, self.placeRotation)
                     attached.objectLink.obj.attachedWeapons.append(placeObject.obj)
                     cell.weaponLink = placeObject
+                    if objectType.hasBase:
+                        placeObject.obj.baseGO = GameObject.Create(self.engine)
+                        placeObject.obj.baseGO.gameObject.size = (placeObject.gameObject.size.x * 0.25, placeObject.gameObject.size.y * 0.25)
+                        placeObject.obj.baseGO.gameObject.position = placeObject.gameObject.position + Types.Vector3(placeObject.gameObject.size.x * 0.375, placeObject.gameObject.size.y * 0.375, 3)
+                        self.engine.CreateNewObject(placeObject.obj.baseGO)
+
                 self.UpdateLinkedMatrix(cell)
-                    
+                moneyManagement.money -= objectType.cost
                 self.engine.FindObject("GRID").obj.gridMatrix.SetCell(cell.cell, cell)
     def UpdateLinkedMatrix(self, cell):
         if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell + Types.Vector2(0, -1))):
@@ -83,16 +92,21 @@ class PlaceHandler(): #Change this to the name of your script
                     self.placeRotation -= 90
                     self.placeRotation %= 360
                     demoObj.gameObject.rotation = self.placeRotation
+                if not self.selectedPlaceObject.objectType.canRotate:
+                    self.placeRotation = 0
+                    demoObj.gameObject.rotation = self.placeRotation
                 demoObj.gameObject.renderEnabled = True
                 demoObj.gameObject.image = self.selectedPlaceObject.objectType._GRAYTexture
                 demoObj.gameObject.color = (255,255,255)
                 demoObj.gameObject.size = cell.size
                 pos = cell.position
-                demoObj.gameObject.position = Types.Vector3(pos.x, pos.y, 400000)
+                demoObj.gameObject.position = Types.Vector3(pos.x, pos.y, 40001)
                 if self.CHECKIFCANPLACE(cell):
                     demoObj.gameObject.color = (0, 255, 0)
                 else:
                     demoObj.gameObject.color = (255, 0, 0)
+        else:
+            demoObj.gameObject.renderEnabled = False
 
     def _GetWeaponAttachedWall(self, cell, rotation):
         if self.selectedPlaceObject.objectType.canPlace_ROOT:
@@ -113,6 +127,8 @@ class PlaceHandler(): #Change this to the name of your script
             return None
 
     def CHECKIFCANPLACE(self, cell):
+        if self.engine.FindObject("MONEYMANAGEMENT").obj.money < self.selectedPlaceObject.objectType.cost:
+            return False
         condition1 = False
         condition3 = True
         if (type(self.selectedPlaceObject) == PlaceWall):
@@ -138,7 +154,7 @@ class PlaceHandler(): #Change this to the name of your script
                 if attached:
                     if (attached.objectLink != None) and (type(attached.objectLink) == Wall.Create):
                         condition1 = True
-        condition2 = cell.enemyLink == None
+        condition2 = (cell.enemyLink == None) or (self.selectedPlaceObject.objectType.canPlace_ENEMY)
         return (condition1 and condition2 and condition3)
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.

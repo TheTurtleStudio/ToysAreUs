@@ -25,6 +25,7 @@ class PauseMenu(): #Change this to the name of your script
                 for element in self.elements:
                     element.gameObject.renderEnabled = False
                 self.engine.timeScale = 1
+            #self.engine.Reload()
 
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.

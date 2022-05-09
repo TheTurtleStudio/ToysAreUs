@@ -1,5 +1,5 @@
 from math import floor
-from GameObjects import GameObject, PlaceWeapon
+from GameObjects import GameObject, MoneyManager, PlaceWeapon, ProgressWaveButton, WaveProgression
 from GameObjects import Button
 from GameObjects import Grid
 from GameObjects import PlaceWall
@@ -29,8 +29,9 @@ class Objects():
         engine.AddImageAsset("RUG", "Assets\\Common\\rug.png")
         engine.AddImageAsset("_PLUGWALK", "Assets\\Common\\enemyWalk.png")
         engine.AddImageAsset("_ENEMYATTACK", "Assets\\Common\\enemyAttack.png")
+        engine.AddImageAsset("WEAPONBASE", "Assets\\Common\\weaponBase.png")
 
-        engine.AddImageAsset("DICEWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Dice\\diceWalls.png", (32, 32), 6))
+        engine.AddImageAsset("DICEWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Dice\\diceWalls.png", (64, 64), 6))
         engine.AddImageAsset("DICEWALLS_UI", "Assets\\Dice\\diceWallsUI.png")
         engine.AddImageAsset("DICEWALLS_UI_GRAYSCALE", "Assets\\Dice\\diceWallsUIGRAYSCALE.png")
         engine.AddImageAsset("LEGOWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Lego\\legoWalls.png", (32, 32), 6))
@@ -66,6 +67,8 @@ class Objects():
         engine.AddAnimation("CAR2_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 54), framerate=12, loop=False)
         engine.AddAnimation("CAR3_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 66), framerate=12, loop=False)
 
+        engine.AddImageAsset("TURRET", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turret.png", (192, 192), 1)[0])
+
         
 
         
@@ -82,6 +85,7 @@ class Objects():
         BaseWall.gameObject.color = (50,50,50)
         BaseWall.gameObject.position = Types.Vector3(engine._Globals._display[0]-(75 / 1600 * engine._Globals._display[0]), (110 / 900 * engine._Globals._display[1]), 1)
         BaseWall.gameObject.name = "BaseWall"
+        print(BaseWall.gameObject.size.whole)
         
         
         self.ObjectList.append(BaseWall)
@@ -120,7 +124,7 @@ class Objects():
         HealthBar.obj._fullnessBar.gameObject.color = (100, 185, 115)
         HealthBar.obj._fullnessBar.gameObject.position = HealthBar.gameObject.position + Types.Vector3(0, 0, 1)
         HealthBar.obj._fullnessBar.gameObject.size = HealthBar.gameObject.size
-        HealthBar.obj.maxHealth = 500
+        HealthBar.obj.maxHealth = 100
         HealthBar.gameObject.name = "HEALTHBAR"
         
         HealthTitle = GameObject.Create(engine)
@@ -136,10 +140,14 @@ class Objects():
         self.ObjectList.append(WaveIndicator)
 
         self.ObjectList.append(HealthTitle)
+
+        
+   
+
         WallsTitle = GameObject.Create(engine)
         walls = [Types.WallTypes.Dice, Types.WallTypes.LetterBlock, Types.WallTypes.Lego]
-        weapons = [Types.WeaponTypes.ToothpickTrap, Types.WeaponTypes.NerfGun, Types.WeaponTypes.BottleRocket, Types.WeaponTypes.BarrelOfMonkeys]
-        for buttonNum in range(8): #Red ("button"), Gray ("Garbage"), Black ("Nothing/Space") Green ("Start Button") Purple ("Money text and stuff") Yellow ("HealthBar")
+        weapons = [Types.WeaponTypes.NerfGun, Types.WeaponTypes.BottleRocket, Types.WeaponTypes.ToothpickTrap, Types.WeaponTypes.BarrelOfMonkeys]
+        for buttonNum in range(8):
             if buttonNum < 3:
                 WallButton = PlaceWall.Create(engine)
                 WallButtonHighlight = GameObject.Create(engine)
@@ -198,6 +206,49 @@ class Objects():
                 self.ObjectList.append(WeaponsButton)
                 self.ObjectList.append(WeaponsButtonHighlight)
         self.ObjectList.append(DestroyWallButton)
+
+
+        WaveProgressionObj = WaveProgression.Create(engine)
+        WaveProgressionObj.gameObject.name = "WAVEPROGRESSION"
+        WaveProgressionObj.gameObject.renderEnabled = False
+        self.ObjectList.append(WaveProgressionObj)
+
+        ProgressWave = ProgressWaveButton.Create(engine)
+        ProgressWave.gameObject.size = ((60 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
+        ProgressWave.gameObject.position = Types.Vector3((WaveTitle.gameObject.position.x + WaveTitle.gameObject.size.x) + (40 / 1600 * engine._Globals._display[0]), (TopBar.gameObject.size.y / 2) - (ProgressWave.gameObject.size.y / 2), 4097)
+        ProgressWave.gameObject.color = (255,0,0)
+        ProgressWave.gameObject.collisionLayer = Types.CollisionLayer.UI
+        ProgressWave.gameObject.fontSize = floor(20 / 1600 * engine._Globals._display[0])
+        ProgressWave.gameObject.name = "WAVESTARTBUTTON"
+        ProgressWave.gameObject.textFormat = 0
+        ProgressWave.gameObject.text = "START"
+        self.ObjectList.append(ProgressWave)
+
+        CurrencyTitle = GameObject.Create(engine)
+        CurrencyTitle.gameObject.text = "MONEY"
+        CurrencyTitle.gameObject.position = Types.Vector3((WaveTitle.gameObject.position.x + WaveTitle.gameObject.size.x) + (140 / 1600 * engine._Globals._display[0]), 0, WaveTitle.gameObject.position.z)
+        CurrencyTitle.gameObject.size = WaveTitle.gameObject.size + Types.Vector2(100, 0)
+        CurrencyTitle.gameObject.color = TopBar.gameObject.color
+        CurrencyTitle.gameObject.fontSize = floor(25 / 1600 * engine._Globals._display[0])
+        self.ObjectList.append(CurrencyTitle)
+
+        
+
+        CurrencyHolder = GameObject.Create(engine)
+        CurrencyHolder.gameObject.name = "MONEY"
+        CurrencyHolder.gameObject.text = "N\A"
+        
+        CurrencyHolder.gameObject.size = WaveTitle.gameObject.size + Types.Vector2(100, 0)
+        CurrencyHolder.gameObject.position = Types.Vector3((WaveTitle.gameObject.position.x + WaveTitle.gameObject.size.x) + (140 / 1600 * engine._Globals._display[0]), (TopBar.gameObject.size.y / 2) - (CurrencyHolder.gameObject.size.y / 2) + (10 / 900 * engine._Globals._display[1]), WaveTitle.gameObject.position.z)
+        CurrencyHolder.gameObject.color = TopBar.gameObject.color
+        CurrencyHolder.gameObject.fontSize = floor(20 / 1600 * engine._Globals._display[0])
+        self.ObjectList.append(CurrencyHolder)
+
+        MoneyManagement = MoneyManager.Create(engine)
+        MoneyManagement.gameObject.renderEnabled = False
+        MoneyManagement.gameObject.name = "MONEYMANAGEMENT"
+        self.ObjectList.append(MoneyManagement)
+
         BoardGrid = Grid.Create(engine)
         BoardGrid.gameObject.name = 'GRID'
         BoardGrid.gameObject.size = ((1088 / 1600 * engine._Globals._display[0]), (768 / 900 * engine._Globals._display[1]))
@@ -231,7 +282,8 @@ class Objects():
         return tuple(self.ObjectList)
 class Injections():
     caption = "ToysWarUs"
-    dimensions = (1200, 675)
+    dimensions = (1600, 900)
+    icon = "Assets\\Common\\icon.png"
     abstract = [
         "#This is raw code to be after all other injections are made. Yes, I know this is vulnerable to ACE and very unsafe in general. No, I don't care. Why? Because I'm a thug.",
         "#It's pretty intuitive, just put every piece of code encapsulated in a string as a new item in the array.",
