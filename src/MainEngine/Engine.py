@@ -12,12 +12,13 @@ class PregameSettings():
         self.engine = engine
     def SetScreenDimensions(self, dimensions: Types.Vector2):
         self.engine._Globals.screen = pygame.display.set_mode(dimensions.whole)
-        self.engine._Globals.display = dimensions.whole
-    
+        self.engine._Globals.display = dimensions.whole  
 class Engine():
-    def __init__(self):
-        pygame.mixer.pre_init(44100, 16, 2, 4096) #Audio mixer settings
-        self._Globals = self.Globals()
+    def __init__(self, initialStart=True):
+        if initialStart is True:
+            pygame.init() #Initialize pygame duh
+            pygame.mixer.pre_init(44100, 16, 2, 4096) #Audio mixer settings
+        self._Globals: self.Globals = self.Globals()
         
     @property
     def timeScale(self):
@@ -30,11 +31,11 @@ class Engine():
             print("Can't set timeScale to an arbitrary value; only integers and floats allowed.")
 
     def Start(self, main: Main.Main): #Start the main gameloop
-        pygame.init() #Initialize pygame duh
         self._Globals.clock = pygame.time.Clock()
         self.Input = Input.InputHandler(self)
         self.Collisions = Collision.Collision(self)
         main._POSTSTART()
+        self.mainReference = main
         while True:
             self.FrameEvents()
     
@@ -98,6 +99,21 @@ class Engine():
             return (linkedObjArray, array)
         del array, linkedObjArray, sOA_copy
         return None
+
+    def Reload(self):
+        for item in self._Globals.sceneObjectsArray.copy():
+            self._Globals.sceneObjectsArray.remove(item)
+            del item
+        print("del inp")
+        del self.Input
+        print("del col")
+        del self.Collisions
+        print("del globals")
+        del self._Globals
+        print("reloading main")
+        self.mainReference.Reload()
+        print("I shouldn't be here")
+        del self
 
     def Render(self): #Note that the render function has literally no culling. Everything in the scene will be rendered no matter if it's even on the screen or not.
         self._Globals.currentRenderTime = pygame.time.get_ticks()

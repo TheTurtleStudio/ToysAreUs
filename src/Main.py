@@ -7,20 +7,27 @@ class Globals:
   
   
 class Main():
-  def __init__(self):
-    self._STARTENGINE()
+  def __init__(self, initialStart=True):
+    self._STARTENGINE(initialStart=initialStart)
     
-  def _PRESTART(self):
-    Globals.engine = Engine.Engine()
+  def Reload(self):
+    del Globals.engine
+    self.__init__(initialStart=False)
+    Globals.engine.Start(self)
+
+  def _PRESTART(self, initialStart=True):
+    Globals.engine = None
+    Globals.engine = Engine.Engine(initialStart=initialStart)
     settings = Engine.PregameSettings(Globals.engine)
     settings.SetScreenDimensions(Types.Vector2(SceneObjects.Injections.dimensions[0], SceneObjects.Injections.dimensions[1]))
+    del settings
     
   def _APPENDSCENEOBJECT(self, objectTuple):
     for _object in objectTuple:
       Globals.engine.CreateNewObject(_object)
       
-  def _STARTENGINE(self):
-    self._PRESTART()
+  def _STARTENGINE(self, initialStart=True):
+    self._PRESTART(initialStart=initialStart)
     
   def _POSTSTART(self):
     Globals.engine.SetCaption(SceneObjects.Injections.caption) #Just change this to whatever

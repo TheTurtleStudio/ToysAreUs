@@ -449,4 +449,3 @@ class EnemyTypes():
         _WalkingAnimation = ["TEDDYBEAR1_WALK", "TEDDYBEAR2_WALK", "TEDDYBEAR3_WALK"]
         _AttackAnimation = ["TEDDYBEAR1_ATTACK", "TEDDYBEAR2_ATTACK", "TEDDYBEAR3_ATTACK"]
         _AttackAnimationAttackFrame = 5
-    

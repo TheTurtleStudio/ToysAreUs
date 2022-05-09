@@ -19,6 +19,7 @@ class Enemy(): #Change this to the name of your script
         self.animationVariationIndex = 0
         self._hasAttackedThisCycle = False
         self._attackAnimationPlaying = False
+
     def Start(self):
         self.gridAccessor = self.engine.FindObject("GRID")
         yPos = self.gridAccessor.obj.CellToPosition((0, random.randint(1, self.gridAccessor.obj.gridSize.y - 2))).y
@@ -26,8 +27,6 @@ class Enemy(): #Change this to the name of your script
         self.gameObject.image = "NOTEXTURE"
         self._destination = None
         self.animationVariationIndex = random.randint(0, len(self.enemyType._WalkingAnimation) - 1)
-        print(self.gameObject.color)
-        
 
     def Update(self):
         if (self._destination != None):
@@ -103,7 +102,6 @@ class Enemy(): #Change this to the name of your script
                     self._destination = currentCell.cell + Types.Vector2(0, -2 if goAbove else 2)
                 else:
                     self.HandleWallAttack(futureCell)
-
 
     def HandleBaseWallDamage(self):
         healthBarObj: Healthbar.Healthbar = self.engine.FindObject("HEALTHBAR").obj
