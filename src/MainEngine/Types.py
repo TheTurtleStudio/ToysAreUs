@@ -397,17 +397,17 @@ class WallTypes():
     class _GENERIC(PlacementType):
         methodReference = Wall
     class Dice(_GENERIC): #Weak
-        cost = 10
+        cost = 2
         health = 6
         _UITexture = "DICEWALLS_UI"
         _GRAYTexture = "DICEWALLS_UI_GRAYSCALE"
         _FieldTexture = "DICEWALLS"
     class LetterBlock(_GENERIC): #Medium
-        cost = 20
+        cost = 5
         health = 12
         _FieldTexture = "BLOCKWALLS"
     class Lego(_GENERIC): #Strong
-        cost = 30
+        cost = 8
         health = 15
         _UITexture = "LEGOWALLS_UI"
         _GRAYTexture = "LEGOWALLS_UI_GRAYSCALE"
@@ -416,6 +416,7 @@ class WeaponTypes():
     class _GENERIC(PlacementType):
         methodReference = Weapon
         hasBase = False
+        speed = 50
         damage = 1
         canPlace_ENEMY = False
         canPlace_ANYWHERE = False
@@ -449,28 +450,28 @@ class EnemyTypes():
         health = 1
         reward = 1
         damage = 1
-        speed = 50
+        speed = 100
         _WalkingAnimation = ["NOTEXTURE"]
         _AttackAnimation = ["NOTEXTURE"]
         _AttackAnimationAttackFrame = 0
     class ToyCar(_GENERIC): #Fast and weak
         damage = 1
         reward = 2
-        speed = 90
+        speed = 180
         _WalkingAnimation = ["CAR1_WALK", "CAR2_WALK", "CAR3_WALK"]
         _AttackAnimation = ["CAR1_ATTACK", "CAR2_ATTACK", "CAR3_ATTACK"]
         _AttackAnimationAttackFrame = 7
     class ToySoldier(_GENERIC): #Basic, medium speed and medium strength
         damage = 2
         reward = 2
-        speed = 49
+        speed = 100
         _WalkingAnimation = ["SOLDIER1_WALK", "SOLDIER2_WALK", "SOLDIER3_WALK"]
         _AttackAnimation = ["SOLDIER1_ATTACK", "SOLDIER2_ATTACK", "SOLDIER3_ATTACK"]
         _AttackAnimationAttackFrame = 1
     class TeddyBear(_GENERIC): #Slow and strong
         damage = 3
         reward = 5
-        speed = 30
+        speed = 60
         _WalkingAnimation = ["TEDDYBEAR1_WALK", "TEDDYBEAR2_WALK", "TEDDYBEAR3_WALK"]
         _AttackAnimation = ["TEDDYBEAR1_ATTACK", "TEDDYBEAR2_ATTACK", "TEDDYBEAR3_ATTACK"]
         _AttackAnimationAttackFrame = 5

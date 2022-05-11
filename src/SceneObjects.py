@@ -1,5 +1,5 @@
 from math import floor
-from GameObjects import GameObject, MoneyManager, PlaceWeapon, ProgressWaveButton, WaveProgression
+from GameObjects import GameObject, MoneyManager, PlaceWeapon, ProgressWaveButton, StartButtonFunctionality, WaveProgression
 from GameObjects import Button
 from GameObjects import Grid
 from GameObjects import PlaceWall
@@ -8,6 +8,7 @@ from GameObjects import RemoveTile
 from GameObjects import Enemy
 from GameObjects import Healthbar
 from GameObjects import PauseMenu
+from GameObjects import GameOverScreen
 
 from MainEngine import ImageManipulation
 from MainEngine import Types
@@ -42,9 +43,6 @@ class Objects():
         #engine.AddImageAsset("LEGOWALLS_UI_GRAYSCALE", "Assets\\Lego\\legoWallsUIGRAYSCALE.png")
         
         engine.AddImageAsset("ARROW", "Assets\\Common\\arrow.png")
-        
-
-        engine.AddAnimation("ATTACK_TEMP", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\attackingAnimation.png", (32, 32), 4), framerate=2, loop=False) #Spritesheet
 
         engine.AddAnimation("SOLDIER1_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4), framerate=5, loop=True)
         engine.AddAnimation("SOLDIER2_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 4), framerate=5, loop=True)
@@ -67,8 +65,14 @@ class Objects():
         engine.AddAnimation("CAR2_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 54), framerate=12, loop=False)
         engine.AddAnimation("CAR3_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 66), framerate=12, loop=False)
 
-        engine.AddImageAsset("TURRET", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turret.png", (192, 192), 1)[0])
+        engine.AddImageAsset("TURRET", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turret.png", (64, 64), 1)[0])
 
+        engine.AddImageAsset("PLAYCLICKABLE", "Assets\\Common\\playButtonClickable.png")
+        engine.AddImageAsset("PLAYNOTCLICKABLE", "Assets\\Common\\playButtonUnclickable.png")
+        engine.AddImageAsset("40PERCENTTRANS", "Assets\\Common\\40PERCENTTRANS.png")
+        engine.AddImageAsset("100PERCENTTRANS", "Assets\\Common\\100PERCENTTRANS.png")
+
+        engine.AddImageAsset("MAINWALL", "Assets\\Common\\wall.png")
         
 
         
@@ -82,9 +86,10 @@ class Objects():
         self.ObjectList.append(BackGround)
         BaseWall = GameObject.Create(engine)
         BaseWall.gameObject.size = ((75 / 1600 * engine._Globals._display[0]), engine._Globals._display[1]-(120 / 900 * engine._Globals._display[1]))
-        BaseWall.gameObject.color = (50,50,50)
+        BaseWall.gameObject.color = (128,128,128)
         BaseWall.gameObject.position = Types.Vector3(engine._Globals._display[0]-(75 / 1600 * engine._Globals._display[0]), (110 / 900 * engine._Globals._display[1]), 1)
         BaseWall.gameObject.name = "BaseWall"
+        BaseWall.gameObject.image = "MAINWALL"
         print(BaseWall.gameObject.size.whole)
         
         
@@ -113,9 +118,37 @@ class Objects():
         WaveIndicator.gameObject.size = ((60 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
         WaveIndicator.gameObject.position = Types.Vector3((engine._Globals._display[0] / 2) - (WaveIndicator.gameObject.size.x / 2), WaveTitle.gameObject.size.y / 2, 4098)
         WaveIndicator.gameObject.color = TopBar.gameObject.color
-        WaveIndicator.gameObject.text = "5"
+        WaveIndicator.gameObject.text = "0"
         WaveIndicator.gameObject.fontSize = floor(60 / 1600 * engine._Globals._display[0])
+        WaveIndicator.gameObject.name = "WAVEINDICATOR"
 
+        GameOver = GameOverScreen.Create(engine)
+        GameOver.gameObject.size = engine._Globals._display
+        GameOver.gameObject.position = Types.Vector3(0,0,65536)
+        GameOver.gameObject.color = (0, 0, 0)
+        GameOver.gameObject.name = "GAMEOVER"
+        GameOverTitle = GameObject.Create(engine)
+        GameOverTitle.gameObject.size = ((900 / 1600 * engine._Globals._display[0]), (100 / 900 * engine._Globals._display[1]))
+        GameOverTitle.gameObject.position = Types.Vector3((engine._Globals._display[0] / 2) - (GameOverTitle.gameObject.size.x / 2), GameOverTitle.gameObject.size.y / 2, GameOver.gameObject.position.z + 1)
+        GameOverTitle.gameObject.image = "100PERCENTTRANS"
+        GameOverTitle.gameObject.textFormat = 0
+        GameOverTitle.gameObject.fontSize = 100
+        GameOverTitle.gameObject.text = "GAME OVER"
+        GameOver.obj.elements.append(GameOverTitle)
+        GameOverRestart = StartButtonFunctionality.Create(engine)
+        GameOverRestart.gameObject.size = ((120 / 1600 * engine._Globals._display[0]), (50 / 900 * engine._Globals._display[1]))
+        GameOverRestart.gameObject.position = Types.Vector3((engine._Globals._display[0] / 2) - (GameOverRestart.gameObject.size.x / 2), engine._Globals._display[1] / 2, GameOver.gameObject.position.z + 1)
+        #GameOverRestart.gameObject.image = "100PERCENTTRANS"
+        GameOverRestart.gameObject.color = (50, 50, 50)
+        GameOverRestart.gameObject.collisionLayer = Types.CollisionLayer.UI
+        GameOverRestart.gameObject.textFormat = 0
+        GameOverRestart.gameObject.fontSize = 30
+        GameOverRestart.gameObject.text = "RESTART"
+        GameOver.obj.elements.append(GameOverRestart)
+        self.ObjectList.append(GameOverTitle)
+        self.ObjectList.append(GameOverRestart)
+        self.ObjectList.append(GameOver)
+        
 
         HealthBar = Healthbar.Create(engine)
         HealthBar.gameObject.size = Types.Vector2(TopBar.gameObject.size.x * 0.25 - (20 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
@@ -214,14 +247,10 @@ class Objects():
         self.ObjectList.append(WaveProgressionObj)
 
         ProgressWave = ProgressWaveButton.Create(engine)
-        ProgressWave.gameObject.size = ((60 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
+        ProgressWave.gameObject.size = ((64 / 1600 * engine._Globals._display[0]), (64 / 900 * engine._Globals._display[1]))
         ProgressWave.gameObject.position = Types.Vector3((WaveTitle.gameObject.position.x + WaveTitle.gameObject.size.x) + (40 / 1600 * engine._Globals._display[0]), (TopBar.gameObject.size.y / 2) - (ProgressWave.gameObject.size.y / 2), 4097)
-        ProgressWave.gameObject.color = (255,0,0)
         ProgressWave.gameObject.collisionLayer = Types.CollisionLayer.UI
-        ProgressWave.gameObject.fontSize = floor(20 / 1600 * engine._Globals._display[0])
         ProgressWave.gameObject.name = "WAVESTARTBUTTON"
-        ProgressWave.gameObject.textFormat = 0
-        ProgressWave.gameObject.text = "START"
         self.ObjectList.append(ProgressWave)
 
         CurrencyTitle = GameObject.Create(engine)
@@ -255,6 +284,7 @@ class Objects():
         BoardGrid.gameObject.image = "RUG"
         BoardGrid.gameObject.position = (BaseWall.gameObject.position.x - BoardGrid.gameObject.size.x, BaseWall.gameObject.position.y + ((BaseWall.gameObject.size.y - BoardGrid.gameObject.size.y) / 2),8192)
         BoardGrid.gameObject.color = (96, 171, 92)
+        WaveProgressionObj.obj.grid = BoardGrid
         self.ObjectList.append(BoardGrid)
         PlaceObjectHandler = PlaceHandler.Create(engine)
         PlaceObjectHandler.gameObject.name = "PLACEHANDLER"
@@ -262,22 +292,12 @@ class Objects():
         
         Pause = PauseMenu.Create(engine)
         Pause.gameObject.size = engine._Globals._display
-        Pause.gameObject.position = Types.Vector3(0,0,65536)
+        Pause.gameObject.position = Types.Vector3(0,0,6553600)
         Pause.gameObject.color = (0, 0, 0)
-        Pause.gameObject.transparency = 60
 
         self.ObjectList.append(Pause)
 
 
-        #CREATE ENEMY
-        for i in range(15):
-            enemy = Enemy.Create(engine)
-            enemy.obj.enemyType = random.choice([Types.EnemyTypes.TeddyBear, Types.EnemyTypes.ToyCar, Types.EnemyTypes.ToySoldier])
-            enemy.gameObject.size = Types.Vector2(BoardGrid.gameObject.size.y / BoardGrid.obj.gridSize.y, BoardGrid.gameObject.size.y / BoardGrid.obj.gridSize.y)
-            #enemy.gameObject.position = Types.Vector3(0,320,500000)
-            #enemy.gameObject.rotation = 0
-            self.ObjectList.append(enemy)
-        #END CREATE ENEMY
     def get(self):
         return tuple(self.ObjectList)
 class Injections():

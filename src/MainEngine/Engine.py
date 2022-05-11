@@ -79,7 +79,12 @@ class Engine():
                 pass
 
     def GetDeltaTime(self): #Seconds since last frame
-        return ((self._Globals.lastRenderTime - self._Globals.currentRenderTime) / 1000) * self._Globals.timeScale
+        return (self.GetDeltaTimeRAW() * self._Globals.timeScale)
+
+    def GetDeltaTimeRAW(self):
+        timeRaw = ((self._Globals.lastRenderTime - self._Globals.currentRenderTime) / 1000)
+        timeRaw = timeRaw if (timeRaw <= (1/60)) else 1/60
+        return timeRaw
 
     def GetTotalTime(self):
         return self._Globals._totalTime

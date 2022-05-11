@@ -31,11 +31,14 @@ class Healthbar(): #Change this to the name of your script
     def _UpdateBar(self):
         if self._health < 0: #Maximize health if it wasn't set
             self._health = self._maxHealth
-        if self._maxHealth <= 0:
+        if self._maxHealth == 0:
             return
+        if self._health == 0:
+            self.engine.FindObject("GAMEOVER").obj.Indicate()
         
         self._fullnessBar.gameObject.size = Types.Vector2(self.gameObject.size.x * (self._health / self._maxHealth), self._fullnessBar.gameObject.size.y)
-        
+
+
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():
     def __init__(self, engine):

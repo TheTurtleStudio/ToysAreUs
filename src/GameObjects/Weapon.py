@@ -24,7 +24,8 @@ class Weapon(): #Change this to the name of your script
     def Update(self):
         if self.engine.timeScale == 0:
             return
-        pass #Do the firing and killing enemies here
+        pass
+
 
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.

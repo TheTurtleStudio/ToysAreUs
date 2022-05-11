@@ -9,7 +9,7 @@ class MoneyManager(): #Change this to the name of your script
         self._money = 0
 
     def Start(self):
-        self.money = 1000
+        self.money = 100
 
     @property
     def money(self):

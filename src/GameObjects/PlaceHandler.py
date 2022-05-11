@@ -42,19 +42,25 @@ class PlaceHandler(): #Change this to the name of your script
                 self.engine.CreateNewObject(placeObject)
                 placeObject.gameObject.size = cell.size
                 pos = cell.position
-                placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40000)
+                
                 placeObject.gameObject.rotation = self.placeRotation
                 if objectType.__bases__[0] == Types.WallTypes._GENERIC:
+                    placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40000)
                     cell.objectLink = placeObject
                 elif objectType.__bases__[0] == Types.WeaponTypes._GENERIC:
-                    attached = self._GetWeaponAttachedWall(cell, self.placeRotation)
-                    attached.objectLink.obj.attachedWeapons.append(placeObject.obj)
+                    placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40001)
+                    if objectType.canPlace_ANYWHERE == False:
+                        attached = self._GetWeaponAttachedWall(cell, self.placeRotation)
+                        attached.objectLink.obj.attachedWeapons.append(placeObject.obj)
                     cell.weaponLink = placeObject
                     if objectType.hasBase:
+                        print("making base")
                         placeObject.obj.baseGO = GameObject.Create(self.engine)
                         placeObject.obj.baseGO.gameObject.size = (placeObject.gameObject.size.x * 0.25, placeObject.gameObject.size.y * 0.25)
-                        placeObject.obj.baseGO.gameObject.position = placeObject.gameObject.position + Types.Vector3(placeObject.gameObject.size.x * 0.375, placeObject.gameObject.size.y * 0.375, 3)
+                        placeObject.obj.baseGO.gameObject.position = placeObject.gameObject.position + Types.Vector3(placeObject.gameObject.size.x * 0.375, placeObject.gameObject.size.y * 0.375, -0.1)
+                        placeObject.obj.baseGO.gameObject.image = "WEAPONBASE"
                         self.engine.CreateNewObject(placeObject.obj.baseGO)
+                        print("placed")
 
                 self.UpdateLinkedMatrix(cell)
                 moneyManagement.money -= objectType.cost
@@ -100,7 +106,7 @@ class PlaceHandler(): #Change this to the name of your script
                 demoObj.gameObject.color = (255,255,255)
                 demoObj.gameObject.size = cell.size
                 pos = cell.position
-                demoObj.gameObject.position = Types.Vector3(pos.x, pos.y, 40001)
+                demoObj.gameObject.position = Types.Vector3(pos.x, pos.y, 80000)
                 if self.CHECKIFCANPLACE(cell):
                     demoObj.gameObject.color = (0, 255, 0)
                 else:
@@ -115,7 +121,7 @@ class PlaceHandler(): #Change this to the name of your script
                 if (current.objectLink != None) and (type(current.objectLink) == Wall.Create) and (current.weaponLink == None):
                     return current
         rotationList = [0, 90, 180, 270]
-        vectorList = [Types.Vector2(-1,0), Types.Vector2(0,1), Types.Vector2(1,0), Types.Vector2(0,-1)]
+        vectorList = [Types.Vector2(1,0), Types.Vector2(0,-1), Types.Vector2(-1,0), Types.Vector2(0,1)]
         try:
             mutualIndex = rotationList.index(rotation)
         except ValueError:
@@ -155,6 +161,9 @@ class PlaceHandler(): #Change this to the name of your script
                     if (attached.objectLink != None) and (type(attached.objectLink) == Wall.Create):
                         condition1 = True
         condition2 = (cell.enemyLink == None) or (self.selectedPlaceObject.objectType.canPlace_ENEMY)
+        if type(self.selectedPlaceObject) == PlaceWeapon:
+            if self.selectedPlaceObject.objectType.canPlace_ANYWHERE and condition3 and condition2 and cell.objectLink == None:
+                return True
         return (condition1 and condition2 and condition3)
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
