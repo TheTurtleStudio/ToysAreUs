@@ -5,6 +5,7 @@ from MainEngine import Types
 from MainEngine import Collision
 from MainEngine import ImageManipulation
 import Main
+import time
 
 
 class PregameSettings():
@@ -52,15 +53,24 @@ class Engine():
         return None
 
     def FrameEvents(self):
+        
         self._Globals.clock.tick()
-        self._PostEventsToInput()
+        self._Globals.lastRunTime = self._Globals.currentRunTime
+        self._Globals.currentRunTime = pygame.time.get_ticks()
+        waitTime = 1000/60 - (self._Globals.currentRunTime - self._Globals.lastRunTime)
+        if waitTime > 0:
+            pygame.time.delay(round(waitTime))
+        
         self._Globals._totalTime += self.GetDeltaTime()
+        self._PostEventsToInput()
+        
         self._UpdateSubscribers() #Tell every GameObject to call their Update function.
         if (self.Input.TestFor.QUIT()):
-            quit()
+            self.Quit()
         self.Input.clearEvents()
         self.Render() #Call a render update
-    
+        #print(f"FPS: {round(1/self.GetDeltaTimeRAW(), 1)}, Enemies: {len(self.FindObject('WAVEPROGRESSION').obj.enemies)}")
+
     def CreateNewObject(self, _object):
         try:
             self._Globals.sceneObjectsArray.append(_object)
@@ -82,8 +92,8 @@ class Engine():
         return (self.GetDeltaTimeRAW() * self._Globals.timeScale)
 
     def GetDeltaTimeRAW(self):
-        timeRaw = ((self._Globals.lastRenderTime - self._Globals.currentRenderTime) / 1000)
-        timeRaw = timeRaw if (timeRaw <= (1/60)) else 1/60
+        timeRaw = ((self._Globals.currentRunTime - self._Globals.lastRunTime)) / 1000
+        timeRaw = timeRaw if timeRaw > 1/60 else 1/60
         return timeRaw
 
     def GetTotalTime(self):
@@ -99,32 +109,39 @@ class Engine():
                     array.append(obj.gameObject.position.z) #Add z component to array
                     linkedObjArray.append(obj) #Add GameObject to array
             n = len(array)
-            linkedObjectQuicksort = BMathL.Math.QuickSort.LinkedObject()
-            linkedObjectQuicksort.QuickSort(array, linkedObjArray, 0, n-1) #User our linked object quicksort algorithm
+            BMathL.Math.QuickSort.LinkedObject.QuickSort(array, linkedObjArray, 0, n-1) #Use our linked object quicksort algorithm
             return (linkedObjArray, array)
         del array, linkedObjArray, sOA_copy
         return None
 
+    def Quit(self):
+        quit()
+
     def Reload(self):
-        for item in self._Globals.sceneObjectsArray.copy():
+        c = self._Globals.sceneObjectsArray.copy()
+        for item in c:
+            item.gameObject.sprite.kill()
             self._Globals.sceneObjectsArray.remove(item)
+            try:
+                item.obj.Destroy()
+            except Exception:
+                pass
             del item
         del self.Input
         del self.Collisions
+        del c
         del self._Globals
         self.mainReference.Reload()
 
     def Render(self): #Note that the render function has literally no culling. Everything in the scene will be rendered no matter if it's even on the screen or not.
-        self._Globals.currentRenderTime = pygame.time.get_ticks()
         self._Globals._screen.fill((0,0,0)) #Background, can remove.
         renderOrderReturnVal = self.CalculateRenderOrder()
         if (renderOrderReturnVal == None):
             return
         array = renderOrderReturnVal[0]
         for i in array:
-            self._Globals.screen.blit(i.gameObject.sprite.image, (i.gameObject.position.x, i.gameObject.position.y))
+            self._Globals.screen.blit(i.gameObject.sprite.image, (i.gameObject.position.x + i.gameObject._offset.x, i.gameObject.position.y + i.gameObject._offset.y))
         pygame.display.update()
-        self._Globals.lastRenderTime = pygame.time.get_ticks()
 
     def AddImageAsset(self, key: str, value: str or list, transparency=True):
         if type(value) == str:
@@ -164,8 +181,9 @@ class Engine():
         sceneObjectsArray = []
         _display = (512, 512)
         clock = None
-        lastRenderTime = pygame.time.get_ticks()
-        currentRenderTime = pygame.time.get_ticks()
+        lastRunTime = pygame.time.get_ticks()
+        currentRunTime = pygame.time.get_ticks()
+        Universals = {}
 
         _screen = pygame.display.set_mode(_display)
         timeScale = 1

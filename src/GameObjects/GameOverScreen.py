@@ -18,6 +18,8 @@ class GameOverScreen(): #Change this to the name of your script
             element.gameObject.renderEnabled = False
 
     def Update(self):
+        if self.engine.GetUniversal("STARTED") == False:
+            return
         if self.active and (self.trans != 0):
             self.trans -= 1020 * self.engine.GetDeltaTimeRAW()
             if self.trans < 0:

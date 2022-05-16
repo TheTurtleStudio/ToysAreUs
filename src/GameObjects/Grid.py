@@ -24,6 +24,8 @@ class Grid(): #Change this to the name of your script
         self.demoPlacement.gameObject.transparency = 60
 
     def Update(self):
+        if self.engine.GetUniversal("STARTED") == False:
+            return
         if self.engine.timeScale == 0:
             return
         if (self.engine.Input.TestFor.RIGHTMOUSESTATE()): #Did the player click to place something this frame?
@@ -139,6 +141,8 @@ class Grid(): #Change this to the name of your script
         gridCellSize = Types.Vector2(self.gameObject.size.x / self.gridSize.x, self.gameObject.size.y / self.gridSize.y)
         return Types.Vector2(math.floor(relative.x / gridCellSize.x), math.floor(relative.y / gridCellSize.y))
 
+    def GetCellSize(self):
+        return Types.Vector2(self.gameObject.size.x / self.gridSize.x, self.gameObject.size.y / self.gridSize.y)
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():

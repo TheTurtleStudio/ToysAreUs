@@ -15,6 +15,8 @@ class Button(): #Change this to the name of your script
         self.gameObject.image = "PLAYCLICKABLE"
 
     def Update(self): #This is called every rendercycle
+        if self.engine.timeScale == 0:
+            return
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
             if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [Types.CollisionLayer.UI])) and (self.engine.FindObject("GAMEOVER").obj.active == False):
                 if not self.activated:

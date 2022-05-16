@@ -48,20 +48,21 @@ class PlaceHandler(): #Change this to the name of your script
                     placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40000)
                     cell.objectLink = placeObject
                 elif objectType.__bases__[0] == Types.WeaponTypes._GENERIC:
+                    placeObject.obj.weaponType = objectType
+                    placeObject.obj.placedRot = self.placeRotation
                     placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40001)
                     if objectType.canPlace_ANYWHERE == False:
                         attached = self._GetWeaponAttachedWall(cell, self.placeRotation)
                         attached.objectLink.obj.attachedWeapons.append(placeObject.obj)
                     cell.weaponLink = placeObject
                     if objectType.hasBase:
-                        print("making base")
                         placeObject.obj.baseGO = GameObject.Create(self.engine)
                         placeObject.obj.baseGO.gameObject.size = (placeObject.gameObject.size.x * 0.25, placeObject.gameObject.size.y * 0.25)
                         placeObject.obj.baseGO.gameObject.position = placeObject.gameObject.position + Types.Vector3(placeObject.gameObject.size.x * 0.375, placeObject.gameObject.size.y * 0.375, -0.1)
                         placeObject.obj.baseGO.gameObject.image = "WEAPONBASE"
+                        placeObject.obj.hasBase = True
                         self.engine.CreateNewObject(placeObject.obj.baseGO)
-                        print("placed")
-
+                    
                 self.UpdateLinkedMatrix(cell)
                 moneyManagement.money -= objectType.cost
                 self.engine.FindObject("GRID").obj.gridMatrix.SetCell(cell.cell, cell)
@@ -150,17 +151,21 @@ class PlaceHandler(): #Change this to the name of your script
                         condition1 = True
         elif (type(self.selectedPlaceObject) == PlaceWeapon):
             condition3 = cell.weaponLink == None
+            if self.selectedPlaceObject.objectType.canPlace_SIDE:
+                attached = self._GetWeaponAttachedWall(cell, self.placeRotation)
+                if attached and self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell) and type(self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell).objectLink) != Wall.Create:
+                    if (attached.objectLink != None) and (type(attached.objectLink) == Wall.Create):
+                        condition1 = True
             if self.selectedPlaceObject.objectType.canPlace_ROOT:
                 if (self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cell.cell)):
                     current = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cell.cell)
                     if (current.objectLink != None) and (type(current.objectLink) == Wall.Create) and (current.weaponLink == None):
                         condition1 = True
-            if self.selectedPlaceObject.objectType.canPlace_SIDE:
-                attached = self._GetWeaponAttachedWall(cell, self.placeRotation)
-                if attached:
-                    if (attached.objectLink != None) and (type(attached.objectLink) == Wall.Create):
-                        condition1 = True
-        condition2 = (cell.enemyLink == None) or (self.selectedPlaceObject.objectType.canPlace_ENEMY)
+                
+        
+        condition2 = len(cell.enemyLink) == 0
+        if condition2 is False and (type(self.selectedPlaceObject) == PlaceWeapon):
+            condition2 = (self.selectedPlaceObject.objectType.canPlace_ENEMY)
         if type(self.selectedPlaceObject) == PlaceWeapon:
             if self.selectedPlaceObject.objectType.canPlace_ANYWHERE and condition3 and condition2 and cell.objectLink == None:
                 return True

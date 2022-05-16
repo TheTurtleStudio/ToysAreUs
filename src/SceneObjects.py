@@ -1,5 +1,5 @@
 from math import floor
-from GameObjects import GameObject, MoneyManager, PlaceWeapon, ProgressWaveButton, StartButtonFunctionality, WaveProgression
+from GameObjects import GameObject, MainMenuQuit, MainMenuStart, MoneyManager, PlaceWeapon, ProgressWaveButton, StartButtonFunctionality, WaveProgression
 from GameObjects import Button
 from GameObjects import Grid
 from GameObjects import PlaceWall
@@ -18,6 +18,7 @@ import pygame, random
 class Objects():
     def __init__(self, engine: Engine):
         self.ObjectList = []
+        engine.SetUniversal("STARTED", False)
         engine.AddImageAsset("NOTEXTURE", "_ROOT\\NOTEXTURE.png") #WILL POSSIBLY MOVE TO DIFFERENT FILE LATER, AS OF RIGHT NOW DO NOT REMOVE THIS
         engine.AddImageAsset("NOTEXTURE_GRAYSCALE", "_ROOT\\NOTEXTUREGRAYSCALE.png") #WILL POSSIBLY MOVE TO DIFFERENT FILE LATER, AS OF RIGHT NOW DO NOT REMOVE THIS
         engine.AddAnimation("NOTEXTURE", ["NOTEXTURE"], framerate=1, loop=False) #WILL POSSIBLY MOVE TO DIFFERENT FILE LATER, AS OF RIGHT NOW DO NOT REMOVE THIS
@@ -77,8 +78,47 @@ class Objects():
 
         
 
+        MainMenu = GameObject.Create(engine)
+        MainMenu.gameObject.size = engine._Globals._display
+        MainMenu.gameObject.position = Types.Vector3(0, 0, 6413607225314159)
+        MainMenu.gameObject.color = (218,218,218)
+        MainMenu.gameObject.name = "MAINMENU"
+        self.ObjectList.append(MainMenu)
 
+        MainMenuTitle = GameObject.Create(engine)
+        MainMenuTitle.gameObject.size = engine._Globals._display
+        MainMenuTitle.gameObject.position = Types.Vector3(0, 0, MainMenu.gameObject.position.z + 1)
+        MainMenuTitle.gameObject._textColor = (20,20,20)
+        MainMenuTitle.gameObject.fontSize = floor(80 / 1600 * engine._Globals._display[0])
+        MainMenuTitle.gameObject.text = "ToysWarUs "
+        MainMenuTitle.gameObject.image = "100PERCENTTRANS"
+        MainMenuTitle.gameObject.name = "MAINMENUTITLE"
+        self.ObjectList.append(MainMenuTitle)
         
+        StartButtonMain = MainMenuStart.Create(engine)
+        StartButtonMain.gameObject.size = ((300 / 1600 * engine._Globals._display[0]), (80 / 900 * engine._Globals._display[1]))
+        StartButtonMain.gameObject.color = (127,127,127)
+        StartButtonMain.gameObject.position = Types.Vector3((engine._Globals._display[0] / 2) - (StartButtonMain.gameObject.size.x / 2), (engine._Globals._display[1] / 2) - (StartButtonMain.gameObject.size.y / 2), MainMenu.gameObject.position.z + 2)
+        StartButtonMain.gameObject.collisionLayer = Types.CollisionLayer.UI
+        StartButtonMain.gameObject.name = "MAINMENUSTART"
+        StartButtonMain.gameObject._textColor = (20,20,20)
+        StartButtonMain.gameObject.textFormat = 0
+        StartButtonMain.gameObject.fontSize = floor(50 / 1600 * engine._Globals._display[0])
+        StartButtonMain.gameObject.text = "START"
+        self.ObjectList.append(StartButtonMain)
+
+        QuitButtonMain = MainMenuQuit.Create(engine)
+        QuitButtonMain.gameObject.size = ((300 / 1600 * engine._Globals._display[0]), (80 / 900 * engine._Globals._display[1]))
+        QuitButtonMain.gameObject.color = (127,127,127)
+        QuitButtonMain.gameObject.position = Types.Vector3((engine._Globals._display[0] / 2) - (QuitButtonMain.gameObject.size.x / 2), (engine._Globals._display[1] / 2) - (QuitButtonMain.gameObject.size.y / 2) + (StartButtonMain.gameObject.size.y * 1.1), MainMenu.gameObject.position.z + 2)
+        QuitButtonMain.gameObject.collisionLayer = Types.CollisionLayer.UI
+        QuitButtonMain.gameObject.name = "MAINMENUQUIT"
+        QuitButtonMain.gameObject._textColor = (20,20,20)
+        QuitButtonMain.gameObject.textFormat = 0
+        QuitButtonMain.gameObject.fontSize = floor(50 / 1600 * engine._Globals._display[0])
+        QuitButtonMain.gameObject.text = "QUIT"
+        self.ObjectList.append(QuitButtonMain)
+
         BackGround = GameObject.Create(engine)
         BackGround.gameObject.size = engine._Globals._display
         BackGround.gameObject.image = "FLOOR"
@@ -90,7 +130,6 @@ class Objects():
         BaseWall.gameObject.position = Types.Vector3(engine._Globals._display[0]-(75 / 1600 * engine._Globals._display[0]), (110 / 900 * engine._Globals._display[1]), 1)
         BaseWall.gameObject.name = "BaseWall"
         BaseWall.gameObject.image = "MAINWALL"
-        print(BaseWall.gameObject.size.whole)
         
         
         self.ObjectList.append(BaseWall)

@@ -6,6 +6,11 @@ class Vector2():
         self.x = x
         self.y = y
         self.whole = (self.x, self.y) # don't know if the variables are pointers or not, python is weird as hell
+
+    @property
+    def magnitude(self):
+        return ((self.x ** 2) + (self.y ** 2)) ** 0.5
+    
     def __add__(self, other):
         try:
             if (type(other) == tuple):
@@ -40,6 +45,11 @@ class Vector3():
         self.y = y
         self.z = z
         self.whole = (self.x, self.y, self.z) # don't know if the variables are pointers or not, python is weird as hell
+
+    @property
+    def magnitude(self):
+        return ((self.x ** 2) + (self.y ** 2) + (self.z ** 2)) ** 0.5
+
     def __add__(self, other):
         try:
             if (type(other) == tuple):
@@ -109,7 +119,8 @@ class Cell():
         self._center = None
         self.cell = _cell
         self.objectLink: Wall.Create = _objectLink
-        self.enemyLink = _enemyLink
+        self.enemyLink = list()
+        self.enemyLinkDefinite = list()
         self.weaponLink = _weaponLink
         self.aboveCell_OL = None
         self.belowCell_OL = None
@@ -121,8 +132,10 @@ class Cell():
         return self._center
 class GameObject():
     def __init__(self, master):
+        self._textColor = (255, 255, 255)
         self._master = master
         self.sprite = Sprite()
+        self._offset = Vector2()
         self.position = Vector3() #Default is (0,0,0)
         self._size = Vector2(1,1)
         self._rotation = 0
@@ -165,7 +178,7 @@ class GameObject():
     def text(self, value):
         if (type(value) == str):
             self._text = value
-            self._textRender = self._textFont.render(self._text, True, (255,255,255))
+            self._textRender = self._textFont.render(self._text, True, self._textColor)
             self._syncOriginalImage()
         else:
             self._text = None
@@ -177,7 +190,7 @@ class GameObject():
     @rotation.setter
     def rotation(self, value):
         if (self._rotation != value):
-            self._rotation = value
+            self._rotation = value % 360
             self._syncOriginalImage()
     @property
     def image(self):
@@ -288,9 +301,10 @@ class GameObject():
         except Exception:
             pass
         
+
+        centerBeforeRotate = self.sprite.image.get_rect().center
         self.sprite.image = pygame.transform.rotate(self.sprite.image, self._rotation)
-        
-        
+        self._offset = Vector2(centerBeforeRotate[0] - self.sprite.image.get_rect().center[0], centerBeforeRotate[1] - self.sprite.image.get_rect().center[1])
     def Destroy(self, engine):
         try:
             engine.Globals.sceneObjectsArray.remove(self)
@@ -414,18 +428,23 @@ class WallTypes():
         _FieldTexture = "LEGOWALLS"
 class WeaponTypes():
     class _GENERIC(PlacementType):
+        searchCells = Vector2(4, 3) #Total size of the grid we search for enemies
+        searchOffset = Vector2(-3, -1) #0,0 being the position of the weapon. This is the top left cell (if the weapon points up)
+        searchSelf = False
         methodReference = Weapon
         hasBase = False
-        speed = 50
+        speed = 50 #Projectile speed if applicable
         damage = 1
         canPlace_ENEMY = False
         canPlace_ANYWHERE = False
         canPlace_ROOT = False
         canPlace_SIDE = False
+        fireSpeed = 1 #Seconds per use
         _FieldTexture = "ARROW"
         _GRAYTexture = "ARROW"
     class NerfGun(_GENERIC): #Long range
         cost = 15
+        damage = 1
         hasBase = True
         canRotate = True
         canPlace_ROOT = True
@@ -436,6 +455,7 @@ class WeaponTypes():
         cost = 5
         canRotate = True
         canPlace_SIDE = True
+        canPlace_ENEMY = True
     class BottleRocket(_GENERIC): #Overshot mortar
         cost = 20
         hasBase = True
@@ -454,7 +474,8 @@ class EnemyTypes():
         _WalkingAnimation = ["NOTEXTURE"]
         _AttackAnimation = ["NOTEXTURE"]
         _AttackAnimationAttackFrame = 0
-    class ToyCar(_GENERIC): #Fast and weak
+    class ToyCar(_GENERIC): #Fast and weak\
+        health = 1
         damage = 1
         reward = 2
         speed = 180
@@ -462,6 +483,7 @@ class EnemyTypes():
         _AttackAnimation = ["CAR1_ATTACK", "CAR2_ATTACK", "CAR3_ATTACK"]
         _AttackAnimationAttackFrame = 7
     class ToySoldier(_GENERIC): #Basic, medium speed and medium strength
+        health = 3
         damage = 2
         reward = 2
         speed = 100
@@ -469,6 +491,7 @@ class EnemyTypes():
         _AttackAnimation = ["SOLDIER1_ATTACK", "SOLDIER2_ATTACK", "SOLDIER3_ATTACK"]
         _AttackAnimationAttackFrame = 1
     class TeddyBear(_GENERIC): #Slow and strong
+        health = 5
         damage = 3
         reward = 5
         speed = 60

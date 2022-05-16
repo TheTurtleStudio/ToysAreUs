@@ -16,6 +16,8 @@ class PauseMenu(): #Change this to the name of your script
             element.gameObject.renderEnabled = False
 
     def Update(self):
+        if self.engine.GetUniversal("STARTED") == False:
+            return
         if self.engine.Input.TestFor._testFor(768)[0] is True and (self.engine.FindObject("GAMEOVER").obj.active == False):
             self.pausedState = not self.pausedState
             if self.pausedState is True:

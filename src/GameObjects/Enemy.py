@@ -1,28 +1,61 @@
 import math
+from turtle import position
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 from GameObjects import Grid, Healthbar, Wall
 from GameObjects import GameObject
 import random
 import pygame
-from MainEngine.Engine import Engine
+from MainEngine import Engine
 
 
 class Enemy(): #Change this to the name of your script
-    def __init__(self, engine: Engine):
+    def __init__(self, engine: Engine.Engine):
         self.gameObject = Types.GameObject(engine)
-        self.engine = engine
+        self.engine: Engine.Engine = engine
         self.creator = None
         self._oldCurrentCell1: Types.Cell = None
         self._oldCurrentCell2: Types.Cell = None
+        self._oldCurrentCellDefinite: Types.Cell = None
         self.Animator = Types.Animator(self.gameObject)
         self.enemyType: Types.EnemyTypes._GENERIC = Types.EnemyTypes._GENERIC
         self.animationVariationIndex = 0
         self._hasAttackedThisCycle = False
         self._attackAnimationPlaying = False
+        self.maxHealth = 0
+        self.health = 0
+
+    def Destroy(self):
+        self.engine._Globals.sceneObjectsArray.remove(self.creator)
+        if self._oldCurrentCell1:
+            self._oldCurrentCell1.enemyLink.remove(self)
+        if self._oldCurrentCell2:
+            self._oldCurrentCell2.enemyLink.remove(self)
+        if self._oldCurrentCellDefinite:
+            self._oldCurrentCellDefinite.enemyLinkDefinite.remove(self)
+        self.engine.FindObject("WAVEPROGRESSION").obj.enemies.remove(self.creator)
+        self.gameObject.sprite.kill()
+        del self.gameObject
+        self.engine = None
+        del self.creator
+        self.creator = None
+        del self.Animator
+        self.Animator = None
+        self.enemyType = None
+
+    def Damage(self, amount):
+        self.health -= amount
+        if self.health <= 0:
+            self.OnKill()
+
+    def OnKill(self):
+        self.engine.FindObject("MONEYMANAGEMENT").obj.money += self.enemyType.reward
+        self.Destroy()
 
     def Start(self):
+        self.maxHealth = self.enemyType.health
+        self.health = self.enemyType.health
         self.gridAccessor = self.engine.FindObject("GRID")
-        yPos = self.gridAccessor.obj.CellToPosition((0, random.randint(1, self.gridAccessor.obj.gridSize.y - 2))).y
+        yPos = self.gridAccessor.obj.CellToPosition((0, random.randint(0, self.gridAccessor.obj.gridSize.y - 1))).y
         self.gameObject.position = Types.Vector3(-self.gameObject.size.x - 1, yPos, 32768 + random.random())
         self.gameObject.image = "NOTEXTURE"
         self._destination = None
@@ -139,20 +172,33 @@ class Enemy(): #Change this to the name of your script
             position1 = (self.gameObject.position.x + (self.gameObject.size.x / 2), self.gameObject.position.y + self.gameObject.size.y)
             position2 = (self.gameObject.position.x + (self.gameObject.size.x / 2), self.gameObject.position.y)
         return (position1, position2)
+
     def UpdateLink(self, horizontal=True):
         position1, position2 = self.GetEndPoints(horizontal=horizontal)
-        if self._oldCurrentCell1:
-            self._oldCurrentCell1.enemyLink = None
-        if self._oldCurrentCell2:
-            self._oldCurrentCell2.enemyLink = None
-        if self.gridAccessor.obj.gridMatrix.CellExistsCheck(self.gridAccessor.obj.PositionToCell(position1)): #Check if the first cell position exists
+        position3 = Types.Vector2(self.gameObject.position.x, self.gameObject.position.y) + (self.gameObject.size.x / 2, self.gameObject.size.y / 2)
+        if self._oldCurrentCell1 != None and (self._oldCurrentCell1.cell != self.gridAccessor.obj.PositionToCell(position1)):
+            self._oldCurrentCell1.enemyLink.remove(self)
+            self._oldCurrentCell1 = None
+        if self._oldCurrentCell2 != None and (self._oldCurrentCell2.cell != self.gridAccessor.obj.PositionToCell(position2)):
+            self._oldCurrentCell2.enemyLink.remove(self)
+            self._oldCurrentCell2 = None
+        if self._oldCurrentCellDefinite != None and (self._oldCurrentCellDefinite.cell != self.gridAccessor.obj.PositionToCell(position3)):
+            self._oldCurrentCellDefinite.enemyLinkDefinite.remove(self)
+            self._oldCurrentCellDefinite = None
+            
+        if (self._oldCurrentCell1 == None) and self.gridAccessor.obj.gridMatrix.CellExistsCheck(self.gridAccessor.obj.PositionToCell(position1)): #Check if the first cell position exists
             newCurrentCell = self.gridAccessor.obj.GetGridCellFULL(Types.Vector2(position1[0], position1[1]))
-            newCurrentCell.enemyLink = self
+            newCurrentCell.enemyLink.append(self)
             self._oldCurrentCell1 = newCurrentCell
-        if self.gridAccessor.obj.gridMatrix.CellExistsCheck(self.gridAccessor.obj.PositionToCell(position2)): #Check if the first cell position exists
+        if (self._oldCurrentCell2 == None) and self.gridAccessor.obj.gridMatrix.CellExistsCheck(self.gridAccessor.obj.PositionToCell(position2)): #Check if the second cell position exists
             newCurrentCell = self.gridAccessor.obj.GetGridCellFULL(Types.Vector2(position2[0], position2[1]))
-            newCurrentCell.enemyLink = self
+            newCurrentCell.enemyLink.append(self)
             self._oldCurrentCell2 = newCurrentCell
+        
+        if (self._oldCurrentCellDefinite == None) and self.gridAccessor.obj.gridMatrix.CellExistsCheck(self.gridAccessor.obj.PositionToCell(position3)):
+            newCurrentCell = self.gridAccessor.obj.GetGridCellFULL(position3)
+            newCurrentCell.enemyLinkDefinite.append(self)
+            self._oldCurrentCellDefinite = newCurrentCell
         
             
 
