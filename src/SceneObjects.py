@@ -1,5 +1,5 @@
 from math import floor
-from GameObjects import GameObject, MainMenuQuit, MainMenuStart, MoneyManager, PlaceWeapon, ProgressWaveButton, StartButtonFunctionality, WaveProgression
+from GameObjects import GameObject, GoToMainMenu, MainMenuQuit, MainMenuStart, MoneyManager, PlaceWeapon, ProgressWaveButton, StartButtonFunctionality, WaveProgression
 from GameObjects import Button
 from GameObjects import Grid
 from GameObjects import PlaceWall
@@ -40,8 +40,9 @@ class Objects():
         engine.AddImageAsset("LEGOWALLS_UI", "Assets\\Lego\\legoWallsUI.png")
         engine.AddImageAsset("LEGOWALLS_UI_GRAYSCALE", "Assets\\Lego\\legoWallsUIGRAYSCALE.png")
         engine.AddImageAsset("BLOCKWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Woodblocks\\blockWalls.png", (64, 64), 3))
-        #engine.AddImageAsset("LEGOWALLS_UI", "Assets\\Lego\\legoWallsUI.png")
-        #engine.AddImageAsset("LEGOWALLS_UI_GRAYSCALE", "Assets\\Lego\\legoWallsUIGRAYSCALE.png")
+        engine.AddImageAsset("BLOCKWALLS_UI", "Assets\\WoodBlocks\\blockWallsUI.png")
+        engine.AddImageAsset("BLOCKWALLS_UI_GRAYSCALE", "Assets\\WoodBlocks\\blockWallsUIGRAYSCALE.png")
+
         
         engine.AddImageAsset("ARROW", "Assets\\Common\\arrow.png")
 
@@ -67,6 +68,11 @@ class Objects():
         engine.AddAnimation("CAR3_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 66), framerate=12, loop=False)
 
         engine.AddImageAsset("TURRET", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turret.png", (64, 64), 1)[0])
+        engine.AddImageAsset("TURRETUI", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turretUI.png", (64, 64), 1)[0])
+        engine.AddImageAsset("TURRETUIGRAYSCALE", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turretUIGRAYSCALE.png", (64, 64), 1)[0])
+
+        engine.AddImageAsset("MONKEYBARRELUI", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\monkeyBarrelUI.png", (64, 64), 1)[0])
+
 
         engine.AddImageAsset("PLAYCLICKABLE", "Assets\\Common\\playButtonClickable.png")
         engine.AddImageAsset("PLAYNOTCLICKABLE", "Assets\\Common\\playButtonUnclickable.png")
@@ -175,18 +181,19 @@ class Objects():
         GameOverTitle.gameObject.text = "GAME OVER"
         GameOver.obj.elements.append(GameOverTitle)
         GameOverRestart = StartButtonFunctionality.Create(engine)
-        GameOverRestart.gameObject.size = ((120 / 1600 * engine._Globals._display[0]), (50 / 900 * engine._Globals._display[1]))
+        GameOverRestart.gameObject.size = ((150 / 1600 * engine._Globals._display[0]), (50 / 900 * engine._Globals._display[1]))
         GameOverRestart.gameObject.position = Types.Vector3((engine._Globals._display[0] / 2) - (GameOverRestart.gameObject.size.x / 2), engine._Globals._display[1] / 2, GameOver.gameObject.position.z + 1)
-        #GameOverRestart.gameObject.image = "100PERCENTTRANS"
         GameOverRestart.gameObject.color = (50, 50, 50)
         GameOverRestart.gameObject.collisionLayer = Types.CollisionLayer.UI
         GameOverRestart.gameObject.textFormat = 0
         GameOverRestart.gameObject.fontSize = 30
-        GameOverRestart.gameObject.text = "RESTART"
+        GameOverRestart.gameObject.text = "MAIN MENU"
+
         GameOver.obj.elements.append(GameOverRestart)
         self.ObjectList.append(GameOverTitle)
         self.ObjectList.append(GameOverRestart)
         self.ObjectList.append(GameOver)
+
         
 
         HealthBar = Healthbar.Create(engine)
@@ -223,17 +230,23 @@ class Objects():
             if buttonNum < 3:
                 WallButton = PlaceWall.Create(engine)
                 WallButtonHighlight = GameObject.Create(engine)
+                WallButtonInfoBox = GameObject.Create(engine)
                 WallButton.gameObject.size = ((60 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
                 WallButtonHighlight.gameObject.size = WallButton.gameObject.size + Types.Vector2((4 / 1600 * engine._Globals._display[0]), (4 / 900 * engine._Globals._display[1]))
+                WallButtonInfoBox.gameObject.size = WallButton.gameObject.size
                 WallButton.gameObject.color = (255,255,255)
                 WallButtonHighlight.gameObject.color = (255,255,255)
+                WallButtonInfoBox.gameObject.color = (128,128,128)
                 WallButton.gameObject.position = Types.Vector3((buttonNum * (60 / 1600 * engine._Globals._display[0])) + ((buttonNum + 1) * (20 / 1600 * engine._Globals._display[0])), TopBar.gameObject.size.y-WallButton.gameObject.size.y-(10 / 900 * engine._Globals._display[1]), 4097)
                 WallButtonHighlight.gameObject.position = WallButton.gameObject.position - Types.Vector3((2 / 1600 * engine._Globals._display[0]), (2 / 900 * engine._Globals._display[1]), -1)
+                WallButtonInfoBox.gameObject.position = WallButton.gameObject.position
                 WallButton.gameObject.collisionLayer = Types.CollisionLayer.UI
                 WallButtonHighlight.gameObject.renderEnabled = False
+                WallButtonInfoBox.gameObject.renderEnabled = False
                 WallButton.obj.highlightedIndicator = WallButtonHighlight
                 WallButtonHighlight.gameObject.image = "SELECT_FRAME"
                 WallButton.obj.objectType = walls[buttonNum]
+                WallButton.obj.infoBox = WallButtonInfoBox
                 WallButton.gameObject.image = walls[buttonNum]._UITexture
                 if buttonNum == 1:
                     WallsTitle.gameObject.size = ((60 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
@@ -243,6 +256,7 @@ class Objects():
                     WallsTitle.gameObject.fontSize = floor(20 / 1600 * engine._Globals._display[0])
                     self.ObjectList.append(WallsTitle)
                 self.ObjectList.append(WallButton)
+                self.ObjectList.append(WallButtonInfoBox)
                 self.ObjectList.append(WallButtonHighlight)
             if buttonNum == 3:
                 DestroyWallButton = RemoveTile.Create(engine)
@@ -333,8 +347,27 @@ class Objects():
         Pause.gameObject.size = engine._Globals._display
         Pause.gameObject.position = Types.Vector3(0,0,6553600)
         Pause.gameObject.color = (0, 0, 0)
+        PauseTitle = GameObject.Create(engine)
+        PauseTitle.gameObject.size = ((900 / 1600 * engine._Globals._display[0]), (100 / 900 * engine._Globals._display[1]))
+        PauseTitle.gameObject.position = Types.Vector3((engine._Globals._display[0] / 2) - (PauseTitle.gameObject.size.x / 2), PauseTitle.gameObject.size.y / 2, Pause.gameObject.position.z + 1)
+        PauseTitle.gameObject.image = "100PERCENTTRANS"
+        PauseTitle.gameObject.textFormat = 0
+        PauseTitle.gameObject.fontSize = 100
+        PauseTitle.gameObject.text = "PAUSED"
+        Pause.obj.elements.append(PauseTitle)
+        PauseRestart = StartButtonFunctionality.Create(engine)
+        PauseRestart.gameObject.size = ((200 / 1600 * engine._Globals._display[0]), (50 / 900 * engine._Globals._display[1]))
+        PauseRestart.gameObject.position = Types.Vector3((engine._Globals._display[0] / 2) - (PauseRestart.gameObject.size.x / 2), engine._Globals._display[1] / 2, Pause.gameObject.position.z + 1)
+        PauseRestart.gameObject.color = (50, 50, 50)
+        PauseRestart.gameObject.collisionLayer = Types.CollisionLayer.UI
+        PauseRestart.gameObject.textFormat = 0
+        PauseRestart.gameObject.fontSize = 30
+        PauseRestart.gameObject.text = "EXIT TO MENU"
+        Pause.obj.elements.append(PauseRestart)
 
         self.ObjectList.append(Pause)
+        self.ObjectList.append(PauseTitle)
+        self.ObjectList.append(PauseRestart)
 
 
     def get(self):

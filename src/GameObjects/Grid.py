@@ -38,10 +38,12 @@ class Grid(): #Change this to the name of your script
                 if self.engine.Input.TestFor.RIGHTMOUSEDOWN() or (elapsedSinceDrag > 0.15):
                     cellToChange = self.gridMatrix.GetCell(cellAtPos.cell) #Get the actual cell now that we know it exists
                     if (not self.engine.FindObject("PLACEHANDLER").obj.removingTile): #If we're meant to be placing a tile, this doesn't know what type of tile yet though.
+
                         self.engine.FindObject("PLACEHANDLER").obj.HANDLEDEMOPLACEMENT(cellToChange, self.demoPlacement)
                         self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(cellToChange) #Tell our handler to do it, this is in SRC\GameObjects\PlaceHandler.py
                     else: #Are we removing the tile?
-                        self.DestroyWallChain(cellToChange) #Attempt to the cell as well as any now floating artifacts once attached to it.
+                        
+                        self.DestroyWallChain(cellToChange, refund=True) #Attempt to the cell as well as any now floating artifacts once attached to it.
         else:
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
             if self.gridMatrix.CellExistsCheck(cellAtPos.cell):
@@ -56,15 +58,34 @@ class Grid(): #Change this to the name of your script
                 
             else:
                 self.demoPlacement.gameObject.renderEnabled = False
-    def DestroyWallChain(self, rootWall: Wall.Create):
+    def DestroyWallChain(self, rootWall: Wall.Create, refund=False):
+        refundAmount = 0
+        if (rootWall.weaponLink != None):
+            if refund:
+                refundAmount = rootWall.weaponLink.obj.weaponType.cost
+                if self.engine.FindObject("WAVEPROGRESSION").obj.ongoingWave is True:
+                    self.engine.FindObject("MONEYMANAGEMENT").obj.money += (0.5 * refundAmount)
+                else:
+                    self.engine.FindObject("MONEYMANAGEMENT").obj.money += refundAmount
+            rootWall.objectLink.obj.attachedWeapons.remove(rootWall.weaponLink.obj)
+            rootWall.weaponLink.obj.Destroy()
+            rootWall.weaponLink = None
+            return
+        
+        refundAmount = 0
+        if refund and self.engine.FindObject("WAVEPROGRESSION").obj.ongoingWave is True:
+            return
         if (rootWall.objectLink != None):
+            if refund:
+                refundAmount = rootWall.objectLink.obj.wallType.cost
+                self.engine.FindObject("MONEYMANAGEMENT").obj.money += refundAmount
             initialPairs = [rootWall.aboveCell_OL, rootWall.belowCell_OL, rootWall.rightCell_OL, rootWall.leftCell_OL]
             rootWall.objectLink.obj.Destroy()
             for stem in initialPairs:
                 if (stem != None):
                     if (stem != None):
-                        self.DestroyFloatingWalls(stem)
-    def DestroyFloatingWalls(self, initialStem: Wall.Create):
+                        self.DestroyFloatingWalls(stem, refund=True)
+    def DestroyFloatingWalls(self, initialStem: Wall.Create, refund=False):
         queue = [initialStem]
         visited = []
         foundWallConnection = False
@@ -91,6 +112,17 @@ class Grid(): #Change this to the name of your script
                         queue.append(current.leftCell_OL)
         if not foundWallConnection:
             for cell in visited:
+                if refund:
+                    refundAmount = cell.objectLink.obj.wallType.cost
+                    
+                    self.engine.FindObject("MONEYMANAGEMENT").obj.money += refundAmount
+                    refundAmount = 0
+                    for weapon in cell.objectLink.obj.attachedWeapons:
+                        refundAmount += weapon.weaponType.cost
+                    if self.engine.FindObject("WAVEPROGRESSION").obj.ongoingWave is True:
+                        self.engine.FindObject("MONEYMANAGEMENT").obj.money += (0.5 * refundAmount)
+                    else:
+                        self.engine.FindObject("MONEYMANAGEMENT").obj.money += refundAmount
                 cell.objectLink.obj.Destroy()
     
     def ConfigureAllCells(self):

@@ -4,6 +4,7 @@ class Wall(): #Change this to the name of your script
     def __init__(self, engine):
         self.gameObject = Types.GameObject(engine)
         self.engine = engine
+        self.wallType: Types.WallTypes._GENERIC = None
         self.creator = None
         self.cell = None
         self.maxHealth = None

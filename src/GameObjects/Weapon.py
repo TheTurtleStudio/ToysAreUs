@@ -71,10 +71,24 @@ class Weapon(): #Change this to the name of your script
                 
                 self.gameObject.rotation = 90 - rotation - (180 if (linkedObjArray[0].gameObject.position.x - self.gameObject.position.x) > 0 else 0)
                 self.gameObject.rotation = -self.gameObject.rotation if (linkedObjArray[0].gameObject.position.x - self.gameObject.position.x) > 0 else self.gameObject.rotation
-                print(self.gameObject.rotation)
                 linkedObjArray[0].Damage(self.weaponType.damage)
                 fired = True
+        if self.weaponType == Types.WeaponTypes.BarrelOfMonkeys:
+            if len(self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite) != 0:
+                for x in range(self.weaponType.searchCells.x):
+                    for y in range(self.weaponType.searchCells.y):
+                        cellToSearch = self.weaponType.searchOffset + Types.Vector2(x, y) + self.cell.cell
+                        if self.engine.FindObject("GRID").obj.gridMatrix.CellExistsCheck(cellToSearch):
+                            #self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cellToSearch).objectLink.obj.health -= self.weaponType.damage
+                            for enemy in self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cellToSearch).enemyLinkDefinite:
+                                if not enemy in enemyList:
+                                    enemyList.append(enemy)
+                for i in enemyList:
+                    i.Damage(self.weaponType.damage)
                 
+
+                self.Destroy()
+
         enemyList.clear()
         del enemyList
 

@@ -19,16 +19,20 @@ class PauseMenu(): #Change this to the name of your script
         if self.engine.GetUniversal("STARTED") == False:
             return
         if self.engine.Input.TestFor._testFor(768)[0] is True and (self.engine.FindObject("GAMEOVER").obj.active == False):
-            self.pausedState = not self.pausedState
-            if self.pausedState is True:
-                for element in self.elements:
-                    element.gameObject.renderEnabled = True
-                self.engine.timeScale = 0
+            if self.pausedState is False:
+                self.Pause()
             else:
-                for element in self.elements:
-                    element.gameObject.renderEnabled = False
-                self.engine.timeScale = 1
-            #self.engine.Reload()
+                self.Resume()
+    def Pause(self):
+        self.pausedState = True
+        for element in self.elements:
+            element.gameObject.renderEnabled = True
+        self.engine.timeScale = 0
+    def Resume(self):
+        self.pausedState = False
+        for element in self.elements:
+            element.gameObject.renderEnabled = False
+        self.engine.timeScale = 1
 
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.

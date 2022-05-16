@@ -45,6 +45,7 @@ class PlaceHandler(): #Change this to the name of your script
                 
                 placeObject.gameObject.rotation = self.placeRotation
                 if objectType.__bases__[0] == Types.WallTypes._GENERIC:
+                    placeObject.obj.wallType = objectType
                     placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40000)
                     cell.objectLink = placeObject
                 elif objectType.__bases__[0] == Types.WeaponTypes._GENERIC:
@@ -57,8 +58,9 @@ class PlaceHandler(): #Change this to the name of your script
                     cell.weaponLink = placeObject
                     if objectType.hasBase:
                         placeObject.obj.baseGO = GameObject.Create(self.engine)
-                        placeObject.obj.baseGO.gameObject.size = (placeObject.gameObject.size.x * 0.25, placeObject.gameObject.size.y * 0.25)
-                        placeObject.obj.baseGO.gameObject.position = placeObject.gameObject.position + Types.Vector3(placeObject.gameObject.size.x * 0.375, placeObject.gameObject.size.y * 0.375, -0.1)
+                        placeObject.obj.baseGO.gameObject.size = (placeObject.gameObject.size.x * ((2 ** 0.5) / 2) * 0.6, placeObject.gameObject.size.y * ((2 ** 0.5) / 2) * 0.6)
+                        placeObject.obj.baseGO.gameObject.rotation = 45
+                        placeObject.obj.baseGO.gameObject.position = placeObject.gameObject.position + Types.Vector3(placeObject.obj.gameObject.size.x * ((1 - (((2 ** 0.5) / 2) * 0.6)) / 2), placeObject.obj.gameObject.size.y * ((1 - (((2 ** 0.5) / 2) * 0.6)) / 2), -0.1)
                         placeObject.obj.baseGO.gameObject.image = "WEAPONBASE"
                         placeObject.obj.hasBase = True
                         self.engine.CreateNewObject(placeObject.obj.baseGO)
@@ -139,6 +141,8 @@ class PlaceHandler(): #Change this to the name of your script
         condition1 = False
         condition3 = True
         if (type(self.selectedPlaceObject) == PlaceWall):
+            if self.engine.FindObject("WAVEPROGRESSION").obj.ongoingWave is True:
+                return False
             condition3 = cell.objectLink == None and cell.weaponLink == None
             cellOffsets = [Types.Vector2(0,1), Types.Vector2(0,-1), Types.Vector2(1,0), Types.Vector2(-1,0)]
             for i in range(4):

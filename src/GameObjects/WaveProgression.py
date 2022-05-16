@@ -33,7 +33,6 @@ class WaveProgression(): #Change this to the name of your script
                 self.enemiesLeftToSpawn -= 1
 
         if len(self.enemies) == 0 and self.enemiesLeftToSpawn == 0 and self.ongoingWave == True:
-            print("can progress i suppose")
             self.EndWave()
 
     def ProgressWave(self):

@@ -404,6 +404,7 @@ class PlacementType():
     _UITexture = "NOTEXTURE"
     _FieldTexture = "NOTEXTURE"
     _GRAYTexture = "NOTEXTURE_GRAYSCALE"
+    NAME = "N/A"
     canRotate = False
 from GameObjects import Wall
 from GameObjects import Weapon
@@ -411,6 +412,7 @@ class WallTypes():
     class _GENERIC(PlacementType):
         methodReference = Wall
     class Dice(_GENERIC): #Weak
+        NAME = "Dice Wall"
         cost = 2
         health = 6
         _UITexture = "DICEWALLS_UI"
@@ -418,11 +420,15 @@ class WallTypes():
         _FieldTexture = "DICEWALLS"
     class LetterBlock(_GENERIC): #Medium
         cost = 5
+        NAME = "Block Wall"
         health = 12
+        _UITexture = "BLOCKWALLS_UI"
+        _GRAYTexture = "BLOCKWALLS_UI_GRAYSCALE"
         _FieldTexture = "BLOCKWALLS"
     class Lego(_GENERIC): #Strong
         cost = 8
         health = 15
+        NAME = "Lego Wall"
         _UITexture = "LEGOWALLS_UI"
         _GRAYTexture = "LEGOWALLS_UI_GRAYSCALE"
         _FieldTexture = "LEGOWALLS"
@@ -442,25 +448,36 @@ class WeaponTypes():
         fireSpeed = 1 #Seconds per use
         _FieldTexture = "ARROW"
         _GRAYTexture = "ARROW"
+
     class NerfGun(_GENERIC): #Long range
         cost = 15
         damage = 1
         hasBase = True
         canRotate = True
         canPlace_ROOT = True
+        NAME = "Nerf Turret"
         _FieldTexture = "TURRET"
-        _UITexture = "TURRET"
+        _UITexture = "TURRETUI"
+        _GRAYTexture = "TURRETUIGRAYSCALE"
         
     class ToothpickTrap(_GENERIC): #Short range
+        NAME = "Toothpick Trap"
         cost = 5
         canRotate = True
         canPlace_SIDE = True
         canPlace_ENEMY = True
     class BottleRocket(_GENERIC): #Overshot mortar
+        NAME = "Bottle Rocket"
         cost = 20
         hasBase = True
         canPlace_ROOT = True
     class BarrelOfMonkeys(_GENERIC): #Trap
+        _UITexture = "MONKEYBARRELUI"
+        NAME = "Barrel of Monkeys"
+        damage = 1
+        fireSpeed = 0
+        searchCells = Vector2(3, 3) #Total size of the grid we search for enemies
+        searchOffset = Vector2(-1, -1) #0,0 being the position of the weapon. This is the top left cell (if the weapon points up)
         cost = 10
         canPlace_ANYWHERE = True
         canPlace_ENEMY = True

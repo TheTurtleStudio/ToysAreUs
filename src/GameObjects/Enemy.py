@@ -23,6 +23,9 @@ class Enemy(): #Change this to the name of your script
         self._attackAnimationPlaying = False
         self.maxHealth = 0
         self.health = 0
+        self.damageIndicatorCooldown = 0
+        self.damageInvoked = 0
+        self.damageCooldownFinished = True
 
     def Destroy(self):
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
@@ -43,9 +46,23 @@ class Enemy(): #Change this to the name of your script
         self.enemyType = None
 
     def Damage(self, amount):
+        self.InvokeDamageIndicator()
         self.health -= amount
         if self.health <= 0:
             self.OnKill()
+
+    def InvokeDamageIndicator(self):
+        self.damageCooldownFinished = False
+        self.damageInvoked = self.engine.GetTotalTime()
+        self.damageIndicatorCooldown = 0.5
+        self.gameObject.color = (150, 0, 0)
+
+    def CheckDamageIndicator(self):
+        if self.damageCooldownFinished is True:
+            return
+        if (self.damageInvoked + self.damageIndicatorCooldown) <= self.engine.GetTotalTime():
+            self.damageCooldownFinished = True
+            self.gameObject.color = (255, 255, 255)
 
     def OnKill(self):
         self.engine.FindObject("MONEYMANAGEMENT").obj.money += self.enemyType.reward
@@ -62,6 +79,7 @@ class Enemy(): #Change this to the name of your script
         self.animationVariationIndex = random.randint(0, len(self.enemyType._WalkingAnimation) - 1)
 
     def Update(self):
+        self.CheckDamageIndicator()
         if (self._destination != None):
             self.Animator.AnimationStep(self.enemyType._WalkingAnimation[self.animationVariationIndex])
             currentCell: Types.Cell = self.gridAccessor.obj.GetGridCellFULL(Types.Vector2(self.gameObject.position.x + (self.gameObject.size.x / 2), self.gameObject.position.y + (self.gameObject.size.y / 2)))

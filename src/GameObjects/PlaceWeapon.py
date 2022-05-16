@@ -11,6 +11,7 @@ class PlaceWeapon(): #Change this to the name of your script
         self.creator = None
         self.highlightedIndicator: GameObject.Create = None
         self.objectType: Types.WeaponTypes._GENERIC = None
+        self.infoBox: GameObject.Create = None
 
     def Update(self): #This is called every rendercycle
         if self.engine.timeScale == 0:
@@ -25,6 +26,12 @@ class PlaceWeapon(): #Change this to the name of your script
                 
                 self.engine.FindObject("PLACEHANDLER").obj.removingTile = False
                 self.engine.FindObject("TRASHCANBUTTON").obj.UpdateImage()
+        if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [Types.CollisionLayer.UI])):
+            if not self.infoBox.gameObject.renderEnabled:
+                self.infoBox.gameObject.renderEnabled = True
+        else:
+            if self.infoBox.gameObject.renderEnabled:
+                self.infoBox.gameObject.renderEnabled = False
 
 
 
