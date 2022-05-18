@@ -292,12 +292,13 @@ class GameObject():
         self.sprite.image.set_alpha(255 - self.transparency)
         
         try:
-            copyTextRender = self._textRender.copy()
-            formatLists = [(self.size.x / 2, self.size.y / 2), (self.size.x/2, self._textRender.get_size()[1] / 2)]
-            
-            formatTuple = formatLists[self.textFormat]
-            self.sprite.image.blit(copyTextRender, copyTextRender.get_rect(center=formatTuple))
-            del formatLists
+            if self._textRender != None:
+                copyTextRender = self._textRender.copy()
+                formatLists = [(self.size.x / 2, self.size.y / 2), (self.size.x/2, self._textRender.get_size()[1] / 2)]
+                
+                formatTuple = formatLists[self.textFormat]
+                self.sprite.image.blit(copyTextRender, copyTextRender.get_rect(center=formatTuple))
+                del formatLists
         except Exception:
             pass
         

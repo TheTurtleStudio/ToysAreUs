@@ -160,10 +160,11 @@ class Objects():
 
         WaveIndicator = GameObject.Create(engine)
         
-        WaveIndicator.gameObject.size = ((60 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
+        WaveIndicator.gameObject.size = ((120 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
         WaveIndicator.gameObject.position = Types.Vector3((engine._Globals._display[0] / 2) - (WaveIndicator.gameObject.size.x / 2), WaveTitle.gameObject.size.y / 2, 4098)
         WaveIndicator.gameObject.color = TopBar.gameObject.color
         WaveIndicator.gameObject.text = "0"
+        WaveIndicator.gameObject.image = "100PERCENTTRANS"
         WaveIndicator.gameObject.fontSize = floor(60 / 1600 * engine._Globals._display[0])
         WaveIndicator.gameObject.name = "WAVEINDICATOR"
 
@@ -230,23 +231,35 @@ class Objects():
             if buttonNum < 3:
                 WallButton = PlaceWall.Create(engine)
                 WallButtonHighlight = GameObject.Create(engine)
-                WallButtonInfoBox = GameObject.Create(engine)
+                
                 WallButton.gameObject.size = ((60 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
                 WallButtonHighlight.gameObject.size = WallButton.gameObject.size + Types.Vector2((4 / 1600 * engine._Globals._display[0]), (4 / 900 * engine._Globals._display[1]))
-                WallButtonInfoBox.gameObject.size = WallButton.gameObject.size
+                
                 WallButton.gameObject.color = (255,255,255)
                 WallButtonHighlight.gameObject.color = (255,255,255)
-                WallButtonInfoBox.gameObject.color = (128,128,128)
+                
                 WallButton.gameObject.position = Types.Vector3((buttonNum * (60 / 1600 * engine._Globals._display[0])) + ((buttonNum + 1) * (20 / 1600 * engine._Globals._display[0])), TopBar.gameObject.size.y-WallButton.gameObject.size.y-(10 / 900 * engine._Globals._display[1]), 4097)
                 WallButtonHighlight.gameObject.position = WallButton.gameObject.position - Types.Vector3((2 / 1600 * engine._Globals._display[0]), (2 / 900 * engine._Globals._display[1]), -1)
-                WallButtonInfoBox.gameObject.position = WallButton.gameObject.position
+                
                 WallButton.gameObject.collisionLayer = Types.CollisionLayer.UI
                 WallButtonHighlight.gameObject.renderEnabled = False
+
+                WallButtonInfoBox = GameObject.Create(engine)
+                WallButtonInfoBox.gameObject.size = WallButton.gameObject.size
+                WallButtonInfoBox.gameObject.color = (128,128,128)
+                WallButtonInfoBox.gameObject.position = WallButton.gameObject.position + Types.Vector3(0, 0, 0.5)
                 WallButtonInfoBox.gameObject.renderEnabled = False
+                WallButtonInfoBox.gameObject.fontSize = floor(30 / 1600 * engine._Globals._display[0])
+                WallButtonInfoBox.gameObject.textFormat = 0
+                WallButtonInfoBox.gameObject.image = "40PERCENTTRANS"
+                WallButtonInfoBox.gameObject.text = f"${walls[buttonNum].cost}"
+                WallButton.obj.infoBox = WallButtonInfoBox
+                self.ObjectList.append(WallButtonInfoBox)
+
                 WallButton.obj.highlightedIndicator = WallButtonHighlight
                 WallButtonHighlight.gameObject.image = "SELECT_FRAME"
                 WallButton.obj.objectType = walls[buttonNum]
-                WallButton.obj.infoBox = WallButtonInfoBox
+                
                 WallButton.gameObject.image = walls[buttonNum]._UITexture
                 if buttonNum == 1:
                     WallsTitle.gameObject.size = ((60 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
@@ -256,7 +269,7 @@ class Objects():
                     WallsTitle.gameObject.fontSize = floor(20 / 1600 * engine._Globals._display[0])
                     self.ObjectList.append(WallsTitle)
                 self.ObjectList.append(WallButton)
-                self.ObjectList.append(WallButtonInfoBox)
+                
                 self.ObjectList.append(WallButtonHighlight)
             if buttonNum == 3:
                 DestroyWallButton = RemoveTile.Create(engine)
@@ -281,6 +294,19 @@ class Objects():
                 WeaponsButtonHighlight.gameObject.image = "SELECT_FRAME"
                 WeaponsButton.obj.objectType = weapons[buttonNum - 4]
                 WeaponsButton.gameObject.image = weapons[buttonNum - 4]._UITexture
+
+                WeaponsButtonInfoBox = GameObject.Create(engine)
+                WeaponsButtonInfoBox.gameObject.size = WeaponsButton.gameObject.size
+                WeaponsButtonInfoBox.gameObject.color = (128,128,128)
+                WeaponsButtonInfoBox.gameObject.position = WeaponsButton.gameObject.position + Types.Vector3(0, 0, 0.5)
+                WeaponsButtonInfoBox.gameObject.renderEnabled = False
+                WeaponsButtonInfoBox.gameObject.fontSize = floor(30 / 1600 * engine._Globals._display[0])
+                WeaponsButtonInfoBox.gameObject.textFormat = 0
+                WeaponsButtonInfoBox.gameObject.image = "40PERCENTTRANS"
+                WeaponsButtonInfoBox.gameObject.text = f"${weapons[buttonNum - 4].cost}"
+                WeaponsButton.obj.infoBox = WeaponsButtonInfoBox
+                self.ObjectList.append(WeaponsButtonInfoBox)
+
                 if buttonNum == 5:
                     WeaponsTitle = GameObject.Create(engine)
                     WeaponsTitle.gameObject.size = ((100 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
