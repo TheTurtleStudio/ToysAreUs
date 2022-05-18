@@ -70,8 +70,15 @@ class Objects():
         engine.AddImageAsset("TURRET", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turret.png", (64, 64), 1)[0])
         engine.AddImageAsset("TURRETUI", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turretUI.png", (64, 64), 1)[0])
         engine.AddImageAsset("TURRETUIGRAYSCALE", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turretUIGRAYSCALE.png", (64, 64), 1)[0])
+        engine.AddImageAsset("BOTTLEROCKETPROJECTILE", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\bottleRocket.png", (64, 64), 6)[5])
 
+        engine.AddImageAsset("MONKEYBARREL", "Assets\\Common\\monkeyBarrel.png")
+        engine.AddImageAsset("MONKEYBARRELBROKEN", "Assets\\Common\\monkeyBarrelBROKEN.png")
         engine.AddImageAsset("MONKEYBARRELUI", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\monkeyBarrelUI.png", (64, 64), 1)[0])
+        engine.AddImageAsset("MONKEYBARRELUIGRAYSCALE", "Assets\\Common\\monkeyBarrelUIGRAYSCALE.png")
+        engine.AddImageAsset("MONKEYARM", "Assets\\Common\\monkeyHand.png")
+
+        engine.AddImageAsset("TOOTHPICKTRAPUI", "Assets\\Common\\toothpickTrapUI.png")
 
 
         engine.AddImageAsset("PLAYCLICKABLE", "Assets\\Common\\playButtonClickable.png")
@@ -142,7 +149,7 @@ class Objects():
         TopBar = GameObject.Create(engine)
         TopBar.gameObject.size = (engine._Globals._display[0], (100 / 900 * engine._Globals._display[1]))
         TopBar.gameObject.color = (69,10,30)
-        TopBar.gameObject.position = Types.Vector3(0, 0, 4083)
+        TopBar.gameObject.position = Types.Vector3(0, 0, 4093)
         TopBarBorder = GameObject.Create(engine)
         TopBarBorder.gameObject.size = TopBar.gameObject.size + Types.Vector2(0, (3 / 900 * engine._Globals._display[1]))
         TopBarBorder.gameObject.position = TopBar.gameObject.position - Types.Vector3(0, 0, 1)

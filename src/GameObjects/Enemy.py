@@ -26,6 +26,8 @@ class Enemy(): #Change this to the name of your script
         self.damageIndicatorCooldown = 0
         self.damageInvoked = 0
         self.damageCooldownFinished = True
+        self.Targeted = False
+        self.Stunned = False
 
     def Destroy(self):
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
@@ -80,6 +82,8 @@ class Enemy(): #Change this to the name of your script
 
     def Update(self):
         self.CheckDamageIndicator()
+        if self.Stunned:
+            return
         if (self._destination != None):
             self.Animator.AnimationStep(self.enemyType._WalkingAnimation[self.animationVariationIndex])
             currentCell: Types.Cell = self.gridAccessor.obj.GetGridCellFULL(Types.Vector2(self.gameObject.position.x + (self.gameObject.size.x / 2), self.gameObject.position.y + (self.gameObject.size.y / 2)))

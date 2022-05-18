@@ -462,6 +462,7 @@ class WeaponTypes():
         _GRAYTexture = "TURRETUIGRAYSCALE"
         
     class ToothpickTrap(_GENERIC): #Short range
+        _UITexture = "TOOTHPICKTRAPUI"
         NAME = "Toothpick Trap"
         cost = 5
         canRotate = True
@@ -470,16 +471,19 @@ class WeaponTypes():
     class BottleRocket(_GENERIC): #Overshot mortar
         NAME = "Bottle Rocket"
         cost = 20
+        fireSpeed = 5
         hasBase = True
         canPlace_ROOT = True
     class BarrelOfMonkeys(_GENERIC): #Trap
         _UITexture = "MONKEYBARRELUI"
+        _FieldTexture = "MONKEYBARREL"
+        _GRAYTexture = "MONKEYBARRELUIGRAYSCALE"
         NAME = "Barrel of Monkeys"
-        damage = 1
+        damage = 500
         fireSpeed = 0
         searchCells = Vector2(3, 3) #Total size of the grid we search for enemies
         searchOffset = Vector2(-1, -1) #0,0 being the position of the weapon. This is the top left cell (if the weapon points up)
-        cost = 10
+        cost = 35
         canPlace_ANYWHERE = True
         canPlace_ENEMY = True
 

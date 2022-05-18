@@ -1,5 +1,6 @@
 import math
-from GameObjects import GameObject
+import random
+from GameObjects import Barrel, Enemy, GameObject, Rocket
 from GameObjects.Wall import Wall
 from MainEngine import BMathL, Engine, Types #NEEDED. Mainly for Types.GameObject creation.
 import pygame
@@ -83,12 +84,38 @@ class Weapon(): #Change this to the name of your script
                             for enemy in self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cellToSearch).enemyLinkDefinite:
                                 if not enemy in enemyList:
                                     enemyList.append(enemy)
+                barrel = Barrel.Create(self.engine)
+                barrel.gameObject.size = self.gameObject.size
+                barrel.gameObject.position = self.gameObject.position
+                barrel.gameObject.image = "MONKEYBARRELBROKEN"
+                barrel.obj.arm = GameObject.Create(self.engine)
+                barrel.obj.arm.gameObject.size = Types.Vector2(barrel.gameObject.size.x * 0.5, barrel.gameObject.size.y)
+                barrel.obj.arm.gameObject.position = barrel.gameObject.position + Types.Vector3(-barrel.gameObject.size.x / 2, 0, 0.1)
+                barrel.obj.arm.gameObject.image = "MONKEYARM"
+                self.engine.CreateNewObject(barrel)
+                self.engine.CreateNewObject(barrel.obj.arm)
+                print(enemyList)
+                barrel.obj.enemies = enemyList.copy()
                 for i in enemyList:
-                    i.Damage(self.weaponType.damage)
-                
-
+                    i.Stunned = True
                 self.Destroy()
 
+        if self.weaponType == Types.WeaponTypes.BottleRocket:
+            enemies = self.engine.FindObject("WAVEPROGRESSION").obj.enemies
+            if len(enemies) == 0:
+                return
+            target: Enemy.Create = random.choice(enemies)
+            if target.obj.Targeted == True:
+                return
+
+            rocket = Rocket.Create(self.engine)
+            rocket.gameObject.size = self.gameObject.size
+            rocket.gameObject.position = self.gameObject.position + Types.Vector3(0, 0, 0.1)
+            rocket.obj.enemy = target.obj
+            rocket.gameObject.image = "BOTTLEROCKETPROJECTILE"
+            target.obj.Targeted = True
+            self.engine.CreateNewObject(rocket)
+            fired = True
         enemyList.clear()
         del enemyList
 
