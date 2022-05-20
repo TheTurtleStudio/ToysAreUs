@@ -1,6 +1,6 @@
 import math
 import random
-from GameObjects import Barrel, Enemy, GameObject, Rocket
+from GameObjects import Barrel, Enemy, GameObject, Rocket, ToothpickTrap
 from GameObjects.Wall import Wall
 from MainEngine import BMathL, Engine, Types #NEEDED. Mainly for Types.GameObject creation.
 import pygame
@@ -19,7 +19,6 @@ class Weapon(): #Change this to the name of your script
         self.placedRot = 0
         self.lastFired = 0
         self.finishedStartup = False
-        self.Animator = Types.Animator(self.gameObject)
     def Destroy(self):
         self._UpdateLinkedMatrix()
         try:
@@ -103,7 +102,6 @@ class Weapon(): #Change this to the name of your script
                 barrel.obj.arm.gameObject.image = "MONKEYARM"
                 self.engine.CreateNewObject(barrel)
                 self.engine.CreateNewObject(barrel.obj.arm)
-                print(enemyList)
                 barrel.obj.enemies = enemyList.copy()
                 self.engine.PlaySound("Assets\\Sounds\\monkey_barrel_cracking.mp3")
                 for i in enemyList:
@@ -129,33 +127,21 @@ class Weapon(): #Change this to the name of your script
             fired = True
 
         if self.weaponType == Types.WeaponTypes.ToothpickTrap:
-            if len(enemyList) == 0 and (len(self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite) != 0):
-                enemyList = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite
-            
-            if len(enemyList) != 0:
-                print("Check me")
+            enemyList = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite
+            if len(enemyList) == 0:
+                return
+            else:
+                trap = ToothpickTrap.Create(self.engine)
+                trap.gameObject.size = self.gameObject.size
+                trap.gameObject.position = self.gameObject.position
+                trap.gameObject.image = self.gameObject.image
+                trap.gameObject.rotation = self.gameObject.rotation
+                self.engine.CreateNewObject(trap)
+                trap.obj.enemies = enemyList.copy()
                 for i in enemyList:
-                    print("setting to stunned")
                     i.Stunned = True
-                    print("set to stunned")
-                if self.finishedStartup is False:
-                    print("Doing animation stuff")
-                    if self.Animator.finished:
-                        print("Animation finished")
-                        self.finishedStartup = True
-                    else:
-                        print("Animation not finished")
-                        self.Animator.AnimationStep("toothpickTrap")
-                else:
-                    print(3)
-                    for enemy in enemyList:
-                        enemy.Stunned = False
-                        enemy.Damage(self.weaponType.damage)
-                    self.Destroy()
-
-            
-        enemyList.clear()
-        del enemyList
+                self.Destroy()
+                
 
         
         if fired:

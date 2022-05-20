@@ -67,7 +67,7 @@ class Objects():
         engine.AddAnimation("CAR1_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 42), framerate=12, loop=False)
         engine.AddAnimation("CAR2_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 54), framerate=12, loop=False)
         engine.AddAnimation("CAR3_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 66), framerate=12, loop=False)
-        engine.AddAnimation("toothpickTrap", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\toothpickTrap.png", (64, 64), 5), framerate=6, loop=False)
+        engine.AddAnimation("toothpickTrap", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\toothpickTrap.png", (64, 64), 5), framerate=12, loop=False)
         engine.AddAnimation("deathCloud", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\deathCloud.png", (64, 64), 6), framerate=8, loop=False)
 
         engine.AddImageAsset("TURRET", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turret.png", (64, 64), 1)[0])

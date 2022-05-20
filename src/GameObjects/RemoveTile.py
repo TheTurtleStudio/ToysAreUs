@@ -16,7 +16,7 @@ class RemoveTile(): #Change this to the name of your script
                 self.engine.FindObject("PLACEHANDLER").obj.selectedPlaceObject = None
                 self.engine.FindObject("PLACEHANDLER").obj.removingTile = not self.engine.FindObject("PLACEHANDLER").obj.removingTile
                 self.UpdateImage()
-                self.engine.PlaySound("Assets\\Sounds\\TrashSelect.mp3")
+                self.engine.PlaySound("Assets\\Sounds\\place.mp3")
     def UpdateImage(self):
         self.gameObject.image = "TRASH_OPEN" if self.engine.FindObject("PLACEHANDLER").obj.removingTile else "TRASH_CLOSED"
 

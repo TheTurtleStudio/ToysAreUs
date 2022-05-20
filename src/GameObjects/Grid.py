@@ -41,8 +41,7 @@ class Grid(): #Change this to the name of your script
 
                         self.engine.FindObject("PLACEHANDLER").obj.HANDLEDEMOPLACEMENT(cellToChange, self.demoPlacement)
                         self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(cellToChange) #Tell our handler to do it, this is in SRC\GameObjects\PlaceHandler.py
-                    else: #Are we removing the tile?
-                        self.engine.PlaySound("Assets\\Sounds\\TrashDelete.mp3")
+                    else:#Are we removing the tile?
                         self.DestroyWallChain(cellToChange, refund=True) #Attempt to the cell as well as any now floating artifacts once attached to it.
         else:
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())
@@ -62,6 +61,7 @@ class Grid(): #Change this to the name of your script
         refundAmount = 0
         if (rootWall.weaponLink != None):
             if refund:
+                self.engine.PlaySound("Assets\\Sounds\\place.mp3")
                 refundAmount = rootWall.weaponLink.obj.weaponType.cost
                 if self.engine.FindObject("WAVEPROGRESSION").obj.ongoingWave is True:
                     self.engine.FindObject("MONEYMANAGEMENT").obj.money += (0.5 * refundAmount)
@@ -78,6 +78,7 @@ class Grid(): #Change this to the name of your script
             return
         if (rootWall.objectLink != None):
             if refund:
+                self.engine.PlaySound("Assets\\Sounds\\place.mp3")
                 refundAmount = rootWall.objectLink.obj.wallType.cost
                 self.engine.FindObject("MONEYMANAGEMENT").obj.money += refundAmount
             initialPairs = [rootWall.aboveCell_OL, rootWall.belowCell_OL, rootWall.rightCell_OL, rootWall.leftCell_OL]
