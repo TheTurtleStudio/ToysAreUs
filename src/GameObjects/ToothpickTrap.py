@@ -15,6 +15,7 @@ class ToothpickTrap(): #Change this to the name of your script
         self.elapsedRotation = 0
         self.arm: GameObject.Create = None
         self.Animator = Types.Animator(self.gameObject)
+        self.initial = True
 
     def Destroy(self):
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
@@ -27,6 +28,10 @@ class ToothpickTrap(): #Change this to the name of your script
         self.creator = None
 
     def Update(self):
+        if self.initial is True:
+            self.initial = False
+            for i in self.enemies:
+                i.Stunned = True
         if self.startSequenceFinished is False:
             self.Animator.AnimationStep("toothpickTrap")
             if self.Animator.finished:

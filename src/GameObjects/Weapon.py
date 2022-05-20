@@ -104,8 +104,6 @@ class Weapon(): #Change this to the name of your script
                 self.engine.CreateNewObject(barrel.obj.arm)
                 barrel.obj.enemies = enemyList.copy()
                 self.engine.PlaySound("Assets\\Sounds\\monkey_barrel_cracking.mp3")
-                for i in enemyList:
-                    i.Stunned = True
                 self.Destroy()
 
         if self.weaponType == Types.WeaponTypes.BottleRocket:
@@ -138,8 +136,6 @@ class Weapon(): #Change this to the name of your script
                 trap.gameObject.rotation = self.gameObject.rotation
                 self.engine.CreateNewObject(trap)
                 trap.obj.enemies = enemyList.copy()
-                for i in enemyList:
-                    i.Stunned = True
                 self.Destroy()
                 
 
