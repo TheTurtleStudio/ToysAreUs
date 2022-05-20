@@ -18,6 +18,8 @@ class Weapon(): #Change this to the name of your script
         self.baseGO = None
         self.placedRot = 0
         self.lastFired = 0
+        self.finishedStartup = False
+        self.Animator = Types.Animator(self.gameObject)
     def Destroy(self):
         self._UpdateLinkedMatrix()
         try:
@@ -127,13 +129,29 @@ class Weapon(): #Change this to the name of your script
             fired = True
 
         if self.weaponType == Types.WeaponTypes.ToothpickTrap:
-            enemies = self.engine.FindObject("WAVEPROGRESSION").obj.enemies
-            if len(enemies) == 0:
-                return
-            if len(self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite) != 0:
-                for enemy in self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite:
-                    enemy.Damage(self.weaponType.damage)
-                self.Destroy()
+            if len(enemyList) == 0 and (len(self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite) != 0):
+                enemyList = self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite
+            
+            if len(enemyList) != 0:
+                print("Check me")
+                for i in enemyList:
+                    print("setting to stunned")
+                    i.Stunned = True
+                    print("set to stunned")
+                if self.finishedStartup is False:
+                    print("Doing animation stuff")
+                    if self.Animator.finished:
+                        print("Animation finished")
+                        self.finishedStartup = True
+                    else:
+                        print("Animation not finished")
+                        self.Animator.AnimationStep("toothpickTrap")
+                else:
+                    print(3)
+                    for enemy in enemyList:
+                        enemy.Stunned = False
+                        enemy.Damage(self.weaponType.damage)
+                    self.Destroy()
 
             
         enemyList.clear()

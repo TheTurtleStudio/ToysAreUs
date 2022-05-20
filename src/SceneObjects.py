@@ -42,6 +42,7 @@ class Objects():
         engine.AddImageAsset("BLOCKWALLS", ImageManipulation.Sheets.Disect(engine, "Assets\\Woodblocks\\blockWalls.png", (64, 64), 3))
         engine.AddImageAsset("BLOCKWALLS_UI", "Assets\\WoodBlocks\\blockWallsUI.png")
         engine.AddImageAsset("BLOCKWALLS_UI_GRAYSCALE", "Assets\\WoodBlocks\\blockWallsUIGRAYSCALE.png")
+        engine.AddImageAsset("TOOTHPICKTRAPSTATIONARY", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\toothpickTrap.png", (64, 64), 1))
 
         
         engine.AddImageAsset("ARROW", "Assets\\Common\\arrow.png")
@@ -66,12 +67,15 @@ class Objects():
         engine.AddAnimation("CAR1_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 42), framerate=12, loop=False)
         engine.AddAnimation("CAR2_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 54), framerate=12, loop=False)
         engine.AddAnimation("CAR3_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 66), framerate=12, loop=False)
+        engine.AddAnimation("toothpickTrap", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\toothpickTrap.png", (64, 64), 5), framerate=6, loop=False)
+        engine.AddAnimation("deathCloud", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\deathCloud.png", (64, 64), 6), framerate=8, loop=False)
 
         engine.AddImageAsset("TURRET", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turret.png", (64, 64), 1)[0])
         engine.AddImageAsset("TURRETUI", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turretUI.png", (64, 64), 1)[0])
         engine.AddImageAsset("TURRETUIGRAYSCALE", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turretUIGRAYSCALE.png", (64, 64), 1)[0])
         engine.AddImageAsset("BOTTLEROCKETPROJECTILE", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\bottleRocket.png", (64, 64), 6)[5])
-
+        engine.AddImageAsset("BOTTLEROCKETUI", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\bottleRocketUI.png", (64, 64), 1)[0])
+        
         engine.AddImageAsset("MONKEYBARREL", "Assets\\Common\\monkeyBarrel.png")
         engine.AddImageAsset("MONKEYBARRELBROKEN", "Assets\\Common\\monkeyBarrelBROKEN.png")
         engine.AddImageAsset("MONKEYBARRELUI", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\monkeyBarrelUI.png", (64, 64), 1)[0])

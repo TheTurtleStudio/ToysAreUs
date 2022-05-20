@@ -19,7 +19,7 @@ class Rocket(): #Change this to the name of your script
         self.creator = None
 
     def Update(self):
-        if self.enemy == None:
+        if self.enemy.exists is False:
             self.Destroy()
         if self.startSequenceFinished is False:
             self.gameObject.position.y -= self.speed * self.engine.GetDeltaTime()

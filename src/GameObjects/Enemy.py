@@ -28,6 +28,7 @@ class Enemy(): #Change this to the name of your script
         self.damageCooldownFinished = True
         self.Targeted = False
         self.Stunned = False
+        self.exists = True
 
     def Destroy(self):
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
@@ -46,6 +47,7 @@ class Enemy(): #Change this to the name of your script
         del self.Animator
         self.Animator = None
         self.enemyType = None
+        del self
 
     def Damage(self, amount):
         self.InvokeDamageIndicator()
@@ -67,8 +69,12 @@ class Enemy(): #Change this to the name of your script
             self.gameObject.color = (255, 255, 255)
 
     def OnKill(self):
-        self.engine.FindObject("MONEYMANAGEMENT").obj.money += self.enemyType.reward
-        self.Destroy()
+        self.gameObject.color = (255,255,255)
+        self.exists = False
+        self.Animator.AnimationStep("deathCloud")
+        if self.Animator.finished:
+            self.engine.FindObject("MONEYMANAGEMENT").obj.money += self.enemyType.reward
+            self.Destroy()
 
     def Start(self):
         self.maxHealth = self.enemyType.health
@@ -81,6 +87,9 @@ class Enemy(): #Change this to the name of your script
         self.animationVariationIndex = random.randint(0, len(self.enemyType._WalkingAnimation) - 1)
 
     def Update(self):
+        if self.health <= 0:
+            self.OnKill()
+            return
         self.CheckDamageIndicator()
         if self.Stunned:
             return

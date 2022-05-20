@@ -463,6 +463,7 @@ class WeaponTypes():
         
     class ToothpickTrap(_GENERIC): #Short range
         _UITexture = "TOOTHPICKTRAPUI"
+        _FieldTexture = "TOOTHPICKTRAPSTATIONARY"
         NAME = "Toothpick Trap"
         cost = 5
         fireSpeed = 0
@@ -475,6 +476,7 @@ class WeaponTypes():
         fireSpeed = 5
         hasBase = True
         canPlace_ROOT = True
+        _UITexture = "BOTTLEROCKETUI"
     class BarrelOfMonkeys(_GENERIC): #Trap
         _UITexture = "MONKEYBARRELUI"
         _FieldTexture = "MONKEYBARREL"

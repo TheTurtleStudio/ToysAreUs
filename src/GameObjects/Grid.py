@@ -42,7 +42,7 @@ class Grid(): #Change this to the name of your script
                         self.engine.FindObject("PLACEHANDLER").obj.HANDLEDEMOPLACEMENT(cellToChange, self.demoPlacement)
                         self.engine.FindObject("PLACEHANDLER").obj.HANDLEPLACEMENT(cellToChange) #Tell our handler to do it, this is in SRC\GameObjects\PlaceHandler.py
                     else: #Are we removing the tile?
-                        
+                        self.engine.PlaySound("Assets\\Sounds\\TrashDelete.mp3")
                         self.DestroyWallChain(cellToChange, refund=True) #Attempt to the cell as well as any now floating artifacts once attached to it.
         else:
             cellAtPos = self.GetGridCell(self.engine.Input.TestFor.MOUSEPOS())

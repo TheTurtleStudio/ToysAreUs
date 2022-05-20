@@ -26,6 +26,7 @@ class PlaceWeapon(): #Change this to the name of your script
                 
                 self.engine.FindObject("PLACEHANDLER").obj.removingTile = False
                 self.engine.FindObject("TRASHCANBUTTON").obj.UpdateImage()
+                self.engine.PlaySound("Assets\\Sounds\\place.mp3")
         if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [Types.CollisionLayer.UI])):
             if not self.infoBox.gameObject.renderEnabled:
                 self.infoBox.gameObject.renderEnabled = True
