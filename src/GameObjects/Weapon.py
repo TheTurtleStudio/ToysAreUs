@@ -118,7 +118,7 @@ class Weapon(): #Change this to the name of your script
 
             rocket = Rocket.Create(self.engine)
             rocket.gameObject.size = self.gameObject.size
-            rocket.gameObject.position = self.gameObject.position + Types.Vector3(0, 0, 0.1)
+            rocket.gameObject.position = self.gameObject.position + Types.Vector3(0, 0, 0.0001)
             rocket.obj.enemy = target.obj
             rocket.gameObject.image = "BOTTLEROCKETPROJECTILE"
             target.obj.Targeted = True

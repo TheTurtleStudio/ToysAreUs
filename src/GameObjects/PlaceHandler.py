@@ -47,13 +47,13 @@ class PlaceHandler(): #Change this to the name of your script
                 placeObject.gameObject.rotation = self.placeRotation
                 if objectType.__bases__[0] == Types.WallTypes._GENERIC:
                     placeObject.obj.wallType = objectType
-                    placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40000)
+                    placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 4092)
                     cell.objectLink = placeObject
                 elif objectType.__bases__[0] == Types.WeaponTypes._GENERIC:
                     
                     placeObject.obj.weaponType = objectType
                     placeObject.obj.placedRot = self.placeRotation
-                    placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40001)
+                    placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 4092.1)
                     if objectType.canPlace_ANYWHERE == False:
                         attached = self._GetWeaponAttachedWall(cell, self.placeRotation)
                         attached.objectLink.obj.attachedWeapons.append(placeObject.obj)

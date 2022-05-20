@@ -210,7 +210,7 @@ class Objects():
 
         HealthBar = Healthbar.Create(engine)
         HealthBar.gameObject.size = Types.Vector2(TopBar.gameObject.size.x * 0.25 - (20 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
-        HealthBar.gameObject.position = Types.Vector3(TopBar.gameObject.size.x * 0.75, TopBar.gameObject.size.y-(70 / 900 * engine._Globals._display[1]), 4097)
+        HealthBar.gameObject.position = Types.Vector3(TopBar.gameObject.size.x * 0.75, TopBar.gameObject.size.y-(70 / 900 * engine._Globals._display[1]), 4099)
         HealthBar.gameObject.color = (200, 60, 60)
         HealthBar.obj._fullnessBar.gameObject.color = (100, 185, 115)
         HealthBar.obj._fullnessBar.gameObject.position = HealthBar.gameObject.position + Types.Vector3(0, 0, 1)
@@ -372,7 +372,7 @@ class Objects():
         BoardGrid.gameObject.name = 'GRID'
         BoardGrid.gameObject.size = ((1088 / 1600 * engine._Globals._display[0]), (768 / 900 * engine._Globals._display[1]))
         BoardGrid.gameObject.image = "RUG"
-        BoardGrid.gameObject.position = (BaseWall.gameObject.position.x - BoardGrid.gameObject.size.x, BaseWall.gameObject.position.y + ((BaseWall.gameObject.size.y - BoardGrid.gameObject.size.y) / 2),8192)
+        BoardGrid.gameObject.position = (BaseWall.gameObject.position.x - BoardGrid.gameObject.size.x, BaseWall.gameObject.position.y + ((BaseWall.gameObject.size.y - BoardGrid.gameObject.size.y) / 2),4091)
         BoardGrid.gameObject.color = (96, 171, 92)
         WaveProgressionObj.obj.grid = BoardGrid
         self.ObjectList.append(BoardGrid)
