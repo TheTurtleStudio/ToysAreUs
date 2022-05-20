@@ -8,8 +8,10 @@ class Barrel(): #Change this to the name of your script
         self.engine: Engine.Engine = engine
         self.creator = None
         self.enemies = None
-        self.speed = 400
+        self.speed = 700
         self.startSequenceFinished = False
+        self.timer = 0
+        self.initialTime = 0
         self.elapsedRotation = 0
         self.arm: GameObject.Create = None
 
@@ -24,18 +26,28 @@ class Barrel(): #Change this to the name of your script
         self.creator = None
 
     def Update(self):
-        if self.elapsedRotation >= 360:
-            for i in self.enemies:
-                self.enemies.remove(i)
-                i.Stunned = False
-                i.Damage(Types.WeaponTypes.BarrelOfMonkeys.damage)
-            self.arm.obj.Destroy()
-            self.Destroy()
-        
-        self.arm.gameObject.position = self.gameObject.position + Types.Vector3(self.arm.gameObject.size.x / 2, 0) + (Types.Vector3(math.cos(math.radians(-self.elapsedRotation - 90)), math.sin(math.radians(-self.elapsedRotation - 90)), 0.1) * self.gameObject.size.y)
+        if self.startSequenceFinished is False:
+            if self.elapsedRotation >= 360:
+                self.engine.PlaySound("Assets\\Sounds\\monkey_noises.mp3")
+                for i in self.enemies:
+                    self.enemies.remove(i)
+                    i.Stunned = False
+                    i.Damage(Types.WeaponTypes.BarrelOfMonkeys.damage)
+                self.arm.obj.Destroy()
+                self.startSequenceFinished = True
+                self.initialTime = self.engine.GetTotalTime()
+            self.arm.gameObject.position = self.gameObject.position + Types.Vector3(self.arm.gameObject.size.x / 2, 0) + (Types.Vector3(math.cos(math.radians(-self.elapsedRotation - 90)), math.sin(math.radians(-self.elapsedRotation - 90)), 0.1) * self.gameObject.size.y)
 
-        self.elapsedRotation += self.speed * self.engine.GetDeltaTime()
-        self.arm.gameObject.rotation = self.elapsedRotation
+            self.elapsedRotation += self.speed * self.engine.GetDeltaTime()
+            self.arm.gameObject.rotation = self.elapsedRotation
+        else:
+            self.timer = self.engine.GetTotalTime()
+            if self.timer - self.initialTime > 0.6:
+                targetTrans = ((self.timer - self.initialTime - 0.6) * 200)
+                if targetTrans >= 255:
+                    self.Destroy()
+                else:
+                    self.gameObject.transparency = targetTrans
         '''if self.startSequenceFinished is False:
             self.gameObject.position.y -= self.speed * self.engine.GetDeltaTime()
             if self.gameObject.position.y <= -self.speed:

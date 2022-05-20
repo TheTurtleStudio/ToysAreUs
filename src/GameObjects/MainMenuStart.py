@@ -9,6 +9,7 @@ class MainMenuStart(): #Change this to the name of your script
         self.creator = None
         self.pausedState = False
         self.elements = [self]
+        self.engine.LoadMusic("Assets\\Sounds\\main.mp3")
 
 
     def Update(self):
@@ -16,6 +17,7 @@ class MainMenuStart(): #Change this to the name of your script
             return
         if (self.engine.Input.TestFor.RIGHTMOUSEDOWN()):
             if (self.gameObject.sprite.rect in self.engine.Collisions.PointCollide(self.engine.Input.TestFor.MOUSEPOS(), [Types.CollisionLayer.UI])):
+                
                 self.engine.SetUniversal("STARTED", True)
                 self.engine.FindObject("MAINMENU").obj.gameObject.renderEnabled = False
                 self.engine.FindObject("MAINMENUTITLE").obj.gameObject.renderEnabled = False

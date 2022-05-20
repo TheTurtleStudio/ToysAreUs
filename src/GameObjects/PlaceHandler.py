@@ -28,6 +28,7 @@ class PlaceHandler(): #Change this to the name of your script
                 moneyManagement: MoneyManager.MoneyManager = self.engine.FindObject("MONEYMANAGEMENT").obj
                 if moneyManagement.money < objectType.cost:
                     return
+                self.engine.PlaySound("Assets\\Sounds\\place.mp3")
                 placeObject = objectType.methodReference.Create(self.engine)
                 placeObject.obj.maxHealth = objectType.health
                 placeObject.obj.health = objectType.health
@@ -49,12 +50,14 @@ class PlaceHandler(): #Change this to the name of your script
                     placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40000)
                     cell.objectLink = placeObject
                 elif objectType.__bases__[0] == Types.WeaponTypes._GENERIC:
+                    
                     placeObject.obj.weaponType = objectType
                     placeObject.obj.placedRot = self.placeRotation
                     placeObject.gameObject.position = Types.Vector3(pos.x, pos.y, 40001)
                     if objectType.canPlace_ANYWHERE == False:
                         attached = self._GetWeaponAttachedWall(cell, self.placeRotation)
                         attached.objectLink.obj.attachedWeapons.append(placeObject.obj)
+                        #placeObject.obj.attachedTo = attached.objectLink.obj
                     cell.weaponLink = placeObject
                     if objectType.hasBase:
                         placeObject.obj.baseGO = GameObject.Create(self.engine)

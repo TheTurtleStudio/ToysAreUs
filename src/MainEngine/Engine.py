@@ -18,7 +18,7 @@ class Engine():
     def __init__(self, initialStart=True):
         if initialStart is True:
             pygame.init() #Initialize pygame duh
-            pygame.mixer.pre_init(44100, 16, 2, 4096) #Audio mixer settings
+            pygame.mixer.init()
         self._Globals: self.Globals = self.Globals()
         
     @property
@@ -39,7 +39,34 @@ class Engine():
         self.mainReference = main
         while True:
             self.FrameEvents()
+
+    def LoadMusic(self, music):
+        pygame.mixer.music.load(music)
+
+    def UnloadMusic(self):
+        pygame.mixer.music.unload()
+
+    def PlayMusic(self, volume=1, interrupt=True):
+        if interrupt is False:
+            if pygame.mixer.music.get_busy() is True:
+                return
+        pygame.mixer.music.set_volume(volume)
+        pygame.mixer.music.play()
+
+    def PauseMusic(self):
+        if pygame.mixer.music.get_busy() is True:
+            pygame.mixer.music.pause()
+
+    def ResumeMusic(self):
+        pygame.mixer.music.unpause()
+
+    def StopMusic(self):
+        if pygame.mixer.music.get_busy() is True:
+            pygame.mixer.music.stop()
     
+    def PlaySound(self, sound):
+        pygame.mixer.Sound(sound).play()
+
     def SetUniversal(self, key: str, value):
         self._Globals.Universals[key] = value
 

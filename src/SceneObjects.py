@@ -270,7 +270,7 @@ class Objects():
                 WallButton.gameObject.image = walls[buttonNum]._UITexture
                 if buttonNum == 1:
                     WallsTitle.gameObject.size = ((60 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
-                    WallsTitle.gameObject.position = WallButton.gameObject.position + Types.Vector3(0,-WallButton.gameObject.position.y,-5)
+                    WallsTitle.gameObject.position = WallButton.gameObject.position + Types.Vector3(0,-WallButton.gameObject.position.y,-0.01)
                     WallsTitle.gameObject.color = TopBar.gameObject.color
                     WallsTitle.gameObject.text = "WALLS"
                     WallsTitle.gameObject.fontSize = floor(20 / 1600 * engine._Globals._display[0])
@@ -317,7 +317,7 @@ class Objects():
                 if buttonNum == 5:
                     WeaponsTitle = GameObject.Create(engine)
                     WeaponsTitle.gameObject.size = ((100 / 1600 * engine._Globals._display[0]), (60 / 900 * engine._Globals._display[1]))
-                    WeaponsTitle.gameObject.position = WeaponsButton.gameObject.position + Types.Vector3((20 / 1600 * engine._Globals._display[0]),-WeaponsButton.gameObject.position.y,-5)
+                    WeaponsTitle.gameObject.position = WeaponsButton.gameObject.position + Types.Vector3((20 / 1600 * engine._Globals._display[0]),-WeaponsButton.gameObject.position.y,-0.01)
                     WeaponsTitle.gameObject.color = TopBar.gameObject.color
                     WeaponsTitle.gameObject.text = "WEAPONS"
                     WeaponsTitle.gameObject.fontSize = floor(20 / 1600 * engine._Globals._display[0])

@@ -465,6 +465,7 @@ class WeaponTypes():
         _UITexture = "TOOTHPICKTRAPUI"
         NAME = "Toothpick Trap"
         cost = 5
+        fireSpeed = 0
         canRotate = True
         canPlace_SIDE = True
         canPlace_ENEMY = True
@@ -496,6 +497,7 @@ class EnemyTypes():
         _WalkingAnimation = ["NOTEXTURE"]
         _AttackAnimation = ["NOTEXTURE"]
         _AttackAnimationAttackFrame = 0
+        _AttackSound = None
     class ToyCar(_GENERIC): #Fast and weak\
         health = 1
         damage = 1
@@ -504,6 +506,7 @@ class EnemyTypes():
         _WalkingAnimation = ["CAR1_WALK", "CAR2_WALK", "CAR3_WALK"]
         _AttackAnimation = ["CAR1_ATTACK", "CAR2_ATTACK", "CAR3_ATTACK"]
         _AttackAnimationAttackFrame = 7
+        _AttackSound = "Assets\\Sounds\\CarAttack.mp3"
     class ToySoldier(_GENERIC): #Basic, medium speed and medium strength
         health = 3
         damage = 2
@@ -512,6 +515,7 @@ class EnemyTypes():
         _WalkingAnimation = ["SOLDIER1_WALK", "SOLDIER2_WALK", "SOLDIER3_WALK"]
         _AttackAnimation = ["SOLDIER1_ATTACK", "SOLDIER2_ATTACK", "SOLDIER3_ATTACK"]
         _AttackAnimationAttackFrame = 1
+        _AttackSound = "Assets\\Sounds\\SoldierAttack.mp3"
     class TeddyBear(_GENERIC): #Slow and strong
         health = 5
         damage = 3
@@ -520,3 +524,4 @@ class EnemyTypes():
         _WalkingAnimation = ["TEDDYBEAR1_WALK", "TEDDYBEAR2_WALK", "TEDDYBEAR3_WALK"]
         _AttackAnimation = ["TEDDYBEAR1_ATTACK", "TEDDYBEAR2_ATTACK", "TEDDYBEAR3_ATTACK"]
         _AttackAnimationAttackFrame = 5
+        _AttackSound = "Assets\\Sounds\\BearAttack.mp3"

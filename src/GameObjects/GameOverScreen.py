@@ -11,6 +11,7 @@ class GameOverScreen(): #Change this to the name of your script
         self.elements = [self]
         self.active = False
         self.trans = 255
+        self.playedMusic = False
 
     def Start(self):
         self.gameObject.image = "40PERCENTTRANS"
@@ -26,6 +27,15 @@ class GameOverScreen(): #Change this to the name of your script
                 self.trans = 0
             for element in self.elements:
                 element.gameObject.transparency = self.trans
+        if self.active:
+            if self.playedMusic is False:
+                self.playedMusic = True
+                self.engine.StopMusic()
+                self.engine.UnloadMusic()
+                self.engine.LoadMusic("Assets\\Sounds\\fail.mp3")
+                self.engine.PlayMusic(1, True)
+        else:
+            self.engine.PlayMusic(1, False)
 
     def Indicate(self):
         for element in self.elements:

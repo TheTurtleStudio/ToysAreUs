@@ -1,3 +1,4 @@
+import math
 from MainEngine import Types #NEEDED. Mainly for Types.GameObject creation.
 import pygame
 
@@ -23,7 +24,7 @@ class MoneyManager(): #Change this to the name of your script
         self.engine.FindObject("MONEY").obj.gameObject.text = self.formatMoneyText(self._money)
 
     def formatMoneyText(self, textToFormat: str):
-        return "${:,}".format(textToFormat)
+        return "${:,}".format(math.floor(int(textToFormat)))
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():

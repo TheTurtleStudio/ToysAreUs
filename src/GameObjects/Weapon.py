@@ -20,10 +20,16 @@ class Weapon(): #Change this to the name of your script
         self.lastFired = 0
     def Destroy(self):
         self._UpdateLinkedMatrix()
-        self.engine._Globals.sceneObjectsArray.remove(self.creator)
-        if self.hasBase:
-            self.engine._Globals.sceneObjectsArray.remove(self.baseGO)
-            del self.baseGO
+        try:
+            self.engine._Globals.sceneObjectsArray.remove(self.creator)
+        except Exception:
+            pass
+        try:
+            if self.hasBase:
+                self.engine._Globals.sceneObjectsArray.remove(self.baseGO)
+                del self.baseGO
+        except Exception:
+            pass
     def _UpdateLinkedMatrix(self):
         if (self.cell == None):
             return
@@ -73,6 +79,7 @@ class Weapon(): #Change this to the name of your script
                 self.gameObject.rotation = 90 - rotation - (180 if (linkedObjArray[0].gameObject.position.x - self.gameObject.position.x) > 0 else 0)
                 self.gameObject.rotation = -self.gameObject.rotation if (linkedObjArray[0].gameObject.position.x - self.gameObject.position.x) > 0 else self.gameObject.rotation
                 linkedObjArray[0].Damage(self.weaponType.damage)
+                self.engine.PlaySound("Assets\\Sounds\\nerf_minigun.mp3")
                 fired = True
         if self.weaponType == Types.WeaponTypes.BarrelOfMonkeys:
             if len(self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite) != 0:
@@ -96,6 +103,7 @@ class Weapon(): #Change this to the name of your script
                 self.engine.CreateNewObject(barrel.obj.arm)
                 print(enemyList)
                 barrel.obj.enemies = enemyList.copy()
+                self.engine.PlaySound("Assets\\Sounds\\monkey_barrel_cracking.mp3")
                 for i in enemyList:
                     i.Stunned = True
                 self.Destroy()
@@ -115,7 +123,19 @@ class Weapon(): #Change this to the name of your script
             rocket.gameObject.image = "BOTTLEROCKETPROJECTILE"
             target.obj.Targeted = True
             self.engine.CreateNewObject(rocket)
+            self.engine.PlaySound("Assets\\Sounds\\mortar_shoot.mp3")
             fired = True
+
+        if self.weaponType == Types.WeaponTypes.ToothpickTrap:
+            enemies = self.engine.FindObject("WAVEPROGRESSION").obj.enemies
+            if len(enemies) == 0:
+                return
+            if len(self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite) != 0:
+                for enemy in self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite:
+                    enemy.Damage(self.weaponType.damage)
+                self.Destroy()
+
+            
         enemyList.clear()
         del enemyList
 

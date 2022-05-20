@@ -19,6 +19,8 @@ class Rocket(): #Change this to the name of your script
         self.creator = None
 
     def Update(self):
+        if self.enemy == None:
+            self.Destroy()
         if self.startSequenceFinished is False:
             self.gameObject.position.y -= self.speed * self.engine.GetDeltaTime()
             if self.gameObject.position.y <= -self.speed:
@@ -33,8 +35,7 @@ class Rocket(): #Change this to the name of your script
             self.gameObject.rotation = 180
         self.gameObject.position.x = self.enemy.gameObject.position.x
         self.gameObject.position.y += self.speed * self.engine.GetDeltaTime()
-        if self.enemy == None:
-            self.Destroy()
+        
         
             
 

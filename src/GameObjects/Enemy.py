@@ -159,6 +159,7 @@ class Enemy(): #Change this to the name of your script
                     self.HandleWallAttack(futureCell)
 
     def HandleBaseWallDamage(self):
+        
         healthBarObj: Healthbar.Healthbar = self.engine.FindObject("HEALTHBAR").obj
         self.Animator.AnimationStep(self.enemyType._AttackAnimation[self.animationVariationIndex])
         if (self.Animator.finished):
@@ -166,6 +167,7 @@ class Enemy(): #Change this to the name of your script
         if healthBarObj.health != 0:
             if (self.Animator.currentFrame == self.enemyType._AttackAnimationAttackFrame):
                 if not self._hasAttackedThisCycle:
+                    self.engine.PlaySound(self.enemyType._AttackSound)
                     healthBarObj.health -= self.enemyType.damage
                     self._hasAttackedThisCycle = True
             else:
@@ -173,9 +175,11 @@ class Enemy(): #Change this to the name of your script
             self._attackAnimationPlaying = not self.Animator.finished
 
     def HandleWallAttack(self, wall: Types.Cell):
+        
         self.Animator.AnimationStep(self.enemyType._AttackAnimation[self.animationVariationIndex])
         if (self.Animator.currentFrame == self.enemyType._AttackAnimationAttackFrame):
             if not self._hasAttackedThisCycle:
+                self.engine.PlaySound(self.enemyType._AttackSound)
                 wall.objectLink.obj.health -= self.enemyType.damage
                 self._hasAttackedThisCycle = True
                 if wall.objectLink.obj.health <= 0:

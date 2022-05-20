@@ -67,7 +67,8 @@ class Grid(): #Change this to the name of your script
                     self.engine.FindObject("MONEYMANAGEMENT").obj.money += (0.5 * refundAmount)
                 else:
                     self.engine.FindObject("MONEYMANAGEMENT").obj.money += refundAmount
-            rootWall.objectLink.obj.attachedWeapons.remove(rootWall.weaponLink.obj)
+            if rootWall.objectLink != None:
+                rootWall.objectLink.obj.attachedWeapons.remove(rootWall.weaponLink.obj)
             rootWall.weaponLink.obj.Destroy()
             rootWall.weaponLink = None
             return

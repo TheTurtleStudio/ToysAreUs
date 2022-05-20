@@ -15,6 +15,12 @@ class InputHandler():
     class _TestFor():
         def __init__(self, handler):
             self._InputHandler = handler
+        def WINDOWFOCUSLOST(self):
+            return self._testFor(pygame.WINDOWFOCUSLOST)[0]
+        def WINDOWLEAVE(self):
+            return self._testFor(pygame.WINDOWLEAVE)[0]
+        def WINDOWENTER(self):
+            return self._testFor(pygame.WINDOWENTER)[0]
         def QUIT(self):
             return self._testFor(pygame.QUIT)[0]
         def MOUSEPOS(self):
