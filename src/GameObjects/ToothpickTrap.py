@@ -16,6 +16,7 @@ class ToothpickTrap(): #Change this to the name of your script
         self.arm: GameObject.Create = None
         self.Animator = Types.Animator(self.gameObject)
         self.initial = True
+        self.trapCreator = None
 
     def Destroy(self):
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
@@ -30,14 +31,13 @@ class ToothpickTrap(): #Change this to the name of your script
     def Update(self):
         if self.initial is True:
             self.initial = False
-            for i in self.enemies:
+            for i in self.enemies.copy():
                 i.Stunned = True
         if self.startSequenceFinished is False:
             self.Animator.AnimationStep("toothpickTrap")
             if self.Animator.finished:
                 self.engine.PlaySound("Assets\\Sounds\\toothpick_shoot.mp3")
-                for i in self.enemies:
-                    self.enemies.remove(i)
+                for i in self.enemies.copy():
                     i.Stunned = False
                     i.Damage(Types.WeaponTypes.BarrelOfMonkeys.damage)
                 self.startSequenceFinished = True

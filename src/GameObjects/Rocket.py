@@ -22,8 +22,8 @@ class Rocket(): #Change this to the name of your script
         if self.enemy.exists is False:
             self.Destroy()
         if self.startSequenceFinished is False:
-            self.gameObject.position.y -= self.speed * self.engine.GetDeltaTime()
-            if self.gameObject.position.y <= -self.speed:
+            self.gameObject.position.y -= self.speed * self.engine.GetDeltaTime() * 0.85
+            if self.gameObject.position.y <= -self.speed * 0.85:
                 self.startSequenceFinished = True
             return
         elif self.gameObject.position.y >= self.enemy.gameObject.position.y:

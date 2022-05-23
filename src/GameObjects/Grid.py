@@ -86,7 +86,7 @@ class Grid(): #Change this to the name of your script
             for stem in initialPairs:
                 if (stem != None):
                     if (stem != None):
-                        self.DestroyFloatingWalls(stem, refund=True)
+                        self.DestroyFloatingWalls(stem, refund=refund)
     def DestroyFloatingWalls(self, initialStem: Wall.Create, refund=False):
         queue = [initialStem]
         visited = []

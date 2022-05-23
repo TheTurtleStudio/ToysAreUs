@@ -34,13 +34,13 @@ class PauseMenu(): #Change this to the name of your script
                 self.Resume()
 
     def Pause(self):
-        self.engine.PauseMusic()
+        self.engine.ChangeMusicVolume(0.05)
         self.pausedState = True
         for element in self.elements:
             element.gameObject.renderEnabled = True
         self.engine.timeScale = 0
     def Resume(self):
-        self.engine.ResumeMusic()
+        self.engine.ChangeMusicVolume(0.2)
         self.pausedState = False
         for element in self.elements:
             element.gameObject.renderEnabled = False

@@ -17,6 +17,8 @@ class InputHandler():
             self._InputHandler = handler
         def WINDOWFOCUSLOST(self):
             return self._testFor(pygame.WINDOWFOCUSLOST)[0]
+        def WINDOWFOCUSGAINED(self):
+            return self._testFor(pygame.WINDOWFOCUSGAINED)[0]
         def WINDOWLEAVE(self):
             return self._testFor(pygame.WINDOWLEAVE)[0]
         def WINDOWENTER(self):

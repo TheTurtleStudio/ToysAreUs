@@ -29,6 +29,7 @@ class Enemy(): #Change this to the name of your script
         self.Targeted = False
         self.Stunned = False
         self.exists = True
+        self.rewardGranted = False
 
     def Destroy(self):
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
@@ -69,11 +70,14 @@ class Enemy(): #Change this to the name of your script
             self.gameObject.color = (255, 255, 255)
 
     def OnKill(self):
+        if self.rewardGranted is False:
+            self.engine.FindObject("MONEYMANAGEMENT").obj.money += self.enemyType.reward
+            self.engine.PlaySound("Assets\\Sounds\\pop.wav")
+            self.rewardGranted = True
         self.gameObject.color = (255,255,255)
         self.exists = False
         self.Animator.AnimationStep("deathCloud")
         if self.Animator.finished:
-            self.engine.FindObject("MONEYMANAGEMENT").obj.money += self.enemyType.reward
             self.Destroy()
 
     def Start(self):

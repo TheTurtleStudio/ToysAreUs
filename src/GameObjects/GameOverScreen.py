@@ -35,7 +35,7 @@ class GameOverScreen(): #Change this to the name of your script
                 self.engine.LoadMusic("Assets\\Sounds\\fail.mp3")
                 self.engine.PlayMusic(1, True)
         else:
-            self.engine.PlayMusic(1, False)
+            self.engine.PlayMusic(0.2, False)
 
     def Indicate(self):
         for element in self.elements:

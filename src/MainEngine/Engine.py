@@ -46,7 +46,12 @@ class Engine():
     def UnloadMusic(self):
         pygame.mixer.music.unload()
 
+    def ChangeMusicVolume(self, volume):
+        pygame.mixer.music.set_volume(volume)
+
     def PlayMusic(self, volume=1, interrupt=True):
+        if self.GetUniversal("music_enabled") is False:
+            volume = 0
         if interrupt is False:
             if pygame.mixer.music.get_busy() is True:
                 return
@@ -65,6 +70,8 @@ class Engine():
             pygame.mixer.music.stop()
     
     def PlaySound(self, sound):
+        if self.GetUniversal("sfx_enabled") == False:
+            return
         pygame.mixer.Sound(sound).play()
 
     def SetUniversal(self, key: str, value):
@@ -81,7 +88,7 @@ class Engine():
 
     def FrameEvents(self):
         
-        self._Globals.clock.tick()
+        self._Globals.clock.tick(60)
         self._Globals.lastRunTime = self._Globals.currentRunTime
         self._Globals.currentRunTime = pygame.time.get_ticks()
         waitTime = 1000/60 - (self._Globals.currentRunTime - self._Globals.lastRunTime)
@@ -147,9 +154,13 @@ class Engine():
     def Reload(self):
         c = self._Globals.sceneObjectsArray.copy()
         for item in c:
-            item.gameObject.sprite.kill()
-            self._Globals.sceneObjectsArray.remove(item)
             try:
+                item.gameObject.sprite.kill()
+            except Exception:
+                pass
+            
+            try:
+                self._Globals.sceneObjectsArray.remove(item)
                 item.obj.Destroy()
             except Exception:
                 pass
@@ -168,7 +179,7 @@ class Engine():
         array = renderOrderReturnVal[0]
         for i in array:
             self._Globals.screen.blit(i.gameObject.sprite.image, (i.gameObject.position.x + i.gameObject._offset.x, i.gameObject.position.y + i.gameObject._offset.y))
-        pygame.display.update()
+        pygame.display.flip()
 
     def AddImageAsset(self, key: str, value: str or list, transparency=True):
         if type(value) == str:

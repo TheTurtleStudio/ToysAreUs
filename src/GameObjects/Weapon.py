@@ -42,6 +42,9 @@ class Weapon(): #Change this to the name of your script
             self.lastFired = self.engine.GetTotalTime()
             self.oldWeaponType = self.weaponType
         if self.lastFired + self.weaponType.fireSpeed > self.engine.GetTotalTime():
+            if self.weaponType == Types.WeaponTypes.BottleRocket:
+                if self.lastFired + (self.weaponType.fireSpeed * 0.85) < self.engine.GetTotalTime():
+                    self.gameObject.image = "BOTTLEROCKETFULL"
             return
         fired = False
         enemyList = []
@@ -83,6 +86,8 @@ class Weapon(): #Change this to the name of your script
                 self.engine.PlaySound("Assets\\Sounds\\nerf_minigun.mp3")
                 fired = True
         if self.weaponType == Types.WeaponTypes.BarrelOfMonkeys:
+            if self.gameObject.renderEnabled is False:
+                return
             if len(self.engine.FindObject("GRID").obj.gridMatrix.GetCell(self.cell.cell).enemyLinkDefinite) != 0:
                 for x in range(self.weaponType.searchCells.x):
                     for y in range(self.weaponType.searchCells.y):
@@ -92,7 +97,7 @@ class Weapon(): #Change this to the name of your script
                             for enemy in self.engine.FindObject("GRID").obj.gridMatrix.GetCell(cellToSearch).enemyLinkDefinite:
                                 if not enemy in enemyList:
                                     enemyList.append(enemy)
-                barrel = Barrel.Create(self.engine)
+                barrel:Barrel.Create = Barrel.Create(self.engine)
                 barrel.gameObject.size = self.gameObject.size
                 barrel.gameObject.position = self.gameObject.position
                 barrel.gameObject.image = "MONKEYBARRELBROKEN"
@@ -103,8 +108,9 @@ class Weapon(): #Change this to the name of your script
                 self.engine.CreateNewObject(barrel)
                 self.engine.CreateNewObject(barrel.obj.arm)
                 barrel.obj.enemies = enemyList.copy()
+                barrel.obj.barrelCreator = self
                 self.engine.PlaySound("Assets\\Sounds\\monkey_barrel_cracking.mp3")
-                self.Destroy()
+                self.gameObject.renderEnabled = False
 
         if self.weaponType == Types.WeaponTypes.BottleRocket:
             enemies = self.engine.FindObject("WAVEPROGRESSION").obj.enemies
@@ -113,8 +119,8 @@ class Weapon(): #Change this to the name of your script
             target: Enemy.Create = random.choice(enemies)
             if target.obj.Targeted == True:
                 return
-
             rocket = Rocket.Create(self.engine)
+            self.gameObject.image = "BOTTLEROCKETEMPTY"
             rocket.gameObject.size = self.gameObject.size
             rocket.gameObject.position = self.gameObject.position + Types.Vector3(0, 0, 0.0001)
             rocket.obj.enemy = target.obj
@@ -137,6 +143,8 @@ class Weapon(): #Change this to the name of your script
                 self.engine.CreateNewObject(trap)
                 trap.obj.enemies = enemyList.copy()
                 self.Destroy()
+                
+                
                 
 
         

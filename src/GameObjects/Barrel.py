@@ -15,6 +15,7 @@ class Barrel(): #Change this to the name of your script
         self.elapsedRotation = 0
         self.arm: GameObject.Create = None
         self.initial = True
+        self.barrelCreator = None
 
     def Destroy(self):
         self.engine._Globals.sceneObjectsArray.remove(self.creator)
@@ -29,14 +30,12 @@ class Barrel(): #Change this to the name of your script
     def Update(self):
         if self.initial is True:
             self.initial = False
-            for i in self.enemies:
+            for i in self.enemies.copy():
                 i.Stunned = True
         if self.startSequenceFinished is False:
             if self.elapsedRotation >= 360:
                 self.engine.PlaySound("Assets\\Sounds\\monkey_noises.mp3")
-                for i in self.enemies:
-                    self.enemies.remove(i)
-                    i.Stunned = False
+                for i in self.enemies.copy():
                     i.Damage(Types.WeaponTypes.BarrelOfMonkeys.damage)
                 self.arm.obj.Destroy()
                 self.startSequenceFinished = True
@@ -50,6 +49,7 @@ class Barrel(): #Change this to the name of your script
             if self.timer - self.initialTime > 0.6:
                 targetTrans = ((self.timer - self.initialTime - 0.6) * 200)
                 if targetTrans >= 255:
+                    self.barrelCreator.Destroy()
                     self.Destroy()
                 else:
                     self.gameObject.transparency = targetTrans

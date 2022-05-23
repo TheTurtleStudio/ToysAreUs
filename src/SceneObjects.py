@@ -43,9 +43,10 @@ class Objects():
         engine.AddImageAsset("BLOCKWALLS_UI", "Assets\\WoodBlocks\\blockWallsUI.png")
         engine.AddImageAsset("BLOCKWALLS_UI_GRAYSCALE", "Assets\\WoodBlocks\\blockWallsUIGRAYSCALE.png")
         engine.AddImageAsset("TOOTHPICKTRAPSTATIONARY", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\toothpickTrap.png", (64, 64), 1))
+        engine.AddImageAsset("TOOTHPICKTRAP_UI_GRAYSCALE", "Assets\\Common\\toothpickTrapUIGRAYSCALE.png")
 
-        
-        engine.AddImageAsset("ARROW", "Assets\\Common\\arrow.png")
+
+
 
         engine.AddAnimation("SOLDIER1_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4), framerate=5, loop=True)
         engine.AddAnimation("SOLDIER2_WALK", ImageManipulation.Sheets.Disect(engine, "_PLUGWALK", (64, 64), 4, 4), framerate=5, loop=True)
@@ -67,22 +68,28 @@ class Objects():
         engine.AddAnimation("CAR1_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 42), framerate=12, loop=False)
         engine.AddAnimation("CAR2_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 54), framerate=12, loop=False)
         engine.AddAnimation("CAR3_ATTACK", ImageManipulation.Sheets.Disect(engine, "_ENEMYATTACK", (64, 64), 12, 66), framerate=12, loop=False)
-        engine.AddAnimation("toothpickTrap", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\toothpickTrap.png", (64, 64), 5), framerate=12, loop=False)
+        engine.AddAnimation("toothpickTrap", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\toothpickTrap.png", (64, 64), 5), framerate=40, loop=False)
         engine.AddAnimation("deathCloud", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\deathCloud.png", (64, 64), 6), framerate=8, loop=False)
 
         engine.AddImageAsset("TURRET", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turret.png", (64, 64), 1)[0])
         engine.AddImageAsset("TURRETUI", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turretUI.png", (64, 64), 1)[0])
         engine.AddImageAsset("TURRETUIGRAYSCALE", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\turretUIGRAYSCALE.png", (64, 64), 1)[0])
-        engine.AddImageAsset("BOTTLEROCKETPROJECTILE", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\bottleRocket.png", (64, 64), 6)[5])
-        engine.AddImageAsset("BOTTLEROCKETUI", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\bottleRocketUI.png", (64, 64), 1)[0])
+        engine.AddImageAsset("BOTTLEROCKETPROJECTILE", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\bottleRocket2PROJECTILE.png", (32, 32), 1)[0])
+        engine.AddImageAsset("BOTTLEROCKETUI", "Assets\\Common\\bottleRocket2PROJECTILE.png")
+        engine.AddImageAsset("BOTTLEROCKETEMPTY", "Assets\\Common\\bottleRocket2EMPTY.png")
+        engine.AddImageAsset("BOTTLEROCKETFULL", "Assets\\Common\\bottleRocket2FULL.png")
+        engine.AddImageAsset("BOTTLEROCKETGRAY", "Assets\\Common\\bottleRocket2UIGRAYSCALE.png")
+        
         
         engine.AddImageAsset("MONKEYBARREL", "Assets\\Common\\monkeyBarrel.png")
         engine.AddImageAsset("MONKEYBARRELBROKEN", "Assets\\Common\\monkeyBarrelBROKEN.png")
-        engine.AddImageAsset("MONKEYBARRELUI", ImageManipulation.Sheets.Disect(engine, "Assets\\Common\\monkeyBarrelUI.png", (64, 64), 1)[0])
+        engine.AddImageAsset("MONKEYBARRELUI", "Assets\\Common\\monkeyBarrelUI.png")
         engine.AddImageAsset("MONKEYBARRELUIGRAYSCALE", "Assets\\Common\\monkeyBarrelUIGRAYSCALE.png")
         engine.AddImageAsset("MONKEYARM", "Assets\\Common\\monkeyHand.png")
 
         engine.AddImageAsset("TOOTHPICKTRAPUI", "Assets\\Common\\toothpickTrapUI.png")
+
+        
 
 
         engine.AddImageAsset("PLAYCLICKABLE", "Assets\\Common\\playButtonClickable.png")
@@ -401,11 +408,25 @@ class Objects():
         PauseRestart.gameObject.fontSize = 30
         PauseRestart.gameObject.text = "EXIT TO MENU"
         Pause.obj.elements.append(PauseRestart)
+        '''PauseOptions = StartButtonFunctionality.Create(engine)
+        PauseOptions.gameObject.size = ((200 / 1600 * engine._Globals._display[0]), (50 / 900 * engine._Globals._display[1]))
+        PauseOptions.gameObject.position = Types.Vector3((engine._Globals._display[0] / 2) - (PauseOptions.gameObject.size.x / 2), engine._Globals._display[1] / 2 + (PauseOptions.gameObject.size.y * 1.5), Pause.gameObject.position.z + 1)
+        PauseOptions.gameObject.color = (50, 50, 50)
+        PauseOptions.gameObject.collisionLayer = Types.CollisionLayer.UI
+        PauseOptions.gameObject.textFormat = 0
+        PauseOptions.gameObject.fontSize = 30
+        PauseOptions.gameObject.text = "OPTIONS"
+        Pause.obj.elements.append(PauseOptions)'''
 
         self.ObjectList.append(Pause)
         self.ObjectList.append(PauseTitle)
         self.ObjectList.append(PauseRestart)
+        #self.ObjectList.append(PauseOptions)
 
+        with open("DATA\\sounds.twu", "r") as sounds:
+            lines = sounds.readlines()
+            engine.SetUniversal("music_enabled", True if lines[0].removesuffix("\n").lower() == "true" else False)
+            engine.SetUniversal("sfx_enabled", True if lines[1].removesuffix("\n").lower() == "true" else False)
 
     def get(self):
         return tuple(self.ObjectList)

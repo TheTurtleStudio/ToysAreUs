@@ -447,12 +447,12 @@ class WeaponTypes():
         canPlace_ROOT = False
         canPlace_SIDE = False
         fireSpeed = 1 #Seconds per use
-        _FieldTexture = "ARROW"
-        _GRAYTexture = "ARROW"
+        _FieldTexture = "NOTEXTURE"
+        _GRAYTexture = "NOTEXTURE"
 
     class NerfGun(_GENERIC): #Long range
-        cost = 15
-        damage = 1
+        cost = 20
+        damage = 2
         hasBase = True
         canRotate = True
         canPlace_ROOT = True
@@ -464,29 +464,33 @@ class WeaponTypes():
     class ToothpickTrap(_GENERIC): #Short range
         _UITexture = "TOOTHPICKTRAPUI"
         _FieldTexture = "TOOTHPICKTRAPSTATIONARY"
+        _GRAYTexture = "TOOTHPICKTRAP_UI_GRAYSCALE"
         NAME = "Toothpick Trap"
-        cost = 5
+        cost = 10
         fireSpeed = 0
+        damage = 5
         canRotate = True
         canPlace_SIDE = True
         canPlace_ENEMY = True
     class BottleRocket(_GENERIC): #Overshot mortar
         NAME = "Bottle Rocket"
-        cost = 20
+        cost = 50
         fireSpeed = 5
-        hasBase = True
+        damage = 1
         canPlace_ROOT = True
         _UITexture = "BOTTLEROCKETUI"
+        _FieldTexture = "BOTTLEROCKETEMPTY"
+        _GRAYTexture = "BOTTLEROCKETGRAY"
     class BarrelOfMonkeys(_GENERIC): #Trap
         _UITexture = "MONKEYBARRELUI"
         _FieldTexture = "MONKEYBARREL"
         _GRAYTexture = "MONKEYBARRELUIGRAYSCALE"
         NAME = "Barrel of Monkeys"
-        damage = 500
+        damage = 50000
         fireSpeed = 0
         searchCells = Vector2(3, 3) #Total size of the grid we search for enemies
         searchOffset = Vector2(-1, -1) #0,0 being the position of the weapon. This is the top left cell (if the weapon points up)
-        cost = 35
+        cost = 30
         canPlace_ANYWHERE = True
         canPlace_ENEMY = True
 
@@ -501,7 +505,7 @@ class EnemyTypes():
         _AttackAnimationAttackFrame = 0
         _AttackSound = None
     class ToyCar(_GENERIC): #Fast and weak\
-        health = 1
+        health = 3
         damage = 1
         reward = 2
         speed = 180
@@ -510,7 +514,7 @@ class EnemyTypes():
         _AttackAnimationAttackFrame = 7
         _AttackSound = "Assets\\Sounds\\CarAttack.mp3"
     class ToySoldier(_GENERIC): #Basic, medium speed and medium strength
-        health = 3
+        health = 7
         damage = 2
         reward = 2
         speed = 100
@@ -519,7 +523,7 @@ class EnemyTypes():
         _AttackAnimationAttackFrame = 1
         _AttackSound = "Assets\\Sounds\\SoldierAttack.mp3"
     class TeddyBear(_GENERIC): #Slow and strong
-        health = 5
+        health = 15
         damage = 3
         reward = 5
         speed = 60
