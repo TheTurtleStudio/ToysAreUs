@@ -143,6 +143,7 @@ class PlaceHandler(): #Change this to the name of your script
             return False
         condition1 = False
         condition3 = True
+        edgeCondition = cell.cell.x != 0
         if (type(self.selectedPlaceObject) == PlaceWall):
             if self.engine.FindObject("WAVEPROGRESSION").obj.ongoingWave is True:
                 return False
@@ -176,7 +177,7 @@ class PlaceHandler(): #Change this to the name of your script
         if type(self.selectedPlaceObject) == PlaceWeapon:
             if self.selectedPlaceObject.objectType.canPlace_ANYWHERE and condition3 and condition2 and cell.objectLink == None:
                 return True
-        return (condition1 and condition2 and condition3)
+        return (condition1 and condition2 and condition3 and edgeCondition)
 
 #Create needs to be defined for every script in this folder. Everything should be exactly the same except for what is commented below, read that.
 class Create():
