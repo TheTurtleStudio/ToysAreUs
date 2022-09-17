@@ -1,4 +1,4 @@
-# ToysAreUs
+# ToysWarUs
 A school project.
 
 This is a project for my gaming development class.
